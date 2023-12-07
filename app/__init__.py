@@ -8,6 +8,10 @@ from flask_sqlalchemy import SQLAlchemy
 #from flask_mail import Mail
 from config import Config
 from flask_bootstrap import Bootstrap
+import pprint
+printer = pprint.PrettyPrinter(indent=12, width=160)
+prnt = printer.pprint    
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
