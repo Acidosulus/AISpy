@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 import os
 from flask_sqlalchemy import SQLAlchemy
 import pymssql
@@ -37,8 +37,13 @@ def get_file(filename):  # pragma: no cover
 
 
 @app.route('/')
+@app.route('/index')
 def index():
-    return 'Hello World'
+    user = {'nickname':'UserName'}
+    title = 'AISpy'
+    return render_template("main_index.html", title = title, user = user)
+
+
 
 if __name__ == "__main__":
     app.run()

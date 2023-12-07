@@ -1,0 +1,14 @@
+{% extends 'bootstrap/base.html' %}
+
+
+{% block title %}
+    {% if title %}{{ title }}{% else %}Welcome to AISpy{% endif %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+      <h1>Hello, {{user.nickname}}!</h1>
+    </div>
+{% endblock %}
+
