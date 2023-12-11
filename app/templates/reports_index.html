@@ -1,0 +1,28 @@
+{% extends 'bootstrap/base.html' %}
+
+
+{% block title %}
+    {% if title %}{{ title }}{% else %}Welcome to AISpy{% endif %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+      <h1>Отчёты</h1>
+    </div>
+
+   <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Название</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+        <tr>
+          <td><a href="/report/<{{ report.add_link }}>">{{ report.name }}</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
