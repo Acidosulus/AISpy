@@ -5,6 +5,21 @@ import sqlalchemy as sa
 from app import app, db, models
 
 
+@app.route('/addresses/<object_id>')
+def addresses(object_id):
+    print(object_id)
+    db.engine.connect().execute(f"select [AddrLs](row_id,0), * from [Лицевые счета] where [Счета]={object_id};")
+    return f'{object_id}'
+
+
+
+@app.route('/reports/')
+def reports():
+    reportsList = [{'name':'Первый отчёт', 'add_link':'report1'}, {'name':'Второй отчёт', 'add_link':'report2'}, {'name':'Третий отчет', 'add_link':'report3'}]
+    return render_template("reports_index.html", reports=reportsList)
+
+
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -16,13 +31,6 @@ def index():
     user = {'nickname':'UserName'}
     title = 'AISpy'
     return render_template("main_index.html", title = title, user = user)
-
-
-@app.route('/reports/')
-def reports():
-    reportsList = [{'name':'Первый отчёт', 'add_link':'report1'}, {'name':'Второй отчёт', 'add_link':'report2'}, {'name':'Третий отчет', 'add_link':'report3'}]
-    return render_template("reports_index.html", reports=reportsList)
-
 
 
 

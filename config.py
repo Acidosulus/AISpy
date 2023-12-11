@@ -11,7 +11,9 @@ class Config:
 
     SECRET_KEY = 'a really really really really long secret key' #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     ##SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:321@185.112.225.153:35432/start_dev'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+    ## SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_DATABASE_URI = f'mssql+pymssql://{urllib.parse.quote_plus("TMPSITE")}:{urllib.parse.quote_plus("1")}@{urllib.parse.quote_plus("10.19.50.11:1433")}/{urllib.parse.quote_plus("atom_khk_fl_testupd.stack")}'
+    TEMPLATES_AUTO_RELOAD = True
     ##SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
     
     ###   really working connection to STEK
