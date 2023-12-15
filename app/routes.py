@@ -4,7 +4,7 @@ from flask import render_template, flash, redirect, url_for, request
 import sqlalchemy as sa
 from collections.abc import Iterable
 from app import app, db, models,connection_fl
-
+from click import echo, style
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
@@ -18,6 +18,10 @@ def Get_Addresses_List(parent_id:int) -> list:
 	prnt(result)
 	return result
 
+@app.route('/Report/<report_name>')
+def Report(report_name):
+	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
+	return redirect(url_for('index'))
 
 @app.route('/addresses/<object_id>')
 def addresses(object_id):
@@ -45,24 +49,62 @@ def import_data():
 									'/static/images/ico_excel.bmp',
 									'0',
 									1900,
-									Null);""")
-	pItem = models.PageItemsList(   name='Рассчитанность ТУ МКЖД',
-									path='/Report/Report_Calc_Status_MKJD_Point',
+									-110);""")
+	
+	db.session.add(models.PageItemsList(   name='Рассчитанность ТУ МКЖД',
+									path='/Report/Report_Calc_Status_MKJD_Points',
 									icon='/static/images/ico_excel.bmp',
 									roles='0',
-									persistent_id=1901)
+									persistent_id=1901,
+									parent= -110)
+					)
 
-	db.session.add(pItem)
+	db.session.add(models.PageItemsList(   name='Сервисные отчёты по статусу расчёта текущего периода',
+									path='',
+									icon='/static/images/report.png',
+									roles='0',
+									persistent_id= -110,
+									parent=-100)
+					)
+
+	db.session.add(models.PageItemsList(   name='Отчёты ЮЛ',
+									path='',
+									icon='/static/images/report.png',
+									roles='0',
+									persistent_id= -100,
+									parent=-10)
+					)
+	db.session.add(models.PageItemsList(   name='Отчёты ФЛ',
+									path='',
+									icon='/static/images/report.png',
+									roles='0',
+									persistent_id= -200,
+									parent=-10)
+					)
+	
+
 	db.session.commit()
 	return redirect(url_for('index'))
 
 
 
-@app.route('/reports/')
-def reports():
-	prnt(RowsToDictList(db.session.query(models.PageItemsList).all()))
-	reportsList = RowsToDictList(db.session.query(models.PageItemsList).all())
+
+
+
+@app.route('/page_with_items/<parent_id>')
+def reports(parent_id):
+	rows = RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.parent==parent_id).all())
+	prnt(rows)
+	print()
+	for row in rows:
+		if len(row['path'])==0:
+			row['path'] = f'/page_with_items/{row["persistent_id"]}'
+	prnt(rows)
+	reportsList = rows
 	return render_template("reports_index.html", reports=reportsList)
+
+
+
 
 
 

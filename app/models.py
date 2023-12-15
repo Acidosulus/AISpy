@@ -31,8 +31,8 @@ class PageItemsList (db.Model):
 	id					= db.Column(db.Integer, primary_key = True)
 	persistent_id		= db.Column(db.Integer)
 	parent				= db.Column(db.Integer)
-	name				= db.Column(db.String(250),  unique = True)
-	path				= db.Column(db.String(1024),  unique = True)
+	name				= db.Column(db.String(250),  )
+	path				= db.Column(db.String(1024),  )
 	icon				= db.Column(db.String(1024),  )
 	roles				= db.Column(db.String(1024),  )
 

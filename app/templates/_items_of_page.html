@@ -7,7 +7,7 @@
     <tbody>
       {% for report in reports %}
         <tr>
-          <td><a href="/report/{{ report.path }}"><img src="{{ report.icon }}" with="32" height="32"> {{ report.name }}</a></td>
+          <td><a href="{{ report.path }}"><img src="{{ report.icon }}" with="32" height="32"> {{ report.name }}</a></td>
         </tr>
       {% endfor %}
     </tbody>
