@@ -9,7 +9,7 @@ prnt = printer.pprint
 
 
 from sqlalchemy.engine import URL
-connection_url = URL.create(
+connection_url_fl = URL.create(
     "mssql+pyodbc",
     username="tmpsite",
     password="1",
@@ -20,8 +20,21 @@ connection_url = URL.create(
         "driver": "ODBC Driver 18 for SQL Server",
         "TrustServerCertificate": "yes"    },
 )
+connection_url_ul = URL.create(
+    "mssql+pyodbc",
+    username="КАЗАКОВЦЕВ_НМ",
+    password="1",
+    host="10.19.50.11",
+    port=1433,
+    database="atom_khk_ul_test",
+    query={
+        "driver": "ODBC Driver 18 for SQL Server",
+        "TrustServerCertificate": "yes"    },
+)
+
 print()
-prnt(connection_url)
+prnt(connection_url_fl)
+prnt(connection_url_ul)
 print()
 
 
@@ -32,9 +45,13 @@ class Config:
     config.read("settings.ini", encoding='UTF-8')  
 
     SECRET_KEY = 'a really really really really long secret key' #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    ##SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:321@185.112.225.153:35432/start_dev'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:321@185.112.225.153:35432/start_dev'
     ## SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
-    SQLALCHEMY_DATABASE_URI = connection_url
+    #SQLALCHEMY_DATABASE_URI = connection_url_fl
+    SQLALCHEMY_BINDS = {
+        'dbfl': connection_url_fl,
+        'dbul': connection_url_ul
+}
     TEMPLATES_AUTO_RELOAD = True
     ##SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
     

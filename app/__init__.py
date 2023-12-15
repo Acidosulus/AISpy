@@ -6,9 +6,11 @@ from flask_sqlalchemy import SQLAlchemy
 #from flask_migrate import Migrate
 from flask_login import LoginManager
 #from flask_mail import Mail
-from config import Config
+from config import Config, connection_url_ul, connection_url_fl
 from flask_bootstrap import Bootstrap
 import pprint
+from sqlalchemy import create_engine
+
 printer = pprint.PrettyPrinter(indent=12, width=160)
 prnt = printer.pprint    
 
@@ -18,12 +20,18 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
+
+engine_ul = create_engine(connection_url_ul)
+engine_fl = create_engine(connection_url_fl)
+connection_ul = engine_ul.connect()
+connection_fl = engine_fl.connect()
+
 bootstrap = Bootstrap(app)
 
-#migrate = Migrate(app, db)
+
 login = LoginManager(app)
 login.login_view = 'login'
-#mail = Mail(app)
+
 
 if not os.path.exists('logs'):
     os.mkdir('logs')
