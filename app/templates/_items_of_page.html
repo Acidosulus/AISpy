@@ -1,0 +1,15 @@
+   <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+        <tr>
+          <td><a href="/report/{{ report.path }}"><img src="{{ report.icon }}" with="32" height="32"> {{ report.name }}</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
