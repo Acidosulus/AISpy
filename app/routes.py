@@ -18,6 +18,18 @@ def Get_Addresses_List(parent_id:int) -> list:
 	prnt(result)
 	return result
 
+
+
+
+
+
+
+
+@app.route('/parameters_dialog/')
+def parameters_dialog():
+	return render_template("parameters_dialog.html")
+
+
 @app.route('/Report/<report_name>')
 def Report(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
