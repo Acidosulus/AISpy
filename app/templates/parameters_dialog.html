@@ -7,6 +7,7 @@
 {% block content %}
 
 <script type="text/javascript">
+  window.onload = function(event){
   var source = {
     title:`Заголовок диалога с произвольными параметрами`,
     parameters:[{ lable:`Подпись параметра ввода строки`,
@@ -30,24 +31,31 @@
                 ]
   };
   console.log(source)
+  document.body.insertAdjacentHTML(`beforeend`, `<div id="id_dialog_body"  style="margin: 20px;"></div>`);
+  
+  const rootNode = document.getElementById('id_dialog_body');
+  rootNode.classList.add(`border`);
+  rootNode.classList.add(`border-3`);
+  rootNode.classList.add(`border-dark`);
+
   if (source.title!=null){
-    document.body.insertAdjacentHTML('beforeend',`<h1>${source.title}</h1><hr><hr>`);
+    rootNode.insertAdjacentHTML(`beforeend`,`<h1>${source.title}</h1><hr><hr>`);
   }
   if (source.parameters!=null){
     for (let section of source.parameters){
       console.log(section);
 
       if (section.type==`edit`){
-      document.body.insertAdjacentHTML(`beforeend`,`<label for="${section.name}">${section.lable} </label><input autocomplete="off" type="text" name="${section.name}" id="${section.name}" value ="${section.default}"><hr>` );
+        rootNode.insertAdjacentHTML(`beforeend`,`<label for="${section.name}">${section.lable} </label><input autocomplete="off" type="text" name="${section.name}" id="${section.name}" value ="${section.default}"><hr>` );
       } //edit
 
       if (section.type==`checkbox`){
-      document.body.insertAdjacentHTML(`beforeend`,`<input autocomplete="off" type="checkbox" name="${section.name}" id="${section.name}" ${Number(section.default)==1?"checked":""}> <label for="${section.name}">${section.lable} </label><hr>`
+        rootNode.insertAdjacentHTML(`beforeend`,`<input autocomplete="off" type="checkbox" name="${section.name}" id="${section.name}" ${Number(section.default)==1?"checked":""}> <label for="${section.name}">${section.lable} </label><hr>`
         );
       } //checkbox
 
       if (section.type==`text`){
-      document.body.insertAdjacentHTML(`beforeend`, `<label for="${section.name}">${section.lable} </label><textarea autocomplete="off" name="${section.name}" id="${section.name}" >${section.default}</textarea><hr>`
+        rootNode.insertAdjacentHTML(`beforeend`, `<label for="${section.name}">${section.lable} </label><textarea autocomplete="off" name="${section.name}" id="${section.name}" >${section.default}</textarea><hr>`
         );
       } //textarea
 
@@ -59,12 +67,12 @@
                 st +=`<option value="${listelement.id}">${listelement.value}</option>`;
               }
               st += `</select>`;
-        document.body.insertAdjacentHTML('beforeend',st);
+            rootNode.insertAdjacentHTML('beforeend',st);
       } //listbox
     }
   }
-  document.body.insertAdjacentHTML(`beforeend`,`<hr><hr><br><button  onclick='Ok();'>&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button> &nbsp &nbsp &nbsp <button  onclick='javascript:history.back(); return false;'>Отмена</button>`)
-
+  rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><button  onclick='Ok();'>&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button> &nbsp &nbsp &nbsp <button  onclick='javascript:history.back(); return false;'>Отмена</button>`)
+  }
 
   //  function read intered parameters an sent them on the server
   function OK(){
