@@ -5,6 +5,7 @@ import sqlalchemy as sa
 from collections.abc import Iterable
 from app import app, db, models,connection_fl
 from click import echo, style
+import base64
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
@@ -35,9 +36,12 @@ def Report(report_name):
 def RunReport(report_name):
 	
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	import codecs
-	answer = codecs.decode(request.get_data(), 'utf-8')
-	print(answer)
+	#answer = base64.b64encode(bytes(request.get_data(as_text=True).replace('?', '.'), 'utf-8')).decode()
+	print()
+	print(request.form.items('text1'))
+	print()
+	for element in  request.form.items():
+		print(element)
 	return redirect(url_for('index'))
 
 
