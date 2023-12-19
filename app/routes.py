@@ -37,11 +37,8 @@ def RunReport(report_name):
 	
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	#answer = base64.b64encode(bytes(request.get_data(as_text=True).replace('?', '.'), 'utf-8')).decode()
-	print()
-	print(request.form.items('text1'))
-	print()
 	for element in  request.form.items():
-		print(element)
+		print(element[0], element[1])
 	return redirect(url_for('index'))
 
 
