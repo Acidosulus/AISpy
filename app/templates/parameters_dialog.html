@@ -4,11 +4,11 @@
   {% include "_head.html"%}
 {% endblock %}
 
-{% block content %}
+
+{% block scripts %}
 
 <script type="text/javascript">
-  window.onload = function(event){
-  var source = {
+  const source = {
     title:`Заголовок диалога с произвольными параметрами`,
     parameters:[{ lable:`Подпись параметра ввода строки`,
                   type:'edit',
@@ -30,13 +30,14 @@
                   name:'listbox1'},
                 ]
   };
+
+
+window.onload = function(event){
   console.log(source)
-  document.body.insertAdjacentHTML(`beforeend`, `<div id="id_dialog_body"  style="margin: 20px;"></div>`);
+  //document.body.insertAdjacentHTML(`beforeend`, `<div id="id_dialog_body"  style="margin: 20px;"></div>`);
   
-  const rootNode = document.getElementById('id_dialog_body');
-  rootNode.classList.add(`border`);
-  rootNode.classList.add(`border-3`);
-  rootNode.classList.add(`border-dark`);
+  const rootNode = document.getElementById('dialog_div');
+
 
   if (source.title!=null){
     rootNode.insertAdjacentHTML(`beforeend`,`<h1>${source.title}</h1><hr><hr>`);
@@ -46,42 +47,81 @@
       console.log(section);
 
       if (section.type==`edit`){
-        rootNode.insertAdjacentHTML(`beforeend`,`<label for="${section.name}">${section.lable} </label><input autocomplete="off" type="text" name="${section.name}" id="${section.name}" value ="${section.default}"><hr>` );
+        rootNode.insertAdjacentHTML(`beforeend`,`<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label></div><div class="col-8"><input class="container-fluid" autocomplete="off" type="text" name="${section.name}" id="${section.name}" value ="${section.default}"></div></div><hr>` );
       } //edit
 
       if (section.type==`checkbox`){
-        rootNode.insertAdjacentHTML(`beforeend`,`<input autocomplete="off" type="checkbox" name="${section.name}" id="${section.name}" ${Number(section.default)==1?"checked":""}> <label for="${section.name}">${section.lable} </label><hr>`
+        rootNode.insertAdjacentHTML(`beforeend`,`<div class="row"><div class="col-4"><label for="${section.name}">${section.lable}</label></div><div class="col-8"><input autocomplete="off" type="checkbox" name="${section.name}" id="${section.name}" ${Number(section.default)==1?"checked":""}></div></div><hr>`
         );
       } //checkbox
 
       if (section.type==`text`){
-        rootNode.insertAdjacentHTML(`beforeend`, `<label for="${section.name}">${section.lable} </label><textarea autocomplete="off" name="${section.name}" id="${section.name}" >${section.default}</textarea><hr>`
+        rootNode.insertAdjacentHTML(`beforeend`, `<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label></div><div class="col-8"><textarea class="container-fluid" autocomplete="off" name="${section.name}" id="${section.name}" >${section.default}</textarea></div></div><hr>`
         );
       } //textarea
 
       if (section.type==`listbox`){
       let st = ``;
-      st +=`<label for="${section.name}">${section.lable} </label>${(section.size!=null?(Number(section.size)>0?'<br>':""):"")}`;
-      st +=`<select name="select" ${(section.size!=null?(Number(section.size)>0?'size="'+section.size+'"':""):"")}>`;
+      st +=`<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label>${(section.size!=null?(Number(section.size)>0?'<br>':""):"")}`;
+      st +=`</div><div class="col-8"> <select class="container-fluid" name="select" id="${section.name}" ${(section.size!=null?(Number(section.size)>0?'size="'+section.size+'"':""):"")}>`;
           for (const listelement of section.data){
                 st +=`<option value="${listelement.id}">${listelement.value}</option>`;
               }
-              st += `</select>`;
+              st += `</select></div></div>`;
             rootNode.insertAdjacentHTML('beforeend',st);
       } //listbox
     }
   }
-  rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><button  onclick='Ok();'>&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button> &nbsp &nbsp &nbsp <button  onclick='javascript:history.back(); return false;'>Отмена</button>`)
+  rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><div class="container"> <div class="row"><div class="col-sm-8"><button type="submit" class="btn btn-primary btn-lg btn-block col-6" >&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button></div><div class="col-sm-4"><button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='javascript:history.back(); return false;'>Отмена</button></div></div>`)
   }
 
+
+  
   //  function read intered parameters an sent them on the server
-  function OK(){
-
-  }
+  function Ok(source){
+    var result = [];
+    if (source.parameters!=null){
+    for (let section of source.parameters){
+      if (section.type==`edit`){
+          foo = {};
+          foo[section.name]=document.getElementById(section.name).value;
+          result.push(foo);
+        }//if (section.type==`edit`)
+      if (section.type==`text`){
+          foo = {};
+          foo[section.name]=document.getElementById(section.name).value;
+          result.push(foo);
+        }//if (section.type==`text`)
+      if (section.type==`checkbox`){
+          foo = {};
+          foo[section.name]=document.getElementById(section.name).checked;
+          result.push(foo);
+        }//if (section.type==`checkbox`)
+       if (section.type==`listbox`){
+          foo = {};
+          foo[section.name]=document.getElementById(section.name).value;
+          result.push(foo);
+        }//if (section.type==`listbox`)
+      }//for (let section of source.parameters)
+    console.log(result);
+    }//if (source.parameters!=null)
+  }//function
 
 
 
 </script>
+{% endblock scripts %}
 
+
+{% block title %}
+    {% if title %}{{ title }}{% else %}Welcome to AISpy{% endif %}
+{% endblock %}
+
+
+
+{% block content %}
+
+<form id="dialog_div"  style="margin: 20px; padding: 20px;" class="border border-3 rounded border-primary" method="POST" action="/RunReport/Points_WithOut_Displays" >
+</form>
 
 {% endblock %}

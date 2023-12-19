@@ -1,1 +1,10 @@
-<link rel="icon" type="image/svg" href="/static/images/favicon.ico">
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}
+            {% if title %}{{ title }}{% else %}Welcome to AISpy{% endif %}
+          {% endblock %}
+    </title>
+    <link rel="icon" type="image/svg" href="/static/images/favicon.ico"> 
+    <link href="{{url_for('static', filename = 'css/bootstrap.min.css')}}" rel="stylesheet">
+</head>

@@ -20,11 +20,6 @@ def Get_Addresses_List(parent_id:int) -> list:
 
 
 
-
-
-
-
-
 @app.route('/parameters_dialog/')
 def parameters_dialog():
 	return render_template("parameters_dialog.html")
@@ -34,6 +29,17 @@ def parameters_dialog():
 def Report(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	return redirect(url_for('index'))
+
+
+@app.route('/RunReport/<report_name>', methods=['POST'])
+def RunReport(report_name):
+	
+	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
+	import codecs
+	answer = codecs.decode(request.get_data(), 'utf-8')
+	print(answer)
+	return redirect(url_for('index'))
+
 
 @app.route('/addresses/<object_id>')
 def addresses(object_id):

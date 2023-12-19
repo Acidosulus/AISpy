@@ -1,9 +1,7 @@
-{% extends 'bootstrap/base.html' %}
-
-
-{% block title %}
-    {% if title %}{{ title }}{% else %}Welcome to AISpy{% endif %}
+{% block head %}
+  {% include "_head.html"%}
 {% endblock %}
+
 
 
 {% block content %}
