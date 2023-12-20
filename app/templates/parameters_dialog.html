@@ -8,28 +8,7 @@
 {% block scripts %}
 
 <script type="text/javascript">
-  const source = {
-    title:`Заголовок диалога с произвольными параметрами`,
-    parameters:[{ lable:`Подпись параметра ввода строки`,
-                  type:'edit',
-                  default:'значение по умолчанию',
-                  name:'edit1'},
-                { lable:`Подпись параметра ввода текста`,
-                  type:'text',
-                  default:'значение по умолчанию для многострочного текста',
-                  name:'text1'},
-                  { lable:`Подпись параметра чекбокса`,
-                  type:'checkbox',
-                  default:'1',
-                  name:'checkbox1'},
-                  { lable:`Подпись списка значений`,
-                  type:'listbox',
-                  data:[{id:`1`,value:`Первое значение`},{id:`2`, value:`Второе значение`},{id:`3`, value:`Третье значение`},{id:`4`, value:`Четвёртое значение`}],
-                  default:'',
-                  size:'0',
-                  name:'listbox1'},
-                ]
-  };
+  var source = {{ parametesJSON }}
 
 
 window.onload = function(event){
