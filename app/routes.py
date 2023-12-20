@@ -3,14 +3,13 @@ from urllib.parse import urlsplit
 from flask import render_template, flash, redirect, url_for, request
 import sqlalchemy as sa
 from collections.abc import Iterable
-from app import app, db, models,connection_fl
+from app import app, db, models,connection_fl, dialogs
 from click import echo, style
 import base64
-import uuid
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
-import dialogs
+
 
 # get list of addresses of people with given parent_id
 def Get_Addresses_List(parent_id:int) -> list:
@@ -22,10 +21,9 @@ def Get_Addresses_List(parent_id:int) -> list:
 	return result
 
 
-
 @app.route('/parameters_dialog/')
 def parameters_dialog():
-	return render_template("parameters_dialog.html", parametesJSON = str(dialogs.dialog))
+	return render_template("parameters_dialog.html", parametesJSON = str(dialogs.testdialog))
 
 
 @app.route('/Report/<report_name>')
@@ -37,7 +35,7 @@ def Report(report_name):
 @app.route('/RunReport/<report_name>', methods=['POST'])
 def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	print(dialogs.dialog.get_answers(request.form.items()))
+	print(dialogs.testdialog.get_answers(request.form.items()))
 	return redirect(url_for('index'))
 
 
@@ -47,10 +45,12 @@ def addresses(object_id):
 	results = Get_Addresses_List(object_id)
 	return render_template("addresses.html", results=results)
 
+
 @app.route('/drop_all/')
 def drop_all():
 	db.drop_all()
 	return redirect(url_for('index'))
+
 
 @app.route('/create_all/')
 def create_all():

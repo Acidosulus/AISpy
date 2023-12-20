@@ -1,3 +1,6 @@
+import uuid
+from datetime import datetime
+
 class DialogParameters():
 	title = ''
 	parameters = []
@@ -20,6 +23,28 @@ class DialogParameters():
 			cdata += (', 'if len(cdata)>0 else '') + str(parameter) 
 		return '{'+f"title:`{self.title}`,"+'parameters:[' + cdata + ']'+'};'
 
+	def add_months(self, lable='Месяц', name=''):
+		self.append(  """{lable:`"""+lable+"""`, 
+					name:`"""+(name if len(name)>0 else str(uuid.uuid4()))+"""`,
+					type:`listbox`,
+					default:`"""+f'{datetime.now().month}'+"""`,
+					size:`12`,
+					data:[{id:`1`, value:`Январь`},{id:`2`, value:`Февраль`},{id:`3`, value:`Март`},{id:`4`, value:`Апрель`},{id:`5`, value:`Май`},{id:`6`, value:`Июнь`},{id:`7`, value:`Июль`},{id:`8`, value:`Август`},{id:`9`, value:`Сентябрь`},{id:`10`, value:`Октярь`},{id:`11`, value:`Ноябрь`},{id:`12`, value:`Декабрь`}]}"""
+					)
+
+
+	def add_months(self, lable='Год', name=''):
+			lcy_ears =''
+			for year in range(datetime.now().year-6,datetime.now().year+3):
+				lc_years = lc_years + (', ' if len(lc_years)>0 else '') + '{' + f'id:{year}, value:`{year}`' + '}'
+			self.append( """{lable:`"""+lable+"""`, 
+					name:`"""+(name if len(name)>0 else str(uuid.uuid4()))+"""`,
+					type:`listbox`,
+					default:`"""+f'{datetime.now().month}'+"""`,
+					size:`12`,
+					data:["""+lc_years+"""]}""")
+			
+
 
 class DialogSection():
 	lable = ''
@@ -39,10 +64,13 @@ class DialogSection():
 	def __str__(self) -> str:
 		cdata=''
 		for element in self.data:
-			cdata = cdata + '          '+'{'+f"""id:`{element['id']}`, value:`{element['value']}`"""+'}' #', ' if len(cdata)>0 else ''+
+			cdata = cdata + '		'+'{'+f"""id:`{element['id']}`, value:`{element['value']}`"""+'}' #', ' if len(cdata)>0 else ''+
 		cdata ='[' + cdata + ']'
-		cdata = cdata.replace('}          {','},          {')
+		cdata = cdata.replace('}		{','},		{')
 		return '{'+f"""lable:`{self.lable}`, name:`{self.name}`, type:`{self.type}`, default:`{self.default}`, size:`{self.size}`, data:{cdata}"""+'}'
+
+testdialog = DialogParameters(title='Заголовок тестового диалога')
+testdialog.add_months('Месяц', 'Month')
 
 
 dialog = DialogParameters(title='Заголовок диалога с параметрами')
