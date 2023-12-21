@@ -7,7 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 #from flask_mail import Mail
 from config import Config, connection_url_ul, connection_url_fl
-from flask_bootstrap import Bootstrap
 import pprint
 from sqlalchemy import create_engine
 
@@ -26,7 +25,6 @@ engine_fl = create_engine(connection_url_fl)
 connection_ul = engine_ul.connect()
 connection_fl = engine_fl.connect()
 
-bootstrap = Bootstrap(app)
 
 
 login = LoginManager(app)
