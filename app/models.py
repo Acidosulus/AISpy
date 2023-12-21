@@ -7,7 +7,7 @@ import sqlalchemy.orm as so
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 ##import jwt
-from app import app, db, login
+from app import app, db, login, login_manager
 
 
 ROLE_USER = 0
@@ -25,6 +25,12 @@ class User(db.Model):
 @login.user_loader
 def load_user(id):
 	return db.session.get(User, int(id))
+
+
+# Creates a user loader callback that returns the user object given an id
+@login_manager.user_loader
+def loader_user(user_id):
+    return User.query.get(user_id)
 
 
 class PageItemsList (db.Model):

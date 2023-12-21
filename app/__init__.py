@@ -19,6 +19,11 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+
 
 engine_ul = create_engine(connection_url_ul)
 engine_fl = create_engine(connection_url_fl)
