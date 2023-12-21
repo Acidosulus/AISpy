@@ -71,6 +71,7 @@ class DialogSection():
 
 testdialog = DialogParameters(title='Заголовок тестового диалога')
 testdialog.add_months('Месяц', 'Month')
+testdialog.add_months('Год', 'Year')
 
 
 dialog = DialogParameters(title='Заголовок диалога с параметрами')
