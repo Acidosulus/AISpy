@@ -44,9 +44,10 @@ window.onload = function(event){
       st +=`<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label>${(section.size!=null?(Number(section.size)>0?'<br>':""):"")}`;
       st +=`</div><div class="col-8"> <select class="container-fluid" name="${section.name}" id="${section.name}" ${(section.size!=null?(Number(section.size)>0?'size="'+section.size+'"':""):"")}>`;
           for (const listelement of section.data){
-                st +=`<option value="${listelement.id}">${listelement.value}</option>`;
+                st +=`<option value="${listelement.id}"`+((listelement.id==section.default)?` selected `:``)+`>${listelement.value}</option>`;
+                console.log(listelement.id, section.default, (listelement.id == section.default))
               }
-              st += `</select></div></div>`;
+              st += `</select></div></div><hr>`;
             rootNode.insertAdjacentHTML('beforeend',st);
       } //listbox
     }

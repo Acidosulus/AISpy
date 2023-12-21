@@ -33,15 +33,15 @@ class DialogParameters():
 					)
 
 
-	def add_months(self, lable='Год', name=''):
-			lcy_ears =''
+	def add_years(self, lable='Год', name=''):
+			lc_years =''
 			for year in range(datetime.now().year-6,datetime.now().year+3):
-				lc_years = lc_years + (', ' if len(lc_years)>0 else '') + '{' + f'id:{year}, value:`{year}`' + '}'
+				lc_years = lc_years + (', ' if len(lc_years)>0 else '') + '{' + f'id:`{year}`, value:`{year}`' + '}'
 			self.append( """{lable:`"""+lable+"""`, 
 					name:`"""+(name if len(name)>0 else str(uuid.uuid4()))+"""`,
 					type:`listbox`,
-					default:`"""+f'{datetime.now().month}'+"""`,
-					size:`12`,
+					default:`"""+f'{datetime.now().year}'+"""`,
+					size:`0`,
 					data:["""+lc_years+"""]}""")
 			
 
@@ -71,7 +71,7 @@ class DialogSection():
 
 testdialog = DialogParameters(title='Заголовок тестового диалога')
 testdialog.add_months('Месяц', 'Month')
-testdialog.add_months('Год', 'Year')
+testdialog.add_years('Год', 'Year')
 
 
 dialog = DialogParameters(title='Заголовок диалога с параметрами')
