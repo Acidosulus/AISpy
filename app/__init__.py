@@ -9,6 +9,7 @@ from flask_login import LoginManager
 from config import Config, connection_url_ul, connection_url_fl
 import pprint
 from sqlalchemy import create_engine
+#from app import data_sourses
 
 printer = pprint.PrettyPrinter(indent=12, width=160)
 prnt = printer.pprint    
@@ -29,6 +30,7 @@ engine_ul = create_engine(connection_url_ul)
 engine_fl = create_engine(connection_url_fl)
 connection_ul = engine_ul.connect()
 connection_fl = engine_fl.connect()
+print('from init: ',connection_fl)
 
 
 

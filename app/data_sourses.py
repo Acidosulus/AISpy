@@ -1,12 +1,12 @@
-from app import app, db, models,connection_fl, connnection_ul, dialogs
 from click import echo, style
 import sqlalchemy as sa
-from common import RowToDict, RowsToDictList
+from app import common, connection_ul, connection_fl
+from sqlalchemy import text
 
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
 def Points_WithOut_Displays(year, month:int):
-	print(RowsToDictList(connnection_ul.execute("""select Номер from stack.[Договор];""").fetchall()))
+	print((connection_ul.execute(text("""select row_id as row_id from stack.[Договор];""")).fetchall()))
 	pass

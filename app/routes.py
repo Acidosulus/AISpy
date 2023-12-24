@@ -2,24 +2,22 @@ from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, flash, redirect, url_for, request
 import sqlalchemy as sa
-from app import app, db, models,connection_fl, connnection_ul, dialogs
+from app import app, db, models,connection_fl, dialogs, common
 from click import echo, style
 import base64
 import pprint
+from sqlalchemy import text
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
-from common import RowToDict, RowsToDictList
-from data_sourses import Points_WithOut_Displays
+from app import data_sourses
 
-Points_WithOut_Displays(2023,1)
 
 # get list of addresses of people with given parent_id
 def Get_Addresses_List(parent_id:int) -> list:
-	rez = connection_fl.execute(f"select stack.[AddrLs](row_id,0) as address, row_id, Номер as number  from stack.[Лицевые счета] where [Счета]={parent_id};").fetchall()
+	rez = connection_fl.execute(text(f"select stack.[AddrLs](row_id,0) as address, row_id, Номер as number  from stack.[Лицевые счета] where [Счета]={parent_id};")).fetchall()
 	result = []
 	for element in rez:
 		result.append({'address':element[0], 'row_id':element[1], 'number':str(element[2])})
-	prnt(result)
 	return result
 
 
@@ -45,6 +43,9 @@ def RunReport(report_name):
 def addresses(object_id):
 	print(object_id)
 	results = Get_Addresses_List(object_id)
+	print('=============================')
+	prnt(results)
+	print('=============================')
 	return render_template("addresses.html", results=results)
 
 
@@ -113,7 +114,7 @@ def import_data():
 
 @app.route('/page_with_items/<parent_id>')
 def reports(parent_id):
-	rows = RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.parent==parent_id).all())
+	rows = common.RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.parent==parent_id).all())
 	prnt(rows)
 	print()
 	for row in rows:
@@ -136,8 +137,12 @@ def index():
 	#db.session.add(u)
 	#db.session.commit()
 	##############################
+#	print('from route: ',connection_fl)
 	user = {'nickname':'UserName'}
 	title = 'AISpy'
+	print('=============---==============')
+	data_sourses.Points_WithOut_Displays(2023,1)
+
 	return render_template("main_index.html", title = title, user = user)
 
 
