@@ -4,9 +4,11 @@ from datetime import datetime
 class DialogParameters():
 	title = ''
 	parameters = []
-	def __init__(self, title):
+	backlink = ''
+	def __init__(self, title, backlink):
 		self.title = title
 		self.parameters = []
+		self.backlink = backlink
 
 	def append(self, section):
 		self.parameters.append(section)
@@ -21,7 +23,7 @@ class DialogParameters():
 		cdata = ''
 		for parameter in self.parameters:
 			cdata += (', 'if len(cdata)>0 else '') + str(parameter) 
-		return '{'+f"title:`{self.title}`,"+'parameters:[' + cdata + ']'+'};'
+		return '{'+f"title:`{self.title}`, backlink:`{self.backlink}`, "+'parameters:[' + cdata + ']'+'};'
 
 	def add_months(self, lable='Месяц', name=''):
 		self.append(  """{lable:`"""+lable+"""`, 
@@ -69,12 +71,12 @@ class DialogSection():
 		cdata = cdata.replace('}		{','},		{')
 		return '{'+f"""lable:`{self.lable}`, name:`{self.name}`, type:`{self.type}`, default:`{self.default}`, size:`{self.size}`, data:{cdata}"""+'}'
 
-testdialog = DialogParameters(title='Заголовок тестового диалога')
+testdialog = DialogParameters(title='Заголовок тестового диалога', backlink='/RunReport/Points_WithOut_Displays')
 testdialog.add_months('Месяц', 'Month')
 testdialog.add_years('Год', 'Year')
 
 
-dialog = DialogParameters(title='Заголовок диалога с параметрами')
+dialog = DialogParameters(title='Заголовок диалога с параметрами', backlink='/RunReport/Points_WithOut_Displays')
 dialog.append( DialogSection(name = 'Первый параметр ввода строки из диалога',
 								lable = 'Первый параметр ввода строки из диалога',
 								type='edit',

@@ -51,7 +51,8 @@ window.onload = function(event){
       } //listbox
     }
   }
-  rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><div class="container"> <div class="row"><div class="col-sm-8"><button type="submit" class="btn btn-primary btn-lg btn-block col-6" >&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button></div><div class="col-sm-4"><button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='javascript:history.back(); return false;'>Отмена</button></div></div>`)
+  rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><div class="container"> <div class="row"><div class="col-sm-8"><button type="submit" class="btn btn-primary btn-lg btn-block col-6" >&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button></div><div class="col-sm-4"><button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='javascript:history.back(); return false;'>Отмена</button></div></div>`);
+  rootNode.action = source.backlink;
   }
 
 
@@ -95,7 +96,7 @@ window.onload = function(event){
 
 {% block content %}
 
-<form id="dialog_div"  style="margin: 20px; padding: 20px;" class="border border-3 rounded border-primary" method="POST" action="/RunReport/Points_WithOut_Displays" >
+<form id="dialog_div"  style="margin: 20px; padding: 20px;" class="border border-3 rounded border-primary" method="POST" action="" >
 </form>
 
 {% endblock %}

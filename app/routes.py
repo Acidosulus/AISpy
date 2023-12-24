@@ -35,7 +35,7 @@ def Report(report_name):
 @app.route('/RunReport/<report_name>', methods=['POST'])
 def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	print(dialogs.testdialog.get_answers(request.form.items()))
+	echo(style('dialog answer: ', fg='yellow')+style(dialogs.testdialog.get_answers(request.form.items()), fg='bright_yellow'))
 	return redirect(url_for('index'))
 
 
