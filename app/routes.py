@@ -141,7 +141,7 @@ def index():
 	user = {'nickname':'UserName'}
 	title = 'AISpy'
 	print('=============---==============')
-	data_sourses.Points_WithOut_Displays(2023,1)
+	prnt(data_sourses.Points_WithOut_Displays(2023,1))
 
 	return render_template("main_index.html", title = title, user = user)
 
