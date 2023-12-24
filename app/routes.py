@@ -2,14 +2,16 @@ from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, flash, redirect, url_for, request
 import sqlalchemy as sa
-from collections.abc import Iterable
-from app import app, db, models,connection_fl, dialogs
+from app import app, db, models,connection_fl, connnection_ul, dialogs
 from click import echo, style
 import base64
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
+from common import RowToDict, RowsToDictList
+from data_sourses import Points_WithOut_Displays
 
+Points_WithOut_Displays(2023,1)
 
 # get list of addresses of people with given parent_id
 def Get_Addresses_List(parent_id:int) -> list:
@@ -140,27 +142,4 @@ def index():
 
 
 
-
-
-# return one row query result as dict
-def RowToDict(row):
-	result = {}
-	for column in row.__table__.columns:
-		result[column.name] = str(getattr(row, column.name))
-	return result
-
-# returl query result as dict list
-def RowsToDictList(rows):
-	if rows is None:
-		return [{}]
-	result = []
-	for row in rows:
-		dic = {}
-		if isinstance(row, Iterable):
-			for element in row:
-				dic = {**dic, **RowToDict(element)}
-			result.append(dic)
-		else:
-			result.append(RowToDict(row))
-	return result
 
