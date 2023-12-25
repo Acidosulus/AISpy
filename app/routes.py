@@ -150,7 +150,7 @@ def register():
                      password=request.form.get("password"))
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for("register"))
+        return redirect(url_for("login"))
     return render_template("register.html")
  
  

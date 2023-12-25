@@ -1,31 +1,67 @@
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
-    <style>
-      h1 {
-        color: green;
-      }
-    </style>
-  </head>
-  <body>
-    <nav>
-      <ul>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Create account</a></li>
-      </ul>
-    </nav>
-    <h1>Create an account</h1>
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="container">
+  <div class="row">
+    <div class="text-end">
+    <li><a href="/login">Войти в систему</a></li>
+  </div>
+</div>
+</div>
+
+<div class="container">
+  <div class="row">
+<h1>Зарегистрироваться</h1>
+</div>
+</div>
+<hr>
+
     <form action="#" method="post">
-      <label for="username">Username:</label>
-      <input type="text" name="username" />
-      <label for="password">Password:</label>
-      <input type="password" name="password" />
-      <button type="submit">Submit</button>
+      <div class="container">
+        <div class="row">
+          <div class="col">
+
+      <label for="username">Пользователь:</label>
+    </div>
+    <div class="col">
+
+
+      <input class="container-fluid" type="text" name="username" />
+    </div>
+  </div>
+</div>
+<br>
+
+<div class="container">
+  <div class="row">
+      <div class="col">
+      <label for="password">Пароль:</label>
+    </div>
+    <div class="col">
+
+      <input class="container-fluid" type="password" name="password" />
+    </div>
+  </div>
+</div>
+
+<hr>
+<hr>
+
+<div class="container">
+  <div class="row">
+      <button type="submit" class="btn btn-primary btn-lg btn-block" >Зарегистрироваться</button>
+    </div>
+  </div>
+
+
+
     </form>
   </body>
 </html>
+{% endblock %}
