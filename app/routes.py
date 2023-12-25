@@ -6,7 +6,7 @@ from click import echo, style
 import pprint
 from sqlalchemy import text
 from app.models import Users
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
@@ -31,7 +31,7 @@ def index():
 	##############################
 #	print('from route: ',connection_fl)
 	user = {'nickname':'UserName'}
-	title = 'AISpy'
+	title = 'AISpy' if current_user.is_authenticated else 'Вход в систему не выполнен'
 	print('=============---==============')
 	#prnt(data_sourses.Points_WithOut_Displays(2023,1))
 	return render_template("main_index.html", title = title, user = user)
@@ -150,8 +150,8 @@ def register():
                      password=request.form.get("password"))
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for("login"))
-    return render_template("login.html")
+        return redirect(url_for("register"))
+    return render_template("register.html")
  
  
 @app.route("/login", methods=["GET", "POST"])
@@ -162,7 +162,7 @@ def login():
         if user.password == request.form.get("password"):
             login_user(user)
             return redirect(url_for("index"))
-    return render_template("login.html")
+    return render_template("login.html", title = "Вход в систему")
  
  
 @app.route("/logout")

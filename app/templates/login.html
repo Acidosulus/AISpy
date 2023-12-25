@@ -5,18 +5,54 @@
 
 
 {% block content %}
-    <title>Вход</title>
-    <nav>
-      <ul>
-        <li><a href="/register">Зарегистрироваться</a></li>
-      </ul>
-    </nav>
-    <h1>Вход в систему</h1>
+    
+    <div class="container">
+      <div class="row">
+        <div class="text-end">
+            <a href="/register">Зарегистрироваться</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+          <h1>Вход в систему</h1>
+        </div>
+    </div>
+    <hr>
     <form action="#" method="post">
-      <label for="username">Пользователь:</label>
-      <input type="text" name="username" />
-      <label for="password">Пароль:</label>
-      <input type="password" name="password" />
-      <button type="submit">Войти</button>
+      
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <label for="username">Пользователь:</label>
+          </div>
+          <div class="col">
+            <input class="container-fluid" type="text" name="username" />
+          </div>
+        </div>
+      </div>
+      <br>
+      
+      <div class="container">
+        <div class="row">
+            <div class="col">
+              <label for="password">Пароль:</label>
+            </div>
+            <div class="col">
+              <input class="container-fluid" type="password" name="password" />
+            </div>
+        </div>
+      </div>
+
+      <hr>
+      <hr>
+
+      <div class="container">
+        <div class="row">
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Войти</button>
+        </div>
+      </div>
+
     </form>
 {% endblock %}
