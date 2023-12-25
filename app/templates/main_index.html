@@ -6,6 +6,7 @@
 
 {% block content %}
     <div class="container">
+      {% if current_user.is_authenticated %}
       <h1><a href="/page_with_items/-10"><img width="30" height="30" src="/static/images/Print_20x20.bmp"> Отчёты</a></h1>
       <h1><a href="/addresses/-10"><img width="30" height="30" src="/static/images/addresses_pull.png"> Адресный фонд</a></h1>
       <hr>
@@ -20,6 +21,22 @@
       <p><a href="/drop_all/">Удалить все таблицы</a></p>
       <p><a href="/create_all/">Создать все таблицы</a></p>
       <p><a href="/import_data/">Импортировать записи</a></p>
+      <hr>
+      <hr>
+      <hr>
+      <a href="/logout">Logout</a>
+      {% else %}
+      <h1>You are not logged in</h1>
+      <nav>
+        <ul>
+          <li><a href="/login">Login</a></li>
+          <li><a href="/register">Create account</a></li>
+        </ul>
+      </nav>
+      {% endif %}
+      <hr>
+      <hr>
+      <hr>
     </div>
 {% endblock %}
 

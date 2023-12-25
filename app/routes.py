@@ -1,15 +1,15 @@
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, flash, redirect, url_for, request
-import sqlalchemy as sa
 from app import app, db, models,connection_fl, dialogs, common
 from click import echo, style
-import base64
 import pprint
 from sqlalchemy import text
+from app.models import Users
+from flask_login import login_user, logout_user
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
-from app import data_sourses
+
 
 
 # get list of addresses of people with given parent_id
@@ -19,6 +19,22 @@ def Get_Addresses_List(parent_id:int) -> list:
 	for element in rez:
 		result.append({'address':element[0], 'row_id':element[1], 'number':str(element[2])})
 	return result
+
+
+@app.route('/')
+@app.route('/index')
+def index():
+	##### working db insert code ######
+	#u = models.User(nickname='john', email='john@email.com', role=models.ROLE_ADMIN)
+	#db.session.add(u)
+	#db.session.commit()
+	##############################
+#	print('from route: ',connection_fl)
+	user = {'nickname':'UserName'}
+	title = 'AISpy'
+	print('=============---==============')
+	#prnt(data_sourses.Points_WithOut_Displays(2023,1))
+	return render_template("main_index.html", title = title, user = user)
 
 
 @app.route('/parameters_dialog/')
@@ -64,13 +80,13 @@ def create_all():
 @app.route('/import_data/')
 def import_data():
 
-	db.engine.connect().execute("""insert into page_items_list (name, path, icon, roles, persistent_id, parent) 
+	db.engine.connect().execute(text("""insert into page_items_list (name, path, icon, roles, persistent_id, parent) 
 									values('ТУ не имеющие показаний в текущем расчётном периоде',
 									'/Report/Points_WithOut_Displays',
 									'/static/images/ico_excel.bmp',
 									'0',
 									1900,
-									-110);""")
+									-110);"""))
 	
 	db.session.add(models.PageItemsList(   name='Рассчитанность ТУ МКЖД',
 									path='/Report/Report_Calc_Status_MKJD_Points',
@@ -104,6 +120,8 @@ def import_data():
 					)
 	
 
+
+
 	db.session.commit()
 	return redirect(url_for('index'))
 
@@ -125,25 +143,39 @@ def reports(parent_id):
 	return render_template("reports_index.html", reports=reportsList)
 
 
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        user = Users(username=request.form.get("username"),
+                     password=request.form.get("password"))
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for("login"))
+    return render_template("login.html")
+ 
+ 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        user = Users.query.filter_by(
+            username=request.form.get("username")).first()
+        if user.password == request.form.get("password"):
+            login_user(user)
+            return redirect(url_for("index"))
+    return render_template("login.html")
+ 
+ 
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("index"))
 
 
 
 
-@app.route('/')
-@app.route('/index')
-def index():
-	##### working db insert code ######
-	#u = models.User(nickname='john', email='john@email.com', role=models.ROLE_ADMIN)
-	#db.session.add(u)
-	#db.session.commit()
-	##############################
-#	print('from route: ',connection_fl)
-	user = {'nickname':'UserName'}
-	title = 'AISpy'
-	print('=============---==============')
-	prnt(data_sourses.Points_WithOut_Displays(2023,1))
 
-	return render_template("main_index.html", title = title, user = user)
+
+
 
 
 

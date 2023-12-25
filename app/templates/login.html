@@ -1,0 +1,22 @@
+
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+
+{% block content %}
+    <title>Вход</title>
+    <nav>
+      <ul>
+        <li><a href="/register">Зарегистрироваться</a></li>
+      </ul>
+    </nav>
+    <h1>Вход в систему</h1>
+    <form action="#" method="post">
+      <label for="username">Пользователь:</label>
+      <input type="text" name="username" />
+      <label for="password">Пароль:</label>
+      <input type="password" name="password" />
+      <button type="submit">Войти</button>
+    </form>
+{% endblock %}

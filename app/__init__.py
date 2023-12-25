@@ -4,13 +4,14 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 #from flask_migrate import Migrate
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user
 #from flask_mail import Mail
 from config import Config, connection_url_ul, connection_url_fl
-import pprint
-from sqlalchemy import create_engine
-#from app import data_sourses
 
+from sqlalchemy import create_engine
+
+
+import pprint
 printer = pprint.PrettyPrinter(indent=12, width=160)
 prnt = printer.pprint    
 
@@ -22,6 +23,7 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 
 
@@ -30,12 +32,9 @@ engine_ul = create_engine(connection_url_ul)
 engine_fl = create_engine(connection_url_fl)
 connection_ul = engine_ul.connect()
 connection_fl = engine_fl.connect()
-print('from init: ',connection_fl)
 
 
 
-login = LoginManager(app)
-login.login_view = 'login'
 
 
 if not os.path.exists('logs'):
@@ -49,7 +48,4 @@ app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 app.logger.info('AISpy startup')
 
-#from app import routes, models, errors
 from app import routes,  models
-
-
