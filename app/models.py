@@ -1,10 +1,8 @@
 from datetime import datetime, timezone
 from hashlib import md5
 from time import time
-from typing import Optional
-import sqlalchemy as sa
-import sqlalchemy.orm as so
-from flask_login import UserMixin
+from sqlalchemy import ForeignKey, Column, String, Table, Integer, DateTime
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 ##import jwt
 from app import db, login_manager
@@ -14,6 +12,7 @@ ROLE_USER = 0
 ROLE_ADMIN = 1
 
 class Users(db.Model):
+	__tablename__ = 'Users'
 	id = db.Column(db.Integer, primary_key = True)
 	username = db.Column(db.String(250), index = True, unique = True)
 	password = db.Column(db.String(250), nullable=False)
@@ -54,4 +53,13 @@ class PageItemsList (db.Model):
 
 
 
+class UserObject (db.Model):
+	__tablename__ = 'user_objects'
+
+	id					=	db.Column(db.Integer, primary_key = True)
+	user_id				=	db.Column(db.Integer)
+	dt					=	db.Column(db.DateTime)
+	name				=	db.Column(db.String)
+	parameters			=	db.Column(db.String)
+	data				=	db.Column(db.String)
 

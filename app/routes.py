@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
-from flask import render_template, flash, redirect, url_for, request
-from app import app, db, models,connection_fl, dialogs, common
+from flask import render_template, render_template_string, flash, redirect, url_for, request
+from app import app, db, models,connection_fl, dialogs, common, data_sourses
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -9,8 +9,9 @@ from app.models import Users
 from flask_login import login_user, logout_user, current_user
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
-
-
+import pandas
+import pretty_html_table
+import json
 
 # get list of addresses of people with given parent_id
 def Get_Addresses_List(parent_id:int) -> list:
@@ -45,13 +46,29 @@ def parameters_dialog():
 @app.route('/Report/<report_name>')
 def Report(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
+	if report_name == "Report_Calc_Status_MKJD_Points":
+		dialog = dialogs.DialogParameters("Рассчитанность ТУ МКЖД", f'/RunReport/{report_name}')
+		dialog.add_months('Месяц','month')
+		dialog.add_years('Год','year')
+		return render_template("parameters_dialog.html", parametesJSON = str(dialog))
 	return redirect(url_for('index'))
 
 
 @app.route('/RunReport/<report_name>', methods=['POST'])
 def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	echo(style('dialog answer: ', fg='yellow')+style(dialogs.testdialog.get_answers(request.form.items()), fg='bright_yellow'))
+	parameters = dialogs.testdialog.get_answers(request.form.items())
+	echo(style('dialog answer: ', fg='yellow')+style(parameters, fg='bright_yellow'))
+	if report_name == "Report_Calc_Status_MKJD_Points":
+		header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
+		data_object = models.UserObject(user_id=current_user.id, dt=datetime.now(), name=report_name, parameters=json.dumps(parameters, ensure_ascii=False), data=json.dumps(data, ensure_ascii=False))
+		db.session.add(data_object)
+		db.session.flush()
+		data_object_id = data_object.id
+		db.session.commit()
+		#print('flask_login.current_user.id:',current_user.id)
+		df = pandas.DataFrame(data)
+		return render_template("report.html", data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), report_title = f"ТУ МКЖД {parameters['year']} {parameters['month']}")
 	return redirect(url_for('index'))
 
 

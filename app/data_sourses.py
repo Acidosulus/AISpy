@@ -34,9 +34,8 @@ select
     agr.[Тема] as [Доп. номер договора],
     org.[Название],
     staff1.[ФИО],
-	statuses.status,
-	folders.folder, folders.area,
-    lastdisplays.*
+	statuses.status as [Статус ПУ],
+	folders.folder as [Участок], folders.area as [Отделение]
   from   stack.[Список объектов] as lo
   inner join (select pus.*,
       case

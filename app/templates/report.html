@@ -1,0 +1,16 @@
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+
+{% block content %}
+    <a onclick="javascript:history.back(); return false;"><IMG  WIDTH="64" HEIGHT="64"  title = "Назад" src="/static/images/back.png"></a>
+    <div class="container">
+      <h1>{{ report_title }}</h1>
+    </div>
+
+    {% autoescape false %}
+      {{ data }}
+    {% endautoescape %}
+    
+{% endblock %}

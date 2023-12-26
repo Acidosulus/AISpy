@@ -14,10 +14,10 @@ class DialogParameters():
 		self.parameters.append(section)
 
 	def get_answers(self, form_elements):
-		result_list = []
+		result_dict = {}
 		for element in  form_elements:
-			result_list.append({element[0]:element[1]})
-		return result_list
+			result_dict[element[0]] = element[1]
+		return result_dict
 
 	def __str__(self) -> str:
 		cdata = ''
