@@ -66,7 +66,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
 	config = configparser.ConfigParser()
 	config.read("settings.ini", encoding='UTF-8')  
-
 	SECRET_KEY = 'a really really really really long secret key' #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:321@185.112.225.153:35432/start_dev'
 	SQLALCHEMY_BINDS = {

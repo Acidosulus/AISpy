@@ -19,6 +19,8 @@ prnt = printer.pprint
 app = Flask(__name__)
 app.config.from_object(Config)
 
+app.TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
+
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
