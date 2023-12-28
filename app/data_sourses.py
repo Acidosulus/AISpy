@@ -13,7 +13,7 @@ def get_queryresult_header_and_data(query_result):
 	for v in query_result:
 		drow = {}
 		for count, value in enumerate(v._fields):
-			drow[value] = v[count]
+			drow[value] = (v[count] if v[count]!=None else '')
 		result.append(drow)
 	headers = []
 	if len(result)>0:

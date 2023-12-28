@@ -43,6 +43,20 @@ def parameters_dialog():
 	return render_template("parameters_dialog.html", parametesJSON = str(dialogs.testdialog))
 
 
+@app.route('/report_history/<report_name>')
+def report_history(report_name):
+	echo(style(text='report_history:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
+	rows = common.RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.name==report_name, models.PageItemsList.user_id==current_user.id).all())
+	prnt(rows)
+	print()
+	for row in rows:
+		if len(row['path'])==0:
+			row['path'] = f'/download_excel/{row["id"]}'
+	prnt(rows)
+	reportsList = rows
+	return render_template("reports_index.html", reports=reportsList)
+
+
 @app.route('/Report/<report_name>')
 def Report(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
@@ -50,7 +64,7 @@ def Report(report_name):
 		dialog = dialogs.DialogParameters("ТУ не имеющие показаний в текущем расчётном периоде", f'/RunReport/{report_name}')
 		dialog.add_months('Месяц','month')
 		dialog.add_years('Год','year')
-		return render_template("parameters_dialog.html", parametesJSON = str(dialog))
+		return render_template("parameters_dialog.html", parametesJSON = str(dialog), report_name=report_name)
 	return redirect(url_for('index'))
 
 
@@ -88,7 +102,8 @@ def RunReport(report_name):
 		return render_template("report.html", 
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
 							report_title=f"ТУ не имеющие показаний в расчётном периоде {parameters['year']} {parameters['month']}",
-							data_object_id=data_object_id)
+							data_object_id=data_object_id,
+							report_name = report_name)
 	return redirect(url_for('index'))
 
 
