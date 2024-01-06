@@ -43,18 +43,48 @@ def parameters_dialog():
 	return render_template("parameters_dialog.html", parametesJSON = str(dialogs.testdialog))
 
 
-@app.route('/report_history/<report_name>')
-def report_history(report_name):
-	echo(style(text='report_history:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	rows = common.RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.name==report_name, models.PageItemsList.user_id==current_user.id).all())
+@app.route('/page_with_items/<parent_id>')
+def reports(parent_id):
+	parent_name = db.engine.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
+	try:
+		parent_name = parent_name[0]
+	except:
+		parent_name = ''
+
+	rows = common.RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.parent==parent_id).all())
 	prnt(rows)
 	print()
 	for row in rows:
 		if len(row['path'])==0:
-			row['path'] = f'/download_excel/{row["id"]}'
+			row['path'] = f'/page_with_items/{row["persistent_id"]}'
 	prnt(rows)
 	reportsList = rows
-	return render_template("reports_index.html", reports=reportsList)
+	return render_template("reports_index.html", reports=reportsList, list_title = 'Отчёты', list_sub_title = parent_name)
+
+
+
+@app.route('/report_history/<report_name>')
+def report_history(report_name):
+	echo(style(text='report_history:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
+	echo(style(text='current_user.id:', fg='bright_white', bg='green'))
+
+	report_humanread_name = db.engine.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
+	try:
+		report_humanread_name = report_humanread_name[0]
+	except:
+		report_humanread_name = ''
+
+	rows = db.engine.execute(db.select(models.UserObject.id, models.UserObject.dt, models.UserObject.parameters).where(models.UserObject.user_id == current_user.id, models.UserObject.name == report_name)).fetchall()
+
+	reportsList = []
+	for row in rows:
+		foo = {}
+		foo['path'] = f'/download_excel/{row["id"]}'
+		foo['icon'] = f'/static/images/ico_excel.bmp'
+		foo['name'] = f'{report_humanread_name} id:{row["id"]} parameters:{row["parameters"]} {row["dt"]:%Y-%m-%d %H:%M}'
+		reportsList.append(foo)
+
+	return render_template("reports_index.html", reports=reportsList, list_title = report_humanread_name , list_sub_title = 'история формирования отчёта')
 
 
 @app.route('/Report/<report_name>')
@@ -180,18 +210,6 @@ def import_data():
 
 
 
-
-@app.route('/page_with_items/<parent_id>')
-def reports(parent_id):
-	rows = common.RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.parent==parent_id).all())
-	prnt(rows)
-	print()
-	for row in rows:
-		if len(row['path'])==0:
-			row['path'] = f'/page_with_items/{row["persistent_id"]}'
-	prnt(rows)
-	reportsList = rows
-	return render_template("reports_index.html", reports=reportsList)
 
 
 @app.route('/register', methods=["GET", "POST"])

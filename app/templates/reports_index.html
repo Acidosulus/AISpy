@@ -5,8 +5,32 @@
 
 
 {% block content %}
+
+<table border="1" class="dataframe table">
+  <tbody>
+    <tr>
+      <td align="left"><a onclick="javascript:history.back(); return false;"><IMG  WIDTH="64" HEIGHT="64"  title = "Назад" src="/static/images/back.png"></a></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+</tbody>
+</table>
+
+
     <div class="container">
-      <h1>Отчёты</h1>
+      <h1>{{ list_title }}</h1>
+      <h2>{{ list_sub_title }}</h2>
     </div>
     {% include "_items_of_page.html"%}
 {% endblock %}

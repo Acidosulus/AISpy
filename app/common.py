@@ -11,13 +11,16 @@ def RowToDict(row):
 def RowsToDictList(rows):
 	if rows is None:
 		return [{}]
-	result = []
-	for row in rows:
-		dic = {}
-		if isinstance(row, Iterable):
-			for element in row:
-				dic = {**dic, **RowToDict(element)}
-			result.append(dic)
-		else:
-			result.append(RowToDict(row))
-	return result
+	try:
+		result = []
+		for row in rows:
+			dic = {}
+			if isinstance(row, Iterable):
+				for element in row:
+					dic = {**dic, **RowToDict(element)}
+				result.append(dic)
+			else:
+				result.append(RowToDict(row))
+		return result
+	except AttributeError:
+		return [dict(r._mapping) for r in rows]
