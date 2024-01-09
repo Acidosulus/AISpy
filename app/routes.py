@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, data_sourses
+from app import app, db, models,connection_fl, dialogs, common, data_sourses, statements
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -45,7 +45,7 @@ def parameters_dialog():
 
 
 @app.route('/page_with_items/<parent_id>')
-def reports(parent_id):
+def page_with_items(parent_id):
 	parent_name = db.engine.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
 	try:
 		parent_name = parent_name[0]
@@ -77,36 +77,15 @@ def delete_report(report_id):
 def report_history(report_name):
 	echo(style(text='report_history:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	echo(style(text='current_user.id:', fg='bright_white', bg='green'))
-
-	report_humanread_name = db.engine.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
-	try:
-		report_humanread_name = report_humanread_name[0]
-	except:
-		report_humanread_name = ''
-
-	rows = db.engine.execute(db.select(models.UserObject.id, models.UserObject.dt, models.UserObject.parameters).where(models.UserObject.user_id == current_user.id, models.UserObject.name == report_name)).fetchall()
-
-	reportsList = []
-	for row in rows:
-		foo = {}
-		foo['path'] = f'/download_excel/{row["id"]}'
-		foo['icon'] = f'/static/images/ico_excel.bmp'
-		foo['name'] = f'{report_humanread_name} id:{row["id"]} parameters:{row["parameters"]} {row["dt"]:%Y-%m-%d %H:%M}'
-		foo['delete_link'] = f"""/delete_report/{row["id"]}"""
-
-		reportsList.append(foo)
-
-	return render_template("reports_index.html", reports=reportsList, list_title = report_humanread_name , list_sub_title = 'история формирования отчёта')
-
+	if report_name in statements.pull.report_names_list():
+		return statements.pull.reports[report_name].history(current_user.id)
+	return redirect(url_for('index'))
 
 @app.route('/Report/<report_name>')
 def Report(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	if report_name == "ReportPointsWithoutDisplays":
-		dialog = dialogs.DialogParameters("ТУ не имеющие показаний в текущем расчётном периоде", f'/RunReport/{report_name}')
-		dialog.add_months('Месяц','month')
-		dialog.add_years('Год','year')
-		return render_template("parameters_dialog.html", parametesJSON = str(dialog), report_name=report_name)
+	if report_name in statements.pull.report_names_list():
+		return statements.pull.reports[report_name].report()
 	return redirect(url_for('index'))
 
 
@@ -136,10 +115,6 @@ def download_excel(user_object_id):
 											)
 		writer.save()
 		return send_file(file_name)
-		#return render_template("report.html", 
-		#				 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
-		#					report_title=f"ТУ не имеющие показаний в расчётном периоде {parameters['year']} {parameters['month']}",
-		#					data_object_id=data_object_id)
 	return redirect(url_for('index'))
 
 @app.route('/RunReport/<report_name>', methods=['POST'])
@@ -147,19 +122,10 @@ def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	parameters = dialogs.testdialog.get_answers(request.form.items())
 	echo(style('dialog answer: ', fg='yellow')+style(parameters, fg='bright_yellow'))
-	if report_name == "ReportPointsWithoutDisplays":
-		header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
-		data_object = models.UserObject(user_id=current_user.id, dt=datetime.now(), name=report_name, parameters=json.dumps(parameters, ensure_ascii=False), data=json.dumps(data, ensure_ascii=False))
-		db.session.add(data_object)
-		db.session.flush()
-		data_object_id = data_object.id
-		db.session.commit()
-		df = pandas.DataFrame(data)
-		return render_template("report.html", 
-						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
-							report_title=f"ТУ не имеющие показаний в расчётном периоде {parameters['year']} {parameters['month']}",
-							data_object_id=data_object_id,
-							report_name = report_name)
+
+	if report_name in statements.pull.report_names_list():
+		return statements.pull.reports[report_name].run_report(parameters, current_user.id)
+
 	return redirect(url_for('index'))
 
 
@@ -167,9 +133,6 @@ def RunReport(report_name):
 def addresses(object_id):
 	print(object_id)
 	results = Get_Addresses_List(object_id)
-	print('=============================')
-	prnt(results)
-	print('=============================')
 	return render_template("addresses.html", results=results)
 
 
