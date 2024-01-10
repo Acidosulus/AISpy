@@ -60,7 +60,7 @@ def page_with_items(parent_id):
 			row['path'] = f'/page_with_items/{row["persistent_id"]}'
 	prnt(rows)
 	reportsList = rows
-	return redirect(url_for("reports_index.html", reports=reportsList, list_title = 'Отчёты', list_sub_title = parent_name))
+	return render_template("reports_index.html", reports=reportsList, list_title = 'Отчёты', list_sub_title = parent_name)
 
 
 @app.route('/delete_report/<report_id>')
@@ -92,40 +92,19 @@ def Report(report_name):
 @app.route('/download_excel/<user_object_id>')
 def download_excel(user_object_id):
 	row = common.RowToDict( db.session.query(models.UserObject).filter(models.UserObject.id==user_object_id).first() )
-
-	if row['name']=='ReportPointsWithoutDisplays':
-		report_humanread_name = db.engine.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.path==f'/Report/{row["name"]}')).fetchone()
-		try:
-			report_humanread_name = report_humanread_name[0]
-		except:
-			report_humanread_name = ''
-		data = json.loads(row['data'])
-		parameters = json.loads(row['parameters'])
-		df = pandas.DataFrame(data)
-		file_name = os.path.join(app.TMP_FOLDER, f'report_id_{user_object_id}.xlsx')
-		writer = pandas.ExcelWriter(file_name, engine='xlsxwriter')
-		df.to_excel(writer, index=False, float_format="%.2f", startrow=4, freeze_panes=(5,0), sheet_name='report')
-		writer.sheets['report'].autofilter('A5:WW5')
-		writer.sheets['report'].write(0,0,report_humanread_name + f""" {parameters['year']} {parameters['month']}""")
-		for column in df:
-			writer.sheets['report'].set_column(
-												df.columns.get_loc(column),
-												df.columns.get_loc(column),
-												max(df[column].astype(str).map(len).max(), len(column))
-											)
-		writer.save()
-		return send_file(file_name)
+	report_name = row['name']
+	if report_name in statements.pull.report_names_list():
+		return statements.pull.reports[report_name].download_excel(row['id'])
 	return redirect(url_for('index'))
+
 
 @app.route('/RunReport/<report_name>', methods=['POST'])
 def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	parameters = dialogs.testdialog.get_answers(request.form.items())
 	echo(style('dialog answer: ', fg='yellow')+style(parameters, fg='bright_yellow'))
-
 	if report_name in statements.pull.report_names_list():
 		return statements.pull.reports[report_name].run_report(parameters, current_user.id)
-
 	return redirect(url_for('index'))
 
 

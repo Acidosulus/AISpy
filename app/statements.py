@@ -1,11 +1,12 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, send_file
 from collections.abc import Iterable
-from app import app, db, models,connection_fl, dialogs, db, data_sourses
+from app import app, db, models,connection_fl, dialogs, db, data_sourses, common
 from click import echo, style
 import json
 import pandas
 import xlsxwriter
+import os
 
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
@@ -47,6 +48,7 @@ class Points_WithOut_Displays:
 			reportsList.append(foo)
 		return render_template("reports_index.html", reports=reportsList, list_title = report_humanread_name , list_sub_title = 'история формирования отчёта')
 
+	# return answer for view report into browser
 	def run_report(self, parameters, current_user_id):
 		header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
 		data_object = models.UserObject(user_id=current_user_id, dt=datetime.now(), name=self.report_name, parameters=json.dumps(parameters, ensure_ascii=False), data=json.dumps(data, ensure_ascii=False))
@@ -61,9 +63,26 @@ class Points_WithOut_Displays:
 							data_object_id=data_object_id,
 							report_name = self.report_name)
 
+	# return answer excel report file download
 	def download_excel(self, user_object_id):
-		
-		pass
+		row = common.RowToDict( db.session.query(models.UserObject).filter(models.UserObject.id==user_object_id).first() )
+		report_humanread_name = get_human_readable_report_name(row["name"]) 
+		data = json.loads(row['data'])
+		parameters = json.loads(row['parameters'])
+		df = pandas.DataFrame(data)
+		file_name = os.path.join(app.TMP_FOLDER, f'report_id_{user_object_id}.xlsx')
+		writer = pandas.ExcelWriter(file_name, engine='xlsxwriter')
+		df.to_excel(writer, index=False, float_format="%.2f", startrow=4, freeze_panes=(5,0), sheet_name='report')
+		writer.sheets['report'].autofilter('A5:WW5')
+		writer.sheets['report'].write(0,0,report_humanread_name + f""" {parameters['year']} {parameters['month']}""")
+		for column in df:
+			writer.sheets['report'].set_column(
+												df.columns.get_loc(column),
+												df.columns.get_loc(column),
+												max(df[column].astype(str).map(len).max(), len(column))
+											)
+		writer.save()
+		return send_file(file_name)
 
 	def __str__(self):
 		return {self.report_name:self.report_name, 'dialog':str(self.dialog)}
