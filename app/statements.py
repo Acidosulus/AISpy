@@ -26,7 +26,7 @@ def get_human_readable_report_name(report_name):
 class Points_WithOut_Displays:
 	def __init__(self):
 		self.report_name = 'ReportPointsWithoutDisplays'
-		self.dialog = dialogs.DialogParameters("ТУ не имеющие показаний в текущем расчётном периоде", f'/RunReport/{self.report_name}')
+		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
 
