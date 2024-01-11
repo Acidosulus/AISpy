@@ -12,7 +12,7 @@ import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
-
+@app.teardown_appcontext
 def get_human_readable_report_name(report_name):
 	report_humanread_name = db.engine.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
 	try:
@@ -106,13 +106,11 @@ class Reports:
 		for key, value in self.reports.items():
 			result += f"{key}:{value.dialog}\n"
 		return result
-	
 
+with app.app_context():
+	points_without_displays = Points_WithOut_Displays()
+	pull = Reports()
+	pull.add(points_without_displays)
 
-points_without_displays = Points_WithOut_Displays()
-
-pull = Reports()
-pull.add(points_without_displays)
-
-print('Registred reports:')
-print(pull)
+	print('Registred reports:')
+	print(pull)
