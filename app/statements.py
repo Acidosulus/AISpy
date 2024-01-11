@@ -22,7 +22,16 @@ def get_human_readable_report_name(report_name):
 	return report_humanread_name
 
 
+def singleton(class_):
+    instances = {}
+    def getinstance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
+    return getinstance
 
+
+@singleton
 class Points_WithOut_Displays:
 	def __init__(self):
 		self.report_name = 'ReportPointsWithoutDisplays'
