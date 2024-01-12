@@ -74,3 +74,35 @@ select
   ----------------------------------------------------------------------------------------------------------------------------------------------------
 ;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
+
+
+def Calc_Status_MKJD_Points(year, month:int):
+	fl_points = connection_ul.execute(text(f"""
+		--sql
+		select Потомок as row_id, 
+			   [0] as Район,[1] as Участок,[12] as НП,[2] as Улица,[3] as Дом,[4] as Квартира
+			   from (
+		select Потомок, (case ls.Тип when 0  then Фамилия 
+										when 1  then org.Название
+										when 2   then ( stack.atoa( city.Название ) )
+	
+										when 12   then (  stack.atoa( city.Название ) )
+										when 3  then ( isnull(space( 5 - len(Номер) ),'') + CONVERT( VARCHAR(10), Номер) + stack.atoa( Фамилия ) )
+										when 4  then ( isnull(space( 5 - len(Номер) ),'') + CONVERT( VARCHAR(10), Номер) + stack.atoa( Фамилия ) ) end ) as Адрес,
+						ls.Тип
+			from atom_khk_fl.stack.[Лицевые иерархия] lh
+			join atom_khk_fl.stack.[Лицевые счета] ls on ls.row_id=lh.Родитель
+			left join atom_khk_fl.stack.[Организации] org on org.row_id = [Счет-Линейный участок]
+			left join atom_khk_fl.stack.Города city on city.row_id = [Улица-Лицевой счет]
+			where Потомок in (select row_id from stack.[Лицевые счета] where Тип=5)
+			) as Addr
+			pivot (Max(Адрес) for Тип in ([0],[1],[2],[3],[4],[12])) as addrls)
+	select v.Номер, s1.Сторонний ТУ_Схема2, s2.Сторонний ТУ_Схема3, 
+		  stack.AddrLs(v.ROW_ID ,2)Адрес, adr.Район,	adr.Участок Участок2,	adr.НП, adr.Улица,	adr.Дом, adr.Квартира
+	from atom_khk_fl.stack.[Лицевые счета]  v 
+	inner join atom_khk_fl.stack.Свойства det4 on det4.[Счет-Параметры]=v.row_id and det4.[Виды-Параметры] =261 and sysdatetime() between det4.ДатНач and isnull(det4.ДатКнц,'20450509')
+	left join atom_khk_fl.stack.[Соответствие лицевых] s1 on s1.Номер =v.Номер and s1.Тип =1002 
+	left join atom_khk_fl.stack.[Соответствие лицевых] s2 on s2.Номер =v.Номер and s2.Тип =1003
+	 left join cur_adres adr on adr.row_id=v.row_id
+	;""")).fetchall()
+	pass

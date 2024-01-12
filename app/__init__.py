@@ -50,4 +50,17 @@ app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 app.logger.info('AISpy startup')
 
+
+
+
+from app import statements
+
+with app.app_context():
+	points_without_displays = statements.Points_WithOut_Displays()
+	pull = statements.Reports()
+	pull.add(points_without_displays)
+
+	print('Registred reports:')
+	print(pull)
+
 from app import routes,  models

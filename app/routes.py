@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, data_sourses, statements
+from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -77,15 +77,15 @@ def delete_report(report_id):
 def report_history(report_name):
 	echo(style(text='report_history:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	echo(style(text='current_user.id:', fg='bright_white', bg='green'))
-	if report_name in statements.pull.report_names_list():
-		return statements.pull.reports[report_name].history(current_user.id)
+	if report_name in pull.report_names_list():
+		return pull.reports[report_name].history(current_user.id)
 	return redirect(url_for('index'))
 
 @app.route('/Report/<report_name>')
 def Report(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	if report_name in statements.pull.report_names_list():
-		return statements.pull.reports[report_name].report()
+	if report_name in pull.report_names_list():
+		return pull.reports[report_name].report()
 	return redirect(url_for('index'))
 
 
@@ -93,8 +93,8 @@ def Report(report_name):
 def download_excel(user_object_id):
 	row = common.RowToDict( db.session.query(models.UserObject).filter(models.UserObject.id==user_object_id).first() )
 	report_name = row['name']
-	if report_name in statements.pull.report_names_list():
-		return statements.pull.reports[report_name].download_excel(row['id'])
+	if report_name in pull.report_names_list():
+		return pull.reports[report_name].download_excel(row['id'])
 	return redirect(url_for('index'))
 
 
@@ -103,8 +103,8 @@ def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	parameters = dialogs.testdialog.get_answers(request.form.items())
 	echo(style('dialog answer: ', fg='yellow')+style(parameters, fg='bright_yellow'))
-	if report_name in statements.pull.report_names_list():
-		return statements.pull.reports[report_name].run_report(parameters, current_user.id)
+	if report_name in pull.report_names_list():
+		return pull.reports[report_name].run_report(parameters, current_user.id)
 	return redirect(url_for('index'))
 
 

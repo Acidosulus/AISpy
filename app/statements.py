@@ -8,6 +8,7 @@ import pandas
 import xlsxwriter
 import os
 
+
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
@@ -22,16 +23,6 @@ def get_human_readable_report_name(report_name):
 	return report_humanread_name
 
 
-def singleton(class_):
-    instances = {}
-    def getinstance(*args, **kwargs):
-        if class_ not in instances:
-            instances[class_] = class_(*args, **kwargs)
-        return instances[class_]
-    return getinstance
-
-
-@singleton
 class Points_WithOut_Displays:
 	def __init__(self):
 		self.report_name = 'ReportPointsWithoutDisplays'
@@ -116,10 +107,3 @@ class Reports:
 			result += f"{key}:{value.dialog}\n"
 		return result
 
-with app.app_context():
-	points_without_displays = Points_WithOut_Displays()
-	pull = Reports()
-	pull.add(points_without_displays)
-
-	print('Registred reports:')
-	print(pull)
