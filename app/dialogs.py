@@ -1,5 +1,8 @@
+from click import echo, style
 import uuid
 from datetime import datetime
+import werkzeug
+
 
 class DialogParameters():
 	title = ''
@@ -17,6 +20,10 @@ class DialogParameters():
 		result_dict = {}
 		for element in  form_elements:
 			result_dict[element[0]] = element[1]
+		# dialog  always must have 'last' attribute with 'off' value as default
+		if 'last' not in result_dict:
+			result_dict['last'] = 'off'
+		echo(style(text='get_answer:', fg='yellow')+' '+style(text=result_dict, fg='green'))
 		return result_dict
 
 	def __str__(self) -> str:
@@ -45,7 +52,15 @@ class DialogParameters():
 					default:`"""+f'{datetime.now().year}'+"""`,
 					size:`0`,
 					data:["""+lc_years+"""]}""")
-			
+	
+	def add_checkbox(self, lable='Флажок', name='', default=0):
+			self.append( """{lable:`"""+lable+"""`, 
+					name:`"""+(name if len(name)>0 else str(uuid.uuid4()))+"""`,
+					type:`checkbox`,
+					default:`"""+f'{default}'+"""`,
+					size:`0`,
+					data:[]}""")
+
 
 
 class DialogSection():

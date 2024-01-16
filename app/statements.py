@@ -29,6 +29,8 @@ class Points_WithOut_Displays:
 		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
+		self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
+
 
 	# return answer for start report with parameters dialog
 	def report(self):
@@ -37,7 +39,12 @@ class Points_WithOut_Displays:
 	# return answer for report_history
 	def history(self, user_id):
 		report_humanread_name = get_human_readable_report_name(self.report_name)
-		rows = common.RowsToDictList(connection.execute(db.select(models.UserObject.id, models.UserObject.dt, models.UserObject.parameters).where(models.UserObject.user_id == user_id, models.UserObject.name == self.report_name)).fetchall())
+		rows = common.RowsToDictList(connection.execute(db.select(	models.UserObject.id,
+																	models.UserObject.dt,
+																	models.UserObject.parameters)
+															.where(	models.UserObject.user_id == user_id,
+					  												models.UserObject.name == self.report_name))
+															.fetchall())
 		reportsList = []
 		for row in rows:
 			foo = {}
@@ -50,13 +57,29 @@ class Points_WithOut_Displays:
 
 	# return answer for view report into browser
 	def run_report(self, parameters, current_user_id):
-		header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
-		data_object = models.UserObject(user_id=current_user_id, dt=datetime.now(), name=self.report_name, parameters=json.dumps(parameters, ensure_ascii=False), data=json.dumps(data, ensure_ascii=False))
-		db.session.add(data_object)
-		db.session.flush()
-		data_object_id = data_object.id
-		db.session.commit()
-		df = pandas.DataFrame(data)
+		if parameters['last']!='on':
+			#create new data set for new report
+			header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
+			data_object = models.UserObject(
+						user_id=current_user_id,
+						dt=datetime.now(),
+						name=self.report_name,
+						parameters=json.dumps(parameters, ensure_ascii=False),
+						data=json.dumps(data, ensure_ascii=False))
+			db.session.add(data_object)
+			db.session.flush()
+			data_object_id = data_object.id
+			db.session.commit()
+			df = pandas.DataFrame(data)
+		else:
+			#select data set from last create data for this report
+			userdata = common.RowsToDictList(
+						connection.execute(db.select(models.UserObject.id, models.UserObject.parameters)
+						 						.where(	models.UserObject.user_id == current_user_id,
+														models.UserObject.name == self.report_name)).fetchall())
+			print(userdata)
+			pass
+
 		return render_template("report.html", 
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
 							report_title=f"ТУ не имеющие показаний в расчётном периоде {parameters['year']} {parameters['month']}",
