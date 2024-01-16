@@ -46,7 +46,7 @@ def parameters_dialog():
 
 @app.route('/page_with_items/<parent_id>')
 def page_with_items(parent_id):
-	parent_name = db.engine.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
+	parent_name = db.engine.connect().execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
 	try:
 		parent_name = parent_name[0]
 	except:
@@ -67,9 +67,9 @@ def page_with_items(parent_id):
 def delete_report(report_id):
 	echo(style(text='delete_report:', fg='black', bg='white') + ' ' + style(text=report_id, fg='bright_white'))
 	echo(style(text='current_user.id:', fg='bright_white', bg='green'))
-	report_data = db.engine.execute(db.select(models.UserObject.name).where(models.UserObject.id==report_id)).fetchall()
+	report_data = db.engine.connect().execute(db.select(models.UserObject.name).where(models.UserObject.id==report_id)).fetchall()
 	print('Report name:', common.RowsToDictList(report_data)[0]['name'])
-	db.engine.execute(db.delete(models.UserObject).where(models.UserObject.id==report_id))
+	db.engine.connect().execute(db.delete(models.UserObject).where(models.UserObject.id==report_id))
 	return redirect(url_for('report_history', report_name=common.RowsToDictList(report_data)[0]['name']))
 
 

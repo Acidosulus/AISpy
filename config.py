@@ -35,11 +35,11 @@ if sys.platform == 'linux':
 else:
 	connection_url_fl = URL.create(
 		"mssql+pyodbc",
-		username="tmpsite",
-		password="1",
+		username="sa",
+		password="Bor@Teks",
 		host="10.19.50.11",
 		port=1433,
-		database="atom_khk_fl_testupd",
+		database="atom_khk_fl",
 		query={
 			"driver": "SQL Server",
 			"TrustServerCertificate": "yes"	},
@@ -67,7 +67,7 @@ class Config:
 	config = configparser.ConfigParser()
 	config.read("settings.ini", encoding='UTF-8')  
 	SECRET_KEY = 'a really really really really long secret key' #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-	SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:321@185.112.225.153:35432/start_dev'
+	SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://postgres:321@{"185.112.225.153" if (sys.platform=="linux") else "127.0.0.1"}:35432/start_dev'
 	SQLALCHEMY_BINDS = {
 		'dbfl': connection_url_fl,
 		'dbul': connection_url_ul
