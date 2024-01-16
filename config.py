@@ -12,11 +12,11 @@ from sqlalchemy.engine import URL
 if sys.platform == 'linux':
 	connection_url_fl = URL.create(
 		"mssql+pyodbc",
-		username="tmpsite",
-		password="1",
+		username="sa",
+		password="Bor@Teks",
 		host="10.19.50.11",
 		port=1433,
-		database="atom_khk_fl_testupd",
+		database="atom_khk_fl",
 		query={
 			"driver": "ODBC Driver 18 for SQL Server",
 			"TrustServerCertificate": "yes"	},
