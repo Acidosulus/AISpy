@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, send_file
 from collections.abc import Iterable
-from app import app, db, models,connection_fl, dialogs, db, data_sourses, common
+from app import app, db, models,connection_fl, dialogs, db, data_sourses, common, connection
 from click import echo, style
 import json
 import pandas
@@ -15,7 +15,7 @@ prnt = printer.pprint
 
 @app.teardown_appcontext
 def get_human_readable_report_name(report_name):
-	report_humanread_name = db.engine.connect().execute(db.select(models.PageItemsList.name).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
+	report_humanread_name = connection.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
 	try:
 		report_humanread_name = report_humanread_name[0]
 	except:
@@ -37,7 +37,7 @@ class Points_WithOut_Displays:
 	# return answer for report_history
 	def history(self, user_id):
 		report_humanread_name = get_human_readable_report_name(self.report_name)
-		rows = common.RowsToDictList(db.engine.connect().execute(db.select(models.UserObject.id, models.UserObject.dt, models.UserObject.parameters).where(models.UserObject.user_id == user_id, models.UserObject.name == self.report_name)).fetchall())
+		rows = common.RowsToDictList(connection.execute(db.select(models.UserObject.id, models.UserObject.dt, models.UserObject.parameters).where(models.UserObject.user_id == user_id, models.UserObject.name == self.report_name)).fetchall())
 		reportsList = []
 		for row in rows:
 			foo = {}

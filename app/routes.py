@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull
+from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull, connection
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -46,7 +46,7 @@ def parameters_dialog():
 
 @app.route('/page_with_items/<parent_id>')
 def page_with_items(parent_id):
-	parent_name = db.engine.connect().execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
+	parent_name = connection.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
 	try:
 		parent_name = parent_name[0]
 	except:
@@ -67,9 +67,9 @@ def page_with_items(parent_id):
 def delete_report(report_id):
 	echo(style(text='delete_report:', fg='black', bg='white') + ' ' + style(text=report_id, fg='bright_white'))
 	echo(style(text='current_user.id:', fg='bright_white', bg='green'))
-	report_data = db.engine.connect().execute(db.select(models.UserObject.name).where(models.UserObject.id==report_id)).fetchall()
+	report_data = connection.execute(db.select(models.UserObject.name).where(models.UserObject.id==report_id)).fetchall()
 	print('Report name:', common.RowsToDictList(report_data)[0]['name'])
-	db.engine.connect().execute(db.delete(models.UserObject).where(models.UserObject.id==report_id))
+	connection.execute(db.delete(models.UserObject).where(models.UserObject.id==report_id))
 	return redirect(url_for('report_history', report_name=common.RowsToDictList(report_data)[0]['name']))
 
 
