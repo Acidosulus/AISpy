@@ -1,7 +1,11 @@
 from click import echo, style
 import uuid
 from datetime import datetime
-import werkzeug
+import json
+
+import pprint
+printer = pprint.PrettyPrinter(indent=12, width=180)
+prnt = printer.pprint
 
 
 class DialogParameters():
@@ -24,6 +28,8 @@ class DialogParameters():
 		if 'last' not in result_dict:
 			result_dict['last'] = 'off'
 		echo(style(text='get_answer:', fg='yellow')+' '+style(text=result_dict, fg='green'))
+		print(str(self).replace("""`""",'"'))
+		prnt(json.loads(str(self)))
 		return result_dict
 
 	def __str__(self) -> str:

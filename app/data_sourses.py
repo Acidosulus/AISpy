@@ -22,7 +22,8 @@ def get_queryresult_header_and_data(query_result):
 
 
 def Points_WithOut_Displays(year, month:int):
-	query_result = connection_ul.execute(text(f"""DECLARE @dateendofmonth datetime = EOMONTH('{year}-{month}-01')
+	query_result = connection_ul.execute(text(f"""--sql
+DECLARE @dateendofmonth datetime = EOMONTH('{year}-{month}-01')
 select
     statuses.status as [Состояние ПУ],
     lo.[ЗаводскойНомер] as [ЗаводскойНомер],
@@ -77,9 +78,8 @@ select
 
 
 def Calc_Status_MKJD_Points(year, month:int):
-	fl_points = connection_ul.execute(text(f"""
-		--sql
-		select Потомок as row_id, 
+	fl_points = connection_ul.execute(text(f"""--sql
+			select Потомок as row_id, 
 			   [0] as Район,[1] as Участок,[12] as НП,[2] as Улица,[3] as Дом,[4] as Квартира
 			   from (
 		select Потомок, (case ls.Тип when 0  then Фамилия 
@@ -104,5 +104,6 @@ def Calc_Status_MKJD_Points(year, month:int):
 	left join atom_khk_fl.stack.[Соответствие лицевых] s1 on s1.Номер =v.Номер and s1.Тип =1002 
 	left join atom_khk_fl.stack.[Соответствие лицевых] s2 on s2.Номер =v.Номер and s2.Тип =1003
 	 left join cur_adres adr on adr.row_id=v.row_id
-	;""")).fetchall()
+	;
+		""")).fetchall()
 	pass
