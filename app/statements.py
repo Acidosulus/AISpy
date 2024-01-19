@@ -27,6 +27,7 @@ class Points_WithOut_Displays:
 	def __init__(self):
 		self.report_name = 'ReportPointsWithoutDisplays'
 		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
+		echo(style(text=str(self.dialog), fg='bright_blue'))
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
 		self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)

@@ -7,7 +7,10 @@
 {% block scripts %}
 
 <script type="text/javascript">
-  var source = {{ parametesJSON }}
+  var source_str = {{ parametesJSON|tojson }};
+  //source_str = source_str.replaceAll(`"`, `'`);
+  console.log(source_str);
+  var source = JSON.parse(source_str);
 
 
 window.onload = function(event){

@@ -101,7 +101,9 @@ def download_excel(user_object_id):
 @app.route('/RunReport/<report_name>', methods=['POST'])
 def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
-	parameters = dialogs.testdialog.get_answers(request.form.items())
+	if report_name in pull.report_names_list():
+		parameters = pull.reports[report_name].dialog.get_answers(request.form.items())
+	#parameters = dialogs.testdialog.get_answers(request.form.items())
 	echo(style('dialog answer: ', fg='yellow')+style(parameters, fg='bright_yellow'))
 	if report_name in pull.report_names_list():
 		return pull.reports[report_name].run_report(parameters, current_user.id)
