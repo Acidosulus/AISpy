@@ -24,9 +24,6 @@ class DialogParameters():
 		result_dict = {}
 		for element in  form_elements:
 			result_dict[element[0]] = element[1]
-		# dialog  always must have 'last' attribute with 'off' value as default
-		if 'last' not in result_dict:
-			result_dict['last'] = 'off'
 		echo(style(text='get_answer:', fg='yellow')+' '+style(text=result_dict, fg='green'))
 		print(str(self).replace("""`""",'"'))
 		prnt(ujson.loads(str(self)))
@@ -70,7 +67,7 @@ class DialogParameters():
 								name	=	(name if len(name)>0 else str(uuid.uuid4())),
 								type	=	'listbox',
 								default	=	datetime.now().year,
-								size	=	0,
+								size	=	6+3,
 								data	=	years_list))
 	
 

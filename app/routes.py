@@ -46,6 +46,7 @@ def parameters_dialog():
 
 @app.route('/page_with_items/<parent_id>')
 def page_with_items(parent_id):
+	echo(style(text=f'page_with_items/{parent_id}', bg='blue', fg='bright_green'))
 	parent_name = connection.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
 	try:
 		parent_name = parent_name[0]
@@ -53,11 +54,21 @@ def page_with_items(parent_id):
 		parent_name = ''
 
 	rows = common.RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.parent==parent_id).all())
-	prnt(rows)
-	print()
+	print('rows:',rows)
+	print(f'Reports',pull.reports)
 	for row in rows:
 		if len(row['path'])==0:
 			row['path'] = f'/page_with_items/{row["persistent_id"]}'
+		else:
+			report_name = row['path'].replace('/Report/','')
+			if len(report_name)>0:
+				if report_name in pull.report_names_list():
+					history_records_count = pull.reports[report_name].ready_reports_count(current_user.id)
+					print(f'report_name found:{report_name}')
+					print('ready_reports_count found:', history_records_count)
+					if history_records_count>0:
+						row['history_link'] = f'/report_history/{report_name}'
+						row['history_records_count'] = history_records_count
 	prnt(rows)
 	reportsList = rows
 	return render_template("reports_index.html", reports=reportsList, list_title = 'Отчёты', list_sub_title = parent_name)

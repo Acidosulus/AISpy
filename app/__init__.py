@@ -59,7 +59,8 @@ from app import statements
 
 with app.app_context():
 	points_without_displays = statements.Points_WithOut_Displays()
-	pull = statements.Reports()
+
+	pull: list[statements.Reports]= statements.Reports()
 	pull.add(points_without_displays)
 
 	print('Registred reports:')

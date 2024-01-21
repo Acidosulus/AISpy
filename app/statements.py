@@ -7,7 +7,7 @@ import json
 import pandas
 import xlsxwriter
 import os
-
+from sqlalchemy import func
 
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
@@ -22,20 +22,41 @@ def get_human_readable_report_name(report_name):
 		report_humanread_name = ''
 	return report_humanread_name
 
+class Report:
+	def __init__(self):
+		self.report_name = ''
 
-class Points_WithOut_Displays:
+	def ready_reports_count(self, user_id:int) -> int:
+		ready_reports_count = connection.execute(db.select(func.count(models.UserObject.id)).where(	models.UserObject.user_id == user_id,
+														   								models.UserObject.name == self.report_name)).scalar()
+		return ready_reports_count
+	
+	# return answer for start report with parameters dialog	
+	def report(self):
+		return render_template("parameters_dialog.html", parametesJSON = str(self.dialog), report_name=self.report_name)
+	
+	def history(self, user_id):
+		return None
+
+	def run_report(self, parameters, current_user_id):
+		return None
+	
+	def download_excel(self, user_object_id):
+		return None
+
+	def __str__(self):
+		return 'Report Superclass'
+	
+
+
+class Points_WithOut_Displays(Report):
 	def __init__(self):
 		self.report_name = 'ReportPointsWithoutDisplays'
 		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
-		echo(style(text=str(self.dialog), fg='bright_blue'))
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
-		self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
-
-
-	# return answer for start report with parameters dialog
-	def report(self):
-		return render_template("parameters_dialog.html", parametesJSON = str(self.dialog), report_name=self.report_name)
+		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
+	
 	
 	# return answer for report_history
 	def history(self, user_id):
@@ -58,28 +79,20 @@ class Points_WithOut_Displays:
 
 	# return answer for view report into browser
 	def run_report(self, parameters, current_user_id):
-		if parameters['last']!='on':
-			#create new data set for new report
-			header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
-			data_object = models.UserObject(
-						user_id=current_user_id,
-						dt=datetime.now(),
-						name=self.report_name,
-						parameters=json.dumps(parameters, ensure_ascii=False),
-						data=json.dumps(data, ensure_ascii=False))
-			db.session.add(data_object)
-			db.session.flush()
-			data_object_id = data_object.id
-			db.session.commit()
-			df = pandas.DataFrame(data)
-		else:
-			#select data set from last create data for this report
-			userdata = common.RowsToDictList(
-						connection.execute(db.select(models.UserObject.id, models.UserObject.parameters)
-						 						.where(	models.UserObject.user_id == current_user_id,
-														models.UserObject.name == self.report_name)).fetchall())
-			print(userdata)
-			pass
+		#create new data set for new report
+		header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
+		data_object = models.UserObject(
+					user_id=current_user_id,
+					dt=datetime.now(),
+					name=self.report_name,
+					parameters=json.dumps(parameters, ensure_ascii=False),
+					data=json.dumps(data, ensure_ascii=False))
+		db.session.add(data_object)
+		db.session.flush()
+		data_object_id = data_object.id
+		db.session.commit()
+		df = pandas.DataFrame(data)
+
 
 		return render_template("report.html", 
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
@@ -111,9 +124,10 @@ class Points_WithOut_Displays:
 	def __str__(self):
 		return {self.report_name:self.report_name, 'dialog':str(self.dialog)}
 
+
 class Reports:
 	def __init__(self):
-		self.reports = {}
+		self.reports: dict[str, Report] = {}
 
 	def add(self, oreport:Points_WithOut_Displays):
 		self.reports[oreport.report_name] = oreport
