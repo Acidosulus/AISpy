@@ -1,28 +1,44 @@
 
       {% for report in reports %}
-      <div class="card">
+      <div class="card border-info mb-3">
         
-        <div class="card-body">
-          <h4 class="card-title">
+        <div class="card-body text-success">
+          <a href="{{ report.path }}"><h3 class="card-title">
             {{ report.name }}
-          </h4>
+          </h3></a>
+          <div>
+          {% if report.text is defined %}
+          <p class="card-text"> {{ report.text }}</p>
+          {% endif %}
+          {% if report.text_1 is defined %}
+          <p class="card-text"> {{ report.text_1 }}</p>
+          {% endif %}
+          {% if report.text_2 is defined %}
+          <p class="card-text"> {{ report.text_2 }}</p>
+          {% endif %}
+          {% if report.text_3 is defined %}
+          <p class="card-text"> {{ report.text_3 }}</p>
+          {% endif %}
           <a href="{{ report.path }}"> <img src="{{ report.icon }}" with="64" height="64"></a>&nbsp;&nbsp;&nbsp;&nbsp;
-          
           {% if report.history_link is defined %}
-          
           <a href="{{ report.history_link }}"  class="card-link">
               <IMG WIDTH="64" HEIGHT="64"  title = "История" src="/static/images/history.png">
               {% if report.history_records_count is defined %}
                 {{ report.history_records_count }}
               {% endif %}
             </a>&nbsp;&nbsp;&nbsp;&nbsp;
-            </div>
+          
           {% endif %}
+
+          {% if report.view_link is defined %}
+            <a href="{{ report.view_link }}"><IMG WIDTH="64" HEIGHT="64"  title = "Просмотр" src="/static/images/view.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+
           
           {% if report.delete_link is defined %}
             <a href="{{ report.delete_link }}"><IMG WIDTH="64" HEIGHT="64"  title = "Удалить" src="/static/images/delete.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;
           {% endif %}
-
+        </div>
         </div>
       </div>
   

@@ -21,7 +21,9 @@ def get_queryresult_header_and_data(query_result):
 	return headers, result	
 
 
-def Points_WithOut_Displays(year, month:int):
+def Points_WithOut_Displays(parameters:dict):
+	year = parameters['year']
+	month = parameters['month']
 	query_result = connection_ul.execute(text(f"""--sql
 DECLARE @dateendofmonth datetime = EOMONTH('{year}-{month}-01')
 select

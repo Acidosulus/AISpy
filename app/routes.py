@@ -44,6 +44,16 @@ def parameters_dialog():
 	return render_template("parameters_dialog.html", parametesJSON = str(dialogs.testdialog))
 
 
+@app.route('/Report_From_History/<report_name>/<user_data_id>')
+def report_from_history(report_name:str, user_data_id:int):
+	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text='report_from_history', fg='bright_white'))
+	echo(style(text='report_name:', fg='black', bg='white') + ' ' + style(text=f'{report_name}', fg='bright_white'))
+	echo(style(text='user_data_id:', fg='black', bg='white') + ' ' + style(text=f'{user_data_id}', fg='bright_white'))
+	if report_name in pull.report_names_list():
+		return pull.reports[report_name].report_from_history(current_user.id, user_data_id)
+	return redirect(url_for('index'))
+
+
 @app.route('/page_with_items/<parent_id>')
 def page_with_items(parent_id):
 	echo(style(text=f'page_with_items/{parent_id}', bg='blue', fg='bright_green'))
@@ -57,6 +67,12 @@ def page_with_items(parent_id):
 	print('rows:',rows)
 	print(f'Reports',pull.reports)
 	for row in rows:
+		
+		# item comment input into text field
+		if len(row['note'])>0:
+			if row['note'] != 'None':
+				row['text'] = row['note']
+
 		if len(row['path'])==0:
 			row['path'] = f'/page_with_items/{row["persistent_id"]}'
 		else:

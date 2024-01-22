@@ -50,6 +50,7 @@ class PageItemsList (db.Model):
 	path				= db.Column(db.String(1024),  )
 	icon				= db.Column(db.String(1024),  )
 	roles				= db.Column(db.String(1024),  )
+	note				= db.Column(db.String(1024))
 
 
 

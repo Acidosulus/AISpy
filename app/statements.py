@@ -22,9 +22,24 @@ def get_human_readable_report_name(report_name):
 		report_humanread_name = ''
 	return report_humanread_name
 
+@app.teardown_appcontext
+def get_report_note(report_name):
+	report_note = connection.execute(db.select(models.PageItemsList.note).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
+	try:
+		report_note = report_note[0]
+	except:
+		report_note = ''
+	return report_note
+
+
+
+
+# superclass for any report
 class Report:
 	def __init__(self):
 		self.report_name = ''
+		self.report_humanread_name = get_human_readable_report_name(self.report_name)
+		self.note = get_report_note(self.report_name)
 
 	def ready_reports_count(self, user_id:int) -> int:
 		ready_reports_count = connection.execute(db.select(func.count(models.UserObject.id)).where(	models.UserObject.user_id == user_id,
@@ -34,33 +49,26 @@ class Report:
 	# return answer for start report with parameters dialog	
 	def report(self):
 		return render_template("parameters_dialog.html", parametesJSON = str(self.dialog), report_name=self.report_name)
-	
-	def history(self, user_id):
-		return None
-
-	def run_report(self, parameters, current_user_id):
-		return None
-	
-	def download_excel(self, user_object_id):
-		return None
-
-	def __str__(self):
-		return 'Report Superclass'
-	
-
-
-class Points_WithOut_Displays(Report):
-	def __init__(self):
-		self.report_name = 'ReportPointsWithoutDisplays'
-		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
-		self.dialog.add_months('Месяц','month')
-		self.dialog.add_years('Год','year')
-		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
-	
+	# return answer for start report from last formed data, recieved UserData.id
+	def report_from_history(self, user_id, user_data_id:int):
+		echo(style(text='report_from_history into class', bg='blue', fg='bright_yellow'))
+		row = common.RowsToDictList(connection.execute(db.select(	models.UserObject)
+															.where(	models.UserObject.user_id == user_id,
+					  												models.UserObject.name == self.report_name,
+																	models.UserObject.id == user_data_id))
+															.fetchall())[0]		
+		parameters = json.loads(row['parameters'])
+		data = json.loads(row['data'])
+		print(parameters)
+		df = pandas.DataFrame(data)
+		return render_template("report.html", 
+						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
+							report_title=f"{self.report_humanread_name} {self.get_parameters_human_readable_string(parameters)}",
+							data_object_id=user_data_id,
+							report_name = self.report_name)
 	
 	# return answer for report_history
 	def history(self, user_id):
-		report_humanread_name = get_human_readable_report_name(self.report_name)
 		rows = common.RowsToDictList(connection.execute(db.select(	models.UserObject.id,
 																	models.UserObject.dt,
 																	models.UserObject.parameters)
@@ -72,34 +80,38 @@ class Points_WithOut_Displays(Report):
 			foo = {}
 			foo['path'] = f'/download_excel/{row["id"]}'
 			foo['icon'] = f'/static/images/ico_excel.bmp'
-			foo['name'] = f'{report_humanread_name} id:{row["id"]} parameters:{row["parameters"]} {row["dt"]:%Y-%m-%d %H:%M}'
+			foo['name'] = f'{self.report_humanread_name}'
+			foo['text'] = f'Идентификатор результата: {row["id"]}'
+			foo['text_1'] = f'Год: {json.loads(row["parameters"])["year"]}'
+			foo['text_2'] = f'Месяц: {json.loads(row["parameters"])["month"]}'
+			foo['text_3'] = f'Время формирования: {row["dt"]:%Y-%m-%d %H:%M}'
 			foo['delete_link'] = f"""/delete_report/{row["id"]}"""
+			foo['view_link'] = f"""/Report_From_History/{self.report_name}/{row["id"]}"""
 			reportsList.append(foo)
-		return render_template("reports_index.html", reports=reportsList, list_title = report_humanread_name , list_sub_title = 'история формирования отчёта')
-
+		return render_template("reports_index.html", reports=reportsList, list_title = self.report_humanread_name , list_sub_title = 'история формирования отчёта')
+	
+	
 	# return answer for view report into browser
 	def run_report(self, parameters, current_user_id):
 		#create new data set for new report
-		header, data = data_sourses.Points_WithOut_Displays(parameters['year'], parameters['month'])
-		data_object = models.UserObject(
-					user_id=current_user_id,
-					dt=datetime.now(),
-					name=self.report_name,
-					parameters=json.dumps(parameters, ensure_ascii=False),
-					data=json.dumps(data, ensure_ascii=False))
+		header, data = self.get_data_source(parameters, current_user_id)
+		data_object = models.UserObject(user_id=current_user_id,
+										dt=datetime.now(),
+										name=self.report_name,
+										parameters=json.dumps(parameters, ensure_ascii=False),
+										data=json.dumps(data, ensure_ascii=False))
 		db.session.add(data_object)
 		db.session.flush()
 		data_object_id = data_object.id
 		db.session.commit()
 		df = pandas.DataFrame(data)
 
-
 		return render_template("report.html", 
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
-							report_title=f"ТУ не имеющие показаний в расчётном периоде {parameters['year']} {parameters['month']}",
+							report_title=f"{self.report_humanread_name} {self.get_parameters_human_readable_string(parameters)}",
 							data_object_id=data_object_id,
 							report_name = self.report_name)
-
+	
 	# return answer excel report file download
 	def download_excel(self, user_object_id):
 		row = common.RowToDict( db.session.query(models.UserObject).filter(models.UserObject.id==user_object_id).first() )
@@ -120,11 +132,44 @@ class Points_WithOut_Displays(Report):
 											)
 		writer.save()
 		return send_file(file_name)
+	# return data source for report, must be realeased for every reportse separately
+	def get_data_source(self, parameters, current_user_id:int):
+		pass
+
+	# return human readable parameters string for report title, must be realeased for every reportse separately
+	def get_parameters_human_readable_string(self, parameters):
+		return f"""{parameters['year']} {parameters['month']}"""
 
 	def __str__(self):
-		return {self.report_name:self.report_name, 'dialog':str(self.dialog)}
+		return 'Report Superclass'
+	
 
 
+
+
+
+
+class Points_WithOut_Displays(Report):
+	def __init__(self):
+		self.report_name = 'ReportPointsWithoutDisplays'
+		self.report_humanread_name = get_human_readable_report_name(self.report_name)
+		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
+		self.dialog.add_months('Месяц','month')
+		self.dialog.add_years('Год','year')
+		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
+
+	def get_data_source(self, parameters, current_user_id:int):
+		return data_sourses.Points_WithOut_Displays(parameters)
+
+	def __str__(self):
+		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
+
+
+
+
+
+
+# adapter for dictionary of report objects
 class Reports:
 	def __init__(self):
 		self.reports: dict[str, Report] = {}
