@@ -58,10 +58,10 @@ app.logger.info('AISpy startup')
 from app import statements
 
 with app.app_context():
-	points_without_displays = statements.Points_WithOut_Displays()
 
 	pull = statements.Reports()
-	pull.add(points_without_displays)
+	pull.add(statements.Points_WithOut_Displays())
+	pull.add(statements.Points_with_Constant_Consuming())
 
 	print('Registred reports:')
 	print(pull)

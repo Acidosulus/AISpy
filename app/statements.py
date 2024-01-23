@@ -165,7 +165,20 @@ class Points_WithOut_Displays(Report):
 		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
 
 
+class Points_with_Constant_Consuming(Report):
+	def __init__(self):
+		self.report_name = 'Report_Points_with_Constant_Consuming'
+		self.report_humanread_name = get_human_readable_report_name(self.report_name)
+		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
+		self.dialog.add_months('Месяц','month')
+		self.dialog.add_years('Год','year')
+		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 
+	def get_data_source(self, parameters, current_user_id:int):
+		return data_sourses.Points_with_Constant_Consuming(parameters)
+
+	def __str__(self):
+		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
 
 
 

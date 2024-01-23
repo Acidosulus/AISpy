@@ -79,33 +79,51 @@ select
 	return get_queryresult_header_and_data(query_result)
 
 
-def Calc_Status_MKJD_Points(year, month:int):
-	fl_points = connection_ul.execute(text(f"""--sql
-			select Потомок as row_id, 
-			   [0] as Район,[1] as Участок,[12] as НП,[2] as Улица,[3] as Дом,[4] as Квартира
-			   from (
-		select Потомок, (case ls.Тип when 0  then Фамилия 
-										when 1  then org.Название
-										when 2   then ( stack.atoa( city.Название ) )
-	
-										when 12   then (  stack.atoa( city.Название ) )
-										when 3  then ( isnull(space( 5 - len(Номер) ),'') + CONVERT( VARCHAR(10), Номер) + stack.atoa( Фамилия ) )
-										when 4  then ( isnull(space( 5 - len(Номер) ),'') + CONVERT( VARCHAR(10), Номер) + stack.atoa( Фамилия ) ) end ) as Адрес,
-						ls.Тип
-			from atom_khk_fl.stack.[Лицевые иерархия] lh
-			join atom_khk_fl.stack.[Лицевые счета] ls on ls.row_id=lh.Родитель
-			left join atom_khk_fl.stack.[Организации] org on org.row_id = [Счет-Линейный участок]
-			left join atom_khk_fl.stack.Города city on city.row_id = [Улица-Лицевой счет]
-			where Потомок in (select row_id from stack.[Лицевые счета] where Тип=5)
-			) as Addr
-			pivot (Max(Адрес) for Тип in ([0],[1],[2],[3],[4],[12])) as addrls)
-	select v.Номер, s1.Сторонний ТУ_Схема2, s2.Сторонний ТУ_Схема3, 
-		  stack.AddrLs(v.ROW_ID ,2)Адрес, adr.Район,	adr.Участок Участок2,	adr.НП, adr.Улица,	adr.Дом, adr.Квартира
-	from atom_khk_fl.stack.[Лицевые счета]  v 
-	inner join atom_khk_fl.stack.Свойства det4 on det4.[Счет-Параметры]=v.row_id and det4.[Виды-Параметры] =261 and sysdatetime() between det4.ДатНач and isnull(det4.ДатКнц,'20450509')
-	left join atom_khk_fl.stack.[Соответствие лицевых] s1 on s1.Номер =v.Номер and s1.Тип =1002 
-	left join atom_khk_fl.stack.[Соответствие лицевых] s2 on s2.Номер =v.Номер and s2.Тип =1003
-	 left join cur_adres adr on adr.row_id=v.row_id
-	;
-		""")).fetchall()
-	pass
+def Points_with_Constant_Consuming(parameters:dict):
+	year = parameters['year']
+	month = parameters['month']
+	query_result = connection_ul.execute(text(f"""--sql
+	declare 	@datn date = '{year}-{month}-01' ,	@datk date = EOMONTH('{year}-{month}-01')
+                     Select distinct * from (
+                                       select 	left(dog.Номер,10) as [Номер договора],
+									   			left(org.Название,250) as [Название договора],
+                                              	ls.Номер as [ТУ], 
+												left(ls.[Примечание],250) as [Название ТУ],
+												"'"+left(nom.Наименование,250) as [ПУ],
+											  	left(so.ЗаводскойНомер,50) as [Заводской номер],
+											  	ps.Показание as [Показание],
+                                              	--ld.Лицевой,
+												left(d.Отделение,50) as [Отделение],
+												left(d.Участок,50) as [Участок],
+												--so.row_id,
+												so.Тарифность as [Тарифность],
+											  	left(staff1.ФИО, 70) as [ФИО отвественного],
+												networkowner.name as [Сетевая организация]
+                                       from stack.contracts(-1) d
+                                       join stack.Договор dog on dog.ROW_ID=d.Договор
+                                                 and dog.[Начало договора]<=@datk
+                                                 and dog.[Окончание]>=@datn
+									   left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = dog.Сотрудник1
+                                       join stack.Организации org on org.ROW_ID = dog.Плательщик
+                                       join stack.[Лицевые договора] ld on ld.Договор = d.Договор
+                                       		  and (ld.ДатНач<=@datk or ld.ДатНач is null)
+                                                     and (ld.ДатКнц>=@datn or ld.ДатКнц is null)
+                                       join stack.[Лицевые счета] ls on ls.ROW_ID = ld.Лицевой
+                                       join stack.[Список объектов] so on so.[Объекты-Счет] = ld.Лицевой
+                                                 and (so.ДатНач<=@datk or so.ДатНач is null)
+                                                 and (so.ДатКнц>=@datn or so.ДатКнц is null)
+												 and so.ЗаводскойНомер = 'прасход'
+                                       join stack.Номенклатура nom on nom.ROW_ID = so.[Номенклатура-Объекты] and nom.Идентификатор=0
+                                       left join stack.[Показания счетчиков] ps on ps.[Объект-Показания] = so.ROW_ID
+                                                 and ps.тип=1
+                                                 and ps.[Расчетный месяц] between @datn and @datk
+										left join (select left(ls.Номер,10) as num_point, left(org.Название,250) as name
+														from stack.[Лицевые счета] ls
+															left join stack.[Поставщики]  ps on ps.[Счет-Список поставщиков] = ls.ROW_ID  and (@datk between ps.ДатНач and ps.ДатКнц) and ps.[Услуги-Список поставщиков] = 14
+															left join stack.[Организации] org on ps.[Поставщики-Список] = org.ROW_ID) networkowner on networkowner.num_point = ls.Номер
+										) ct
+							order by [Номер договора], [ТУ] ;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+#print(Points_with_Constant_Consuming(2024, 1))
