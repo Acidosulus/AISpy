@@ -62,6 +62,7 @@ with app.app_context():
 	pull = statements.Reports()
 	pull.add(statements.Points_WithOut_Displays())
 	pull.add(statements.Points_with_Constant_Consuming())
+	pull.add(statements.Pays_from_date_to_date())
 
 	print('Registred reports:')
 	print(pull)

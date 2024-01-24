@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from flask import render_template, flash, redirect, url_for, request, send_file
 from collections.abc import Iterable
 from app import app, db, models,connection_fl, dialogs, db, data_sourses, common, connection
@@ -12,6 +12,13 @@ from sqlalchemy import func
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
+
+def last_day_of_month(any_day):
+    # The day 28 exists in every month. 4 days later, it's always next month
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
+    # subtracting the number of the current day brings us back one month
+    return next_month - datetime.timedelta(days=next_month.day)
+
 
 @app.teardown_appcontext
 def get_human_readable_report_name(report_name):
@@ -96,7 +103,7 @@ class Report:
 		#create new data set for new report
 		header, data = self.get_data_source(parameters, current_user_id)
 		data_object = models.UserObject(user_id=current_user_id,
-										dt=datetime.now(),
+										dt=datetime.date.today(),
 										name=self.report_name,
 										parameters=json.dumps(parameters, ensure_ascii=False),
 										data=json.dumps(data, ensure_ascii=False))
@@ -138,14 +145,11 @@ class Report:
 
 	# return human readable parameters string for report title, must be realeased for every reportse separately
 	def get_parameters_human_readable_string(self, parameters):
-		return f"""{parameters['year']} {parameters['month']}"""
+		return f"""{parameters}"""
 
 	def __str__(self):
 		return 'Report Superclass'
 	
-
-
-
 
 
 
@@ -180,6 +184,21 @@ class Points_with_Constant_Consuming(Report):
 	def __str__(self):
 		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
 
+class Pays_from_date_to_date(Report):
+	def __init__(self):
+		self.report_name = 'Report_pays_from_date_to_date'
+		self.report_humanread_name = get_human_readable_report_name(self.report_name)
+		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
+		self.dialog.add_date('С', 'from', datetime.date.today().replace(day=1).isoformat())
+		self.dialog.add_date('По', 'to', last_day_of_month(datetime.date.today()).isoformat())
+		
+		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
+
+	def get_data_source(self, parameters, current_user_id:int):
+		return data_sourses.Pays_from_date_to_date(parameters)
+
+	def __str__(self):
+		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
 
 
 # adapter for dictionary of report objects

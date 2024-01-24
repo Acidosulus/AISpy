@@ -2,6 +2,8 @@ from click import echo, style
 import sqlalchemy as sa
 from app import common, connection_ul, connection_fl
 from sqlalchemy import text
+import datetime
+import decimal
 
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
@@ -10,14 +12,24 @@ prnt = printer.pprint
 
 def get_queryresult_header_and_data(query_result):
 	result = []
+	
 	for v in query_result:
 		drow = {}
 		for count, value in enumerate(v._fields):
-			drow[value] = (v[count] if v[count]!=None else '')
+			if isinstance(v[count], datetime.date):
+				drow[value] = v[count].isoformat()
+			else:
+				if isinstance(v[count], decimal.Decimal):
+					drow[value] = float(v[count])
+				else:
+					drow[value] = (v[count] if v[count]!=None else '')
+			print(v[count], '    ->    ', type(v[count]), )
 		result.append(drow)
+	
 	headers = []
 	if len(result)>0:
 		headers = list(result[0].keys())
+	
 	return headers, result	
 
 
@@ -125,5 +137,27 @@ def Points_with_Constant_Consuming(parameters:dict):
 							order by [Номер договора], [ТУ] ;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
-
+def Pays_from_date_to_date(parameters):
+	query_result = connection_ul.execute(text(f"""--sql
+		select 	left(agr.Номер,10) as [Договор],
+				left(org.Название,250) as [Название договора],
+				left(staff1.ФИО,50) as [Расчеты],
+				left(staff3.ФИО,50) as [Менеджер],
+				left(doc.Примечание,250) as [Назначение платежа],
+				doc.ПлатежС as [С],
+				doc.ПлатежПо as [По],
+				left(doc.Аналитика,20) as [Тип],
+				doc.Дата as [Дата платежа],
+				doc.Номер as [Номер п.п.],
+				doc.Сумма as [Сумма]
+			from stack.Документ doc
+			left join stack.Договор  as agr on agr.ROW_ID  = doc.[Документы-Договор] 
+			left join stack.Организации as org on org.ROW_ID  = agr.Грузополучатель 
+			left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = agr.Сотрудник1
+			left join stack.[Сотрудники] as staff3 on staff3.ROW_ID = agr.Сотрудник3
+			where 	doc.[Тип документа] = 21 AND 
+					(doc.Дата between convert(datetime,'{parameters["from"]}',21) and convert(datetime,'{parameters["to"]}',21)) and 
+					(agr.Номер is not null)
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
 #print(Points_with_Constant_Consuming(2024, 1))

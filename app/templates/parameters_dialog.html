@@ -31,6 +31,10 @@ window.onload = function(event){
         rootNode.insertAdjacentHTML(`beforeend`,`<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label></div><div class="col-8"><input class="container-fluid" autocomplete="off" type="text" name="${section.name}" id="${section.name}" value ="${section.default}"></div></div><hr>` );
       } //edit
 
+      if (section.type==`date`){
+        rootNode.insertAdjacentHTML(`beforeend`,`<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label></div><div class="col-8"><input class="container-fluid" autocomplete="off" type="date" name="${section.name}" id="${section.name}" value ="${section.default}"></div></div><hr>` );
+      } //edit
+
       if (section.type==`checkbox`){
         rootNode.insertAdjacentHTML(`beforeend`,`<div class="row"><div class="col-4"><label for="${section.name}">${section.lable}</label></div><div class="col-8"><input autocomplete="off" type="checkbox" name="${section.name}" id="${section.name}" ${Number(section.default)==1?"checked":""}></div></div><hr>`
         );
@@ -70,6 +74,12 @@ window.onload = function(event){
           foo[section.name]=document.getElementById(section.name).value;
           result.push(foo);
         }//if (section.type==`edit`)
+        if (section.type==`date`){
+          foo = {};
+          foo[section.name]=document.getElementById(section.name).value;
+          result.push(foo);
+        }//if (section.type==`edit`)
+
       if (section.type==`text`){
           foo = {};
           foo[section.name]=document.getElementById(section.name).value;

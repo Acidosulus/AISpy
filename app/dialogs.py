@@ -1,6 +1,6 @@
 from click import echo, style
 import uuid
-from datetime import datetime
+import datetime
 import ujson
 
 import pprint
@@ -61,12 +61,12 @@ class DialogParameters():
 
 	def add_years(self, lable='Год', name=''):
 		years_list = []
-		for year in range(datetime.now().year-6,datetime.now().year+3):
+		for year in range(datetime.date.today().year-6,datetime.date.today().year+3):
 			years_list.append( dict(id= year, value=year) )
 		self.append( dict(	lable	=	lable,
 								name	=	(name if len(name)>0 else str(uuid.uuid4())),
 								type	=	'listbox',
-								default	=	datetime.now().year,
+								default	=	datetime.date.today().year,
 								size	=	6+3,
 								data	=	years_list))
 	
@@ -76,6 +76,14 @@ class DialogParameters():
 						name	=	(name if len(name)>0 else str(uuid.uuid4())),
 						type	=	'checkbox',
 						default	=	default,
+						size	=	0,
+						data	=	[]))
+
+	def add_date(self, lable = 'Дата', name = '', default=datetime.date.today().isoformat()):
+			self.append( dict(lable	=	lable, 
+						name	=	(name if len(name)>0 else str(uuid.uuid4())),
+						type	=	'date',
+						default	=	default, # .strftime('%Y-%m-%d'),
 						size	=	0,
 						data	=	[]))
 
