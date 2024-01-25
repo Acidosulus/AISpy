@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull, connection
+from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull, connection, data_sourses
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -14,6 +14,7 @@ import xlsxwriter
 import os
 import json
 
+
 # get list of addresses of people with given parent_id
 def Get_Addresses_List(parent_id:int) -> list:
 	rez = connection_fl.execute(text(f"select stack.[AddrLs](row_id,0) as address, row_id, Номер as number  from stack.[Лицевые счета] where [Счета]={parent_id};")).fetchall()
@@ -21,6 +22,14 @@ def Get_Addresses_List(parent_id:int) -> list:
 	for element in rez:
 		result.append({'address':element[0], 'row_id':element[1], 'number':str(element[2])})
 	return result
+
+@app.route('/agreements/<object_id>')
+def agreements(object_id):
+	print(object_id)
+	header, data = data_sourses.Data_For_Agreements_List(object_id)
+	print('===============agreements=================')
+	prnt(data)
+	return render_template("agreements.html", results=data)
 
 
 @app.route('/')

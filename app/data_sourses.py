@@ -10,6 +10,7 @@ printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
 
+
 def get_queryresult_header_and_data(query_result):
 	result = []
 	
@@ -23,7 +24,7 @@ def get_queryresult_header_and_data(query_result):
 					drow[value] = float(v[count])
 				else:
 					drow[value] = (v[count] if v[count]!=None else '')
-			print(v[count], '    ->    ', type(v[count]), )
+			#print(v[count], '    ->    ', type(v[count]), )
 		result.append(drow)
 	
 	headers = []
@@ -31,6 +32,38 @@ def get_queryresult_header_and_data(query_result):
 		headers = list(result[0].keys())
 	
 	return headers, result	
+
+
+def Data_For_Agreements_List(parent_id:int) -> list:
+	query_result = connection_ul.execute(text(f"""--sql
+select * 
+	from (
+					select 
+						agr.row_id,
+						agr.[Папки] as folder_id,
+						case
+							when len(agr.[Номер])<10 then ''
+							else agr.[Номер]
+						end as number,
+						case 
+							when org.[Наименование] like '%АтомЭнергоСбыт%' then 1
+							else 0
+						end as folder,
+						case
+							when org.[Наименование] like '%АтомЭнергоСбыт%' then agr.[Примечание]
+							else trim(org.[Наименование]) + trim(agr.[Примечание])
+						end as name,
+						org.[ИНН] as inn,
+						org.[КПП] as kpp
+					from stack.[Договор] as agr
+					left join stack.[Организации] as org on org.row_id = agr.[Грузополучатель]
+					where agr.[Папки]={parent_id})
+			as ct
+	order by folder desc, number;
+  ----------------------------------------------------------------------------------------------------------------------------------------------------
+;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)	
+
 
 
 def Points_WithOut_Displays(parameters:dict):
@@ -160,4 +193,6 @@ def Pays_from_date_to_date(parameters):
 					(agr.Номер is not null)
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
-#print(Points_with_Constant_Consuming(2024, 1))
+
+
+print(Data_For_Agreements_List(-10))

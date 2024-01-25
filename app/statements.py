@@ -66,7 +66,6 @@ class Report:
 															.fetchall())[0]		
 		parameters = json.loads(row['parameters'])
 		data = json.loads(row['data'])
-		print(parameters)
 		df = pandas.DataFrame(data)
 		return render_template("report.html", 
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
