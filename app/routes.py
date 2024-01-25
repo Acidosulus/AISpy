@@ -28,7 +28,12 @@ def agreements(object_id):
 	print(object_id)
 	header, data = data_sourses.Data_For_Agreements_List(object_id)
 	print('===============agreements=================')
-	prnt(data)
+	for row in data:
+		print(type(row['descendants_count']))
+		#if isinstance(type(row['descendants_count']), int):
+		#	print(type(row['descendants_count']))
+		#	prnt(row)
+		row['descendants_count'] =  int(row['descendants_count'])
 	return render_template("agreements.html", results=data)
 
 

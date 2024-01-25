@@ -30,8 +30,10 @@
               <b>
             {% endif %}
 
-                      {{ result.name }}
-
+                {{ result.name }}
+            {% if result.descendants_count>0 %}
+              <sup class="text-success">{{ result.descendants_count }}</sup>
+            {% endif %}
             {% if result.number|length == 0 %}
               </b></a>
             {% endif %}

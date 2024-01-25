@@ -45,12 +45,12 @@ select *
 							when len(agr.[Номер])<10 then ''
 							else agr.[Номер]
 						end as number,
-						case 
-							when org.[Наименование] like '%АтомЭнергоСбыт%' then 1
+						CASE 
+							when len(agr.[Номер])<10 then (select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки])
 							else 0
-						end as folder,
+						END as descendants_count,
 						case
-							when org.[Наименование] like '%АтомЭнергоСбыт%' then agr.[Примечание]
+							when len(agr.[Номер])<10 then agr.[Примечание]
 							else trim(org.[Наименование]) + trim(agr.[Примечание])
 						end as name,
 						org.[ИНН] as inn,
@@ -59,7 +59,7 @@ select *
 					left join stack.[Организации] as org on org.row_id = agr.[Грузополучатель]
 					where agr.[Папки]={parent_id})
 			as ct
-	order by folder desc, number;
+	order by number, name;
   ----------------------------------------------------------------------------------------------------------------------------------------------------
 ;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)	
