@@ -74,6 +74,10 @@ class Report:
 							data_object_id=user_data_id,
 							report_name = self.report_name)
 	
+	#return history information humanreadable data from report parameters
+	def get_report_history_information(self, parameters:dict) -> list :
+		return []
+
 	# return answer for report_history
 	def history(self, user_id):
 		rows = common.RowsToDictList(connection.execute(db.select(	models.UserObject.id,
@@ -88,10 +92,13 @@ class Report:
 			foo['path'] = f'/download_excel/{row["id"]}'
 			foo['icon'] = f'/static/images/ico_excel.bmp'
 			foo['name'] = f'{self.report_humanread_name}'
-			foo['text'] = f'Идентификатор результата: {row["id"]}'
-			foo['text_1'] = f'Год: {json.loads(row["parameters"])["year"]}'
-			foo['text_2'] = f'Месяц: {json.loads(row["parameters"])["month"]}'
-			foo['text_3'] = f'Время формирования: {row["dt"]:%Y-%m-%d %H:%M}'
+			dparameters = json.loads(row["parameters"])
+			dparameters['id'] = row["id"]
+			dparameters['dt'] = row["dt"]
+			foo['text']   = self.get_report_history_information(dparameters)[0] #f'Идентификатор результата: {row["id"]}'
+			foo['text_1'] = self.get_report_history_information(dparameters)[1] #f'Год: {json.loads(row["parameters"])["year"]}'
+			foo['text_2'] = self.get_report_history_information(dparameters)[2] #f'Месяц: {json.loads(row["parameters"])["month"]}'
+			foo['text_3'] = self.get_report_history_information(dparameters)[3] #f'Время формирования: {row["dt"]:%Y-%m-%d %H:%M}'
 			foo['delete_link'] = f"""/delete_report/{row["id"]}"""
 			foo['view_link'] = f"""/Report_From_History/{self.report_name}/{row["id"]}"""
 			reportsList.append(foo)
@@ -165,6 +172,14 @@ class Points_WithOut_Displays(Report):
 	def get_data_source(self, parameters, current_user_id:int):
 		return data_sourses.Points_WithOut_Displays(parameters)
 
+	def get_report_history_information(self, parameters:dict) -> list :
+		result = []
+		result.append(f'Идентификатор результата: {parameters["id"]}')
+		result.append(f'Год: {parameters["year"]}')
+		result.append(f'Месяц: {parameters["month"]}')
+		result.append(f'Время формирования: {parameters["dt"]:%Y-%m-%d %H:%M}')
+		return result
+
 	def __str__(self):
 		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
 
@@ -181,8 +196,17 @@ class Points_with_Constant_Consuming(Report):
 	def get_data_source(self, parameters, current_user_id:int):
 		return data_sourses.Points_with_Constant_Consuming(parameters)
 
+	def get_report_history_information(self, parameters:dict) -> list :
+		result = []
+		result.append(f'Идентификатор результата: {parameters["id"]}')
+		result.append(f'Год: {parameters["year"]}')
+		result.append(f'Месяц: {parameters["month"]}')
+		result.append(f'Время формирования: {parameters["dt"]:%Y-%m-%d %H:%M}')
+		return result
+
 	def __str__(self):
 		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
+
 
 class Pays_from_date_to_date(Report):
 	def __init__(self):
@@ -191,11 +215,18 @@ class Pays_from_date_to_date(Report):
 		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
 		self.dialog.add_date('С', 'from', datetime.date.today().replace(day=1).isoformat())
 		self.dialog.add_date('По', 'to', last_day_of_month(datetime.date.today()).isoformat())
-		
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 
 	def get_data_source(self, parameters, current_user_id:int):
 		return data_sourses.Pays_from_date_to_date(parameters)
+
+	def get_report_history_information(self, parameters:dict) -> list :
+		result = []
+		result.append(f'Идентификатор результата: {parameters["id"]}')
+		result.append(f'C: {parameters["from"]}')
+		result.append(f'ПО: {parameters["to"]}')
+		result.append(f'Время формирования: {parameters["dt"]:%Y-%m-%d %H:%M}')
+		return result
 
 	def __str__(self):
 		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""

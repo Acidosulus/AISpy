@@ -37,7 +37,7 @@ else:
 		"mssql+pyodbc",
 		username="sa",
 		password="Bor@Teks",
-		host="10.19.50.11",
+		host="127.0.0.1",
 		port=1433,
 		database="atom_khk_fl",
 		query={
@@ -46,11 +46,11 @@ else:
 	)
 	connection_url_ul = URL.create(
 		"mssql+pyodbc",
-		username="КАЗАКОВЦЕВ_НМ",
-		password="1",
-		host="10.19.50.11",
+		username="sa",
+		password="Bor@Teks",
+		host="127.0.0.1",
 		port=1433,
-		database="atom_khk_ul_test",
+		database="atom_khk_ul",
 		query={
 			"driver": "SQL Server",
 			"TrustServerCertificate": "yes"	},
