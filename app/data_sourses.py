@@ -217,4 +217,4 @@ def Pays_from_date_to_date(parameters):
 	return get_queryresult_header_and_data(query_result)
 
 
-print(get_agreements_hierarchy(86726))
+#print(get_agreements_hierarchy(86726))

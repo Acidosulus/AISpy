@@ -1,15 +1,17 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 import configparser  # импортируем библиотеку
-import urllib
-import sys
 import pprint
+from click import echo, style
+
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
+config = configparser.ConfigParser()
+config.read("settings.ini", encoding='UTF-8')  
 
 from sqlalchemy.engine import URL
-if sys.platform == 'linux':
+"""
 	connection_url_fl = URL.create(
 		"mssql+pyodbc",
 		username="sa",
@@ -32,42 +34,42 @@ if sys.platform == 'linux':
 			"driver": "ODBC Driver 18 for SQL Server",
 			"TrustServerCertificate": "yes"	},
 	)
-else:
-	connection_url_fl = URL.create(
-		"mssql+pyodbc",
-		username="sa",
-		password="Bor@Teks",
-		host="127.0.0.1",
-		port=1433,
-		database="atom_khk_fl",
-		query={
-			"driver": "SQL Server",
-			"TrustServerCertificate": "yes"	},
-	)
-	connection_url_ul = URL.create(
-		"mssql+pyodbc",
-		username="sa",
-		password="Bor@Teks",
-		host="127.0.0.1",
-		port=1433,
-		database="atom_khk_ul",
-		query={
-			"driver": "SQL Server",
-			"TrustServerCertificate": "yes"	},
-	)
-print()
-prnt(connection_url_fl)
-prnt(connection_url_ul)
-print()
+"""
+connection_url_fl = URL.create(
+	config['login_fl']['ENGINE'],
+	username=config['login_fl']['USERNAME'],
+	password=config['login_fl']['PASSWORD'],
+	host=config['login_fl']['SERVER'],
+	port=config['login_fl']['PORT'],
+	database=config['login_fl']['DATABASE'],
+	query={
+		"driver": config['login_fl']['DRIVER'],
+		"TrustServerCertificate": "yes"	},
+)
+connection_url_ul = URL.create(
+	config['login_ul']['ENGINE'],
+	username=config['login_ul']['USERNAME'],
+	password=config['login_ul']['PASSWORD'],
+	host=config['login_ul']['SERVER'],
+	port=config['login_ul']['PORT'],
+	database=config['login_ul']['DATABASE'],
+	query={
+		"driver": config['login_ul']['DRIVER'],
+		"TrustServerCertificate": "yes"	},
+)
+
+echo(style(text=connection_url_fl, bg='blue', fg='bright_green'))
+echo(style(text=connection_url_ul, bg='blue', fg='bright_green'))
+
+
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-	config = configparser.ConfigParser()
-	config.read("settings.ini", encoding='UTF-8')  
-	SECRET_KEY = 'a really really really really long secret key' #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-	SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://postgres:321@{"185.112.225.153" if (sys.platform=="linux") else "127.0.0.1"}:35432/start_dev'
+	SECRET_KEY = config["engine"]["SECRET_KEY"] #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+	SQLALCHEMY_DATABASE_URI = f'{config["login"]["ENGINE"]}://{config["login"]["USERNAME"]}:{config["login"]["PASSWORD"]}@{config["login"]["SERVER"]}:{config["login"]["PORT"]}/{config["login"]["DATABASE"]}'
+	echo(style(text=SQLALCHEMY_DATABASE_URI, bg='blue', fg='bright_green'))
 	SQLALCHEMY_BINDS = {
 		'dbfl': connection_url_fl,
 		'dbul': connection_url_ul

@@ -89,7 +89,7 @@ class Report:
 		for row in rows:
 			foo = {}
 			foo['path'] = f'/download_excel/{row["id"]}'
-			foo['icon'] = f'/static/images/ico_excel.bmp'
+			foo['icon'] = f'/static/images/excel.png'
 			foo['name'] = f'{self.report_humanread_name}'
 			dparameters = json.loads(row["parameters"])
 			dparameters['id'] = row["id"]
