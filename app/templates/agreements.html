@@ -8,6 +8,13 @@
     <a onclick="javascript:history.back(); return false;"><IMG  WIDTH="64" HEIGHT="64"  title = "Назад" src="/static/images/back.png"></a>
     <div class="container">
       <h1>Договора ЮЛ</h1>
+      {%for parent in parents %}
+        <h4>{{ parent.indent|safe }}
+          {% if parent.counter != 0 %}
+          <IMG width="24" height="24" src="/static/images/child_corner.png">
+          {% endif %}
+          <a href="/agreements/{{ parent.row_id }}">{{ parent.name }}</a></h4>
+      {% endfor %}
     </div>
 
    <table id="data" class="table table-striped">

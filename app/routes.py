@@ -24,17 +24,17 @@ def Get_Addresses_List(parent_id:int) -> list:
 	return result
 
 @app.route('/agreements/<object_id>')
-def agreements(object_id):
+def agreements(object_id:int):
 	print(object_id)
 	header, data = data_sourses.Data_For_Agreements_List(object_id)
 	print('===============agreements=================')
 	for row in data:
-		print(type(row['descendants_count']))
+		#print(type(row['descendants_count']))
 		#if isinstance(type(row['descendants_count']), int):
 		#	print(type(row['descendants_count']))
-		#	prnt(row)
+		#prnt(row)
 		row['descendants_count'] =  int(row['descendants_count'])
-	return render_template("agreements.html", results=data)
+	return render_template("agreements.html", results=data, parents=data_sourses.get_agreements_hierarchy(int(object_id)))
 
 
 @app.route('/')

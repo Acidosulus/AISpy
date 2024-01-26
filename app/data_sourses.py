@@ -34,6 +34,28 @@ def get_queryresult_header_and_data(query_result):
 	return headers, result	
 
 
+def get_agreements_hierarchy(start_id:int) -> list:
+	result, rez = [], []
+	counter = 0
+	while start_id is not None and start_id>0:
+		query_result = connection_ul.execute(text(f"""--sql
+										   				select [Папки] as parent, [Примечание] as name, row_id as row_id from stack.[Договор] where row_id = {start_id}
+  														----------------------------------------------------------------------------------------------------------------------------------------------------
+												;""")).fetchall()
+		head, data = get_queryresult_header_and_data(query_result)
+		print(data)
+		start_id = data[0]['parent']
+		result.append({'parent':data[0]['parent'], 'name':data[0]['name'], 'row_id':data[0]['row_id']})
+		counter += 1
+	result = list(reversed(result))
+	for i, row in enumerate(result):
+		row['indent'] = '&nbsp;'*i*3
+		row['counter'] = i
+		rez.append(row)
+	print(rez)
+	return rez
+
+
 def Data_For_Agreements_List(parent_id:int) -> list:
 	query_result = connection_ul.execute(text(f"""--sql
 select * 
@@ -46,7 +68,7 @@ select *
 							else agr.[Номер]
 						end as number,
 						CASE 
-							when len(agr.[Номер])<10 then (select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки])
+							when len(agr.[Номер])<10 then coalesce((select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки]),0)
 							else 0
 						END as descendants_count,
 						case
@@ -195,4 +217,4 @@ def Pays_from_date_to_date(parameters):
 	return get_queryresult_header_and_data(query_result)
 
 
-print(Data_For_Agreements_List(-10))
+print(get_agreements_hierarchy(86726))
