@@ -1,6 +1,6 @@
 from click import echo, style
 import sqlalchemy as sa
-from app import common, connection_ul, connection_fl
+from app import common, connection_ul, connection_fl, connection
 from sqlalchemy import text
 import datetime
 import decimal
@@ -33,6 +33,51 @@ def get_queryresult_header_and_data(query_result):
 	
 	return headers, result	
 
+def get_reports_hierarchy(start_id:int) -> list:
+	result, rez = [], []
+	counter = 0
+	while start_id is not None or start_id != -10:
+		query_result = connection.execute(text(f"""--sql
+														select name, parent, persistent_id as row_id  from page_items_list where persistent_id={start_id};
+  														----------------------------------------------------------------------------------------------------------------------------------------------------
+												;""")).fetchall()
+		head, data = get_queryresult_header_and_data(query_result)
+		try:
+			start_id = data[0]['parent']
+			result.append({'parent':data[0]['parent'], 'name':data[0]['name'], 'row_id':data[0]['row_id']})
+			counter += 1
+		except:
+			break
+	result = list(reversed(result))
+	for i, row in enumerate(result):
+		row['indent'] = '&nbsp;'*i*3
+		row['counter'] = i
+		rez.append(row)
+	print(rez)
+	return rez
+
+def get_addresses_hierarchy(start_id:int) -> list:
+	result, rez = [], []
+	counter = 0
+	while start_id is not None and start_id>0:
+		query_result = connection_fl.execute(text(f"""--sql
+														select stack.[AddrLs](row_id,0) as name, [Счета] as parent, row_id  from stack.[Лицевые счета] where [row_id]={start_id};
+  														----------------------------------------------------------------------------------------------------------------------------------------------------
+												;""")).fetchall()
+		head, data = get_queryresult_header_and_data(query_result)
+		print('get_addresses_hierarchy ')
+		print('start_id:', start_id)
+		print(data)
+		start_id = data[0]['parent']
+		result.append({'parent':data[0]['parent'], 'name':data[0]['name'], 'row_id':data[0]['row_id']})
+		counter += 1
+	result = list(reversed(result))
+	for i, row in enumerate(result):
+		row['indent'] = '&nbsp;'*i*3
+		row['counter'] = i
+		rez.append(row)
+	print(rez)
+	return rez
 
 def get_agreements_hierarchy(start_id:int) -> list:
 	result, rez = [], []
@@ -54,6 +99,24 @@ def get_agreements_hierarchy(start_id:int) -> list:
 		rez.append(row)
 	print(rez)
 	return rez
+
+
+def Data_For_Addresses_List(parent_id:int) -> list:
+	query_result = connection_fl.execute(text(f"""--sql
+											select 	stack.[AddrLs](ls.row_id,0) as address,
+														ls.row_id,
+														trim(str(ls.Номер)) as number,
+														CASE 
+															when len(ls.[Номер])<10 
+								  								then coalesce((select sum(1) from stack.[Лицевые счета] as lss where ls.row_id=lss.[Счета]),0)
+															else 0
+														END as descendants_count
+												from stack.[Лицевые счета] as ls
+												where ls.[Счета]={parent_id};
+  ----------------------------------------------------------------------------------------------------------------------------------------------------
+;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
 
 
 def Data_For_Agreements_List(parent_id:int) -> list:
@@ -84,7 +147,7 @@ select *
 	order by number, name;
   ----------------------------------------------------------------------------------------------------------------------------------------------------
 ;""")).fetchall()
-	return get_queryresult_header_and_data(query_result)	
+	return get_queryresult_header_and_data(query_result)
 
 
 
@@ -217,4 +280,6 @@ def Pays_from_date_to_date(parameters):
 	return get_queryresult_header_and_data(query_result)
 
 
-#print(get_agreements_hierarchy(86726))
+print("=============================")
+print(get_reports_hierarchy(-110))
+print("=============================")

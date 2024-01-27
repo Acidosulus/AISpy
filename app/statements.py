@@ -136,14 +136,14 @@ class Report:
 		writer = pandas.ExcelWriter(file_name, engine='xlsxwriter')
 		df.to_excel(writer, index=False, float_format="%.2f", startrow=4, freeze_panes=(5,0), sheet_name='report')
 		writer.sheets['report'].autofilter('A5:WW5')
-		writer.sheets['report'].write(0,0,report_humanread_name + f""" {parameters['year']} {parameters['month']}""")
+		writer.sheets['report'].write(0,0,report_humanread_name + self.get_parameters_human_readable_string(parameters))
 		for column in df:
 			writer.sheets['report'].set_column(
 												df.columns.get_loc(column),
 												df.columns.get_loc(column),
 												max(df[column].astype(str).map(len).max(), len(column))
 											)
-		writer.save()
+		writer.close()
 		return send_file(file_name)
 	# return data source for report, must be realeased for every reportse separately
 	def get_data_source(self, parameters, current_user_id:int):
@@ -167,6 +167,9 @@ class Points_WithOut_Displays(Report):
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
+	
+	def get_parameters_human_readable_string(self, parameters):
+		return f"""Год {parameters['year']} Месяц {parameters['month']}"""
 
 	def get_data_source(self, parameters, current_user_id:int):
 		return data_sourses.Points_WithOut_Displays(parameters)
@@ -192,6 +195,9 @@ class Points_with_Constant_Consuming(Report):
 		self.dialog.add_years('Год','year')
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 
+	def get_parameters_human_readable_string(self, parameters):
+		return f"""Год {parameters['year']} Месяц {parameters['month']}"""
+
 	def get_data_source(self, parameters, current_user_id:int):
 		return data_sourses.Points_with_Constant_Consuming(parameters)
 
@@ -215,6 +221,9 @@ class Pays_from_date_to_date(Report):
 		self.dialog.add_date('С', 'from', datetime.date.today().replace(day=1).isoformat())
 		self.dialog.add_date('По', 'to', last_day_of_month(datetime.date.today()).isoformat())
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
+
+	def get_parameters_human_readable_string(self, parameters):
+		return f"""с {parameters['from']} ПО {parameters['to']}"""
 
 	def get_data_source(self, parameters, current_user_id:int):
 		return data_sourses.Pays_from_date_to_date(parameters)

@@ -15,14 +15,6 @@ import os
 import json
 
 
-# get list of addresses of people with given parent_id
-def Get_Addresses_List(parent_id:int) -> list:
-	rez = connection_fl.execute(text(f"select stack.[AddrLs](row_id,0) as address, row_id, Номер as number  from stack.[Лицевые счета] where [Счета]={parent_id};")).fetchall()
-	result = []
-	for element in rez:
-		result.append({'address':element[0], 'row_id':element[1], 'number':str(element[2])})
-	return result
-
 @app.route('/agreements/<object_id>')
 def agreements(object_id:int):
 	print(object_id)
@@ -71,12 +63,6 @@ def report_from_history(report_name:str, user_data_id:int):
 @app.route('/page_with_items/<parent_id>')
 def page_with_items(parent_id):
 	echo(style(text=f'page_with_items/{parent_id}', bg='blue', fg='bright_green'))
-	parent_name = connection.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.persistent_id==parent_id) ).fetchone()
-	try:
-		parent_name = parent_name[0]
-	except:
-		parent_name = ''
-
 	rows = common.RowsToDictList(db.session.query(models.PageItemsList).filter(models.PageItemsList.parent==parent_id).all())
 	print('rows:',rows)
 	print(f'Reports',pull.reports)
@@ -101,7 +87,7 @@ def page_with_items(parent_id):
 						row['history_records_count'] = history_records_count
 	prnt(rows)
 	reportsList = rows
-	return render_template("reports_index.html", reports=reportsList, list_title = 'Отчёты', list_sub_title = parent_name)
+	return render_template("reports_index.html", reports=reportsList, list_title = 'Отчёты', parents = data_sourses.get_reports_hierarchy(int(parent_id)))
 
 
 @app.route('/delete_report/<report_id>')
@@ -154,8 +140,8 @@ def RunReport(report_name):
 @app.route('/addresses/<object_id>')
 def addresses(object_id):
 	print(object_id)
-	results = Get_Addresses_List(object_id)
-	return render_template("addresses.html", results=results)
+	header, results = data_sourses.Data_For_Addresses_List(object_id)
+	return render_template("addresses.html", results=results, parents = data_sourses.get_addresses_hierarchy(int(object_id)))
 
 
 @app.route('/drop_all/')

@@ -6,10 +6,17 @@
 {% block content %}
 
 
-    <a onclick="javascript:history.back(); return false;"><IMG  WIDTH="64" HEIGHT="64"  title = "Назад" src="/static/images/back.png"></a>
-    <div class="container">
-      <h1>Адресный фонд</h1>
-    </div>
+  {% include "_navigation_panel.html"%}
+
+
+      <div class="container">
+        <h1>Адресный фонд ФЛ</h1>
+        {%for parent in parents %}
+          <h4>{{ parent.indent|safe }}
+            <IMG width="24" height="24" src="/static/images/child_corner.png">
+            <a href="/addresses/{{ parent.row_id }}"  class="link-secondary">{{ parent.name }}</a></h4>
+        {% endfor %}
+      </div>
 
    <table id="data" class="table table-striped">
     <thead>
@@ -24,7 +31,10 @@
       {% for result in results %}
         <tr>
           <td>{{ result.number }}</td>
-          <td><a href="/addresses/{{ result.row_id }}">{{ result.address }}</a></td>
+          <td><a href="/addresses/{{ result.row_id }}">{{ result.address }}
+            {% if result.descendants_count>0 %}
+            <sup class="text-success">{{ result.descendants_count }}</sup>
+          {% endif %}</a></td>
           {% if result.number|length == 12 %}
           <td><input type="text" name="order" id="order"></td>
           <td><input type="text" name="money" id="money"></td>

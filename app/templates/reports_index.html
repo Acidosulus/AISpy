@@ -6,31 +6,15 @@
 
 {% block content %}
 
-<table border="1" class="dataframe table">
-  <tbody>
-    <tr>
-      <td align="left"><a onclick="javascript:history.back(); return false;"><IMG  WIDTH="64" HEIGHT="64"  title = "Назад" src="/static/images/back.png"></a></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-</tbody>
-</table>
-
+  {% include "_navigation_panel.html"%}
 
     <div class="container">
       <h1>{{ list_title }}</h1>
-      <h2 class="text-secondary">{{ list_sub_title }}</h2>
+      {%for parent in parents %}
+      <h4>{{ parent.indent|safe }}
+        <IMG width="24" height="24" src="/static/images/child_corner.png">
+        <a href="/page_with_items/{{ parent.row_id }}" class="link-secondary">{{ parent.name }}</a></h4>
+      {% endfor %}
     </div>
     {% include "_items_of_page.html"%}
 {% endblock %}
