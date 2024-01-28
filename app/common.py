@@ -1,4 +1,6 @@
 from collections.abc import Iterable
+from dataclasses import dataclass
+
 
 # return one row query result as dict
 def RowToDict(row):
@@ -24,3 +26,34 @@ def RowsToDictList(rows):
 		return result
 	except AttributeError:
 		return [dict(r._mapping) for r in rows]
+
+@dataclass
+class Navbar_Button:
+	href: str
+	title: str
+	src: str
+	onclick: str
+
+class Button_Home(Navbar_Button):
+	href = '/'
+	title = 'В начало'
+	src = 'home.png'
+
+class Button_Back(Navbar_Button):
+	href = ''
+	onclick = 'javascript:history.back(); return false;'
+	title = 'Назад'
+	src = 'home.png'
+
+class Button_List(Navbar_Button):
+	href = '',
+	onclick = '',
+	title = 'Список',
+	src = 'list.png'
+
+class Button_Excel(Navbar_Button):
+	href = '',
+	onclick = '',
+	title = 'Скачать отчет Excel',
+	src = 'excel.png'
+
