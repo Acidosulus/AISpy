@@ -30,13 +30,9 @@ class DialogParameters():
 		return result_dict
 
 	def __str__(self) -> str:
+		print(self.parameters)
 		foo = ujson.dumps(dict(title=self.title, backlink=self.backlink, parameters= self.parameters), sort_keys=False, ensure_ascii=False)
-		#print(foo)
 		return foo
-		cdata = ''
-		for parameter in self.parameters:
-			cdata += (', 'if len(cdata)>0 else '') + str(parameter) 
-		return '{'+f"title:`{self.title}`, backlink:`{self.backlink}`, "+'parameters:[' + cdata + ']'+'};'
 
 	def add_months(self, lable='Месяц', name=''):
 		self.append(  
@@ -87,31 +83,6 @@ class DialogParameters():
 						size	=	0,
 						data	=	[]))
 
-class DialogSection():
-	lable = ''
-	type = ''
-	default =''
-	name = str(uuid.uuid4())
-	data = []
-	size = '0'
-	def __init__(self, lable, type, default, name, data, size,):
-		self.lable = lable
-		self.name = name
-		self.type = type
-		self. size = size
-		self.default = default
-		self.data = data
-
-	def __str__(self) -> str:
-		return ujson.dumps(self.data)
-		cdata=''
-		for element in self.data:
-			cdata = cdata + '		'+'{'+f"""id:`{element['id']}`, value:`{element['value']}`"""+'}' #', ' if len(cdata)>0 else ''+
-		cdata ='[' + cdata + ']'
-		cdata = cdata.replace('}		{','},		{')
-		return '{'+f"""lable:`{self.lable}`, name:`{self.name}`, type:`{self.type}`, default:`{self.default}`, size:`{self.size}`, data:{cdata}"""+'}'
-
-
 """
 testdialog = DialogParameters(title='Заголовок тестового диалога', backlink='/RunReport/Points_WithOut_Displays')
 testdialog.add_months('Месяц', 'Month')
@@ -119,32 +90,35 @@ testdialog.add_years('Год', 'Year')
 
 print(testdialog)
 
+"""
+dialogtest = DialogParameters(title='Заголовок диалога с параметрами', backlink='/RunReport/TestDialog')
 
-dialog = DialogParameters(title='Заголовок диалога с параметрами', backlink='/RunReport/Points_WithOut_Displays')
-dialog.append( DialogSection(name = 'Первый параметр ввода строки из диалога',
+dialogtest.append( dict(name = 'Первый параметр ввода строки из диалога',
 								lable = 'Первый параметр ввода строки из диалога',
 								type='edit',
 								default='строка по умолчанию',
 								data=[],
 								size=0) )
 
-dialog.append( DialogSection(name = 'Второй параметр ввода текста из диалога',
+
+dialogtest.append( dict(name = 'Второй параметр ввода текста из диалога',
 								lable = 'Второй параметр ввода текста из диалога',
 								type='text',
 								default='многострочный\nтекст\nпо\nумолчанию',
 								data=[],
 								size=0) )
-
-dialog.append( DialogSection(name = 'Третий параметр - флажок',
+"""
+dialogtest.append( DialogSection(name = 'Третий параметр - флажок',
 								lable = 'Третий параметр - флажок',
 								type='checkbox',
 								default='1',
 								data=[],
 								size=0) )
-dialog.append( DialogSection(name = 'Список значний',
+dialogtest.append( DialogSection(name = 'Список значний',
 								lable = 'Список значний',
 								type='listbox',
 								default='1',
-								data=[{'id':'1', 'value':'Первое значение'}, {'id':'2', 'value':'Второе значение'}],
+								data=[dict(id=1, value='Первое значение'), dict(id=2,value='Второе значение')],
 								size=0) )
 """
+print(str(dialogtest))

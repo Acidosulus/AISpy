@@ -53,7 +53,6 @@ def get_reports_hierarchy(start_id:int) -> list:
 		row['indent'] = '&nbsp;'*i*3
 		row['counter'] = i
 		rez.append(row)
-	print(rez)
 	return rez
 
 def get_addresses_hierarchy(start_id:int) -> list:
@@ -280,6 +279,6 @@ def Pays_from_date_to_date(parameters):
 	return get_queryresult_header_and_data(query_result)
 
 
-print("=============================")
-print(get_reports_hierarchy(-110))
-print("=============================")
+#print("=============================")
+#print(get_reports_hierarchy(-10))
+#print("=============================")

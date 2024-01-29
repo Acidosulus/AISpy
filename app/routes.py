@@ -67,7 +67,6 @@ def page_with_items(parent_id):
 	print('rows:',rows)
 	print(f'Reports',pull.reports)
 	for row in rows:
-		
 		# item comment input into text field
 		if len(row['note'])>0:
 			if row['note'] != 'None':
@@ -85,7 +84,6 @@ def page_with_items(parent_id):
 					if history_records_count>0:
 						row['history_link'] = f'/report_history/{report_name}'
 						row['history_records_count'] = history_records_count
-	prnt(rows)
 	reportsList = rows
 	return render_template("reports_index.html",
 							reports=reportsList,
@@ -134,7 +132,6 @@ def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
 	if report_name in pull.report_names_list():
 		parameters = pull.reports[report_name].dialog.get_answers(request.form.items())
-	#parameters = dialogs.testdialog.get_answers(request.form.items())
 	echo(style('dialog answer: ', fg='yellow')+style(parameters, fg='bright_yellow'))
 	if report_name in pull.report_names_list():
 		return pull.reports[report_name].run_report(parameters, current_user.id)

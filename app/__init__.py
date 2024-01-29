@@ -64,7 +64,7 @@ with app.app_context():
 	pull.add(statements.Points_with_Constant_Consuming())
 	pull.add(statements.Pays_from_date_to_date())
 
-	print('Registred reports:')
-	print(pull)
+#	print('Registred reports:')
+#	print(pull)
 
 from app import routes,  models

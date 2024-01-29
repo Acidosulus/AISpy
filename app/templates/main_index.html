@@ -5,6 +5,10 @@
 
 
 {% block content %}
+<section class="mform hidden" id="mform">
+</section>
+
+
     <div class="container">
       {% if current_user.is_authenticated %}
       <h1><a href="/page_with_items/-10"><img width="30" height="30" src="/static/images/printer.png"> Отчёты</a></h1>
@@ -15,6 +19,7 @@
       <hr>
       <hr>
       <hr>
+      <input class="btn btn-primary" id="test_button" type="button" value="test" onclick="openModal();" />
       <!--<p><a href="/parameters_dialog/">Проверка диалога с произвольными параметрами</a></p>-->
       <hr>
       <hr>
