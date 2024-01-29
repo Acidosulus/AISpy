@@ -26,7 +26,7 @@ def agreements(object_id:int):
 		#	print(type(row['descendants_count']))
 		#prnt(row)
 		row['descendants_count'] =  int(row['descendants_count'])
-	return render_template("agreements.html", results=data, parents=data_sourses.get_agreements_hierarchy(int(object_id)))
+	return render_template("agreements.html", results=data, parents=data_sourses.get_agreements_hierarchy(int(object_id)), navigation_buttons = [common.Button_Home(), common.Button_Back()])
 
 
 @app.route('/')
@@ -87,7 +87,11 @@ def page_with_items(parent_id):
 						row['history_records_count'] = history_records_count
 	prnt(rows)
 	reportsList = rows
-	return render_template("reports_index.html", reports=reportsList, list_title = 'Отчёты', parents = data_sourses.get_reports_hierarchy(int(parent_id)))
+	return render_template("reports_index.html",
+							reports=reportsList,
+							list_title = 'Отчёты',
+							parents = data_sourses.get_reports_hierarchy(int(parent_id)),
+							navigation_buttons = [common.Button_Home(), common.Button_Back()])
 
 
 @app.route('/delete_report/<report_id>')
@@ -141,71 +145,7 @@ def RunReport(report_name):
 def addresses(object_id):
 	print(object_id)
 	header, results = data_sourses.Data_For_Addresses_List(object_id)
-	return render_template("addresses.html", results=results, parents = data_sourses.get_addresses_hierarchy(int(object_id)))
-
-
-@app.route('/drop_all/')
-def drop_all():
-	db.drop_all()
-	return redirect(url_for('index'))
-
-
-@app.route('/create_all/')
-def create_all():
-	db.create_all()
-	return redirect(url_for('index'))
-
-
-@app.route('/import_data/')
-def import_data():
-	
-	db.session.add(models.PageItemsList(	name = 'ТУ не имеющие показаний в расчётном периоде',
-									 		path='/Report/ReportPointsWithoutDisplays',
-											icon='/static/images/ico_excel.bmp',
-											roles='0',
-											persistent_id=1900,
-											parent=-110))
-
-	db.session.add(models.PageItemsList(   name='Рассчитанность ТУ МКЖД',
-									path='/Report/Report_Calc_Status_MKJD_Points',
-									icon='/static/images/ico_excel.bmp',
-									roles='0',
-									persistent_id=1901,
-									parent= -110)
-					)
-
-	db.session.add(models.PageItemsList(   name='Сервисные отчёты по статусу расчёта текущего периода',
-									path='',
-									icon='/static/images/report.png',
-									roles='0',
-									persistent_id= -110,
-									parent=-100)
-					)
-
-	db.session.add(models.PageItemsList(   name='Отчёты ЮЛ',
-									path='',
-									icon='/static/images/report.png',
-									roles='0',
-									persistent_id= -100,
-									parent=-10)
-					)
-	db.session.add(models.PageItemsList(   name='Отчёты ФЛ',
-									path='',
-									icon='/static/images/report.png',
-									roles='0',
-									persistent_id= -200,
-									parent=-10)
-					)
-	
-
-
-
-	db.session.commit()
-	return redirect(url_for('index'))
-
-
-
-
+	return render_template("addresses.html", results=results, parents = data_sourses.get_addresses_hierarchy(int(object_id)), navigation_buttons = [common.Button_Home(), common.Button_Back()])
 
 
 

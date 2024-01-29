@@ -11,30 +11,7 @@ config = configparser.ConfigParser()
 config.read("settings.ini", encoding='UTF-8')  
 
 from sqlalchemy.engine import URL
-"""
-	connection_url_fl = URL.create(
-		"mssql+pyodbc",
-		username="sa",
-		password="Bor@Teks",
-		host="10.19.50.11",
-		port=1433,
-		database="atom_khk_fl",
-		query={
-			"driver": "ODBC Driver 18 for SQL Server",
-			"TrustServerCertificate": "yes"	},
-	)
-	connection_url_ul = URL.create(
-		"mssql+pyodbc",
-		username="КАЗАКОВЦЕВ_НМ",
-		password="1",
-		host="10.19.50.11",
-		port=1433,
-		database="atom_khk_ul_test",
-		query={
-			"driver": "ODBC Driver 18 for SQL Server",
-			"TrustServerCertificate": "yes"	},
-	)
-"""
+
 connection_url_fl = URL.create(
 	config['login_fl']['ENGINE'],
 	username=config['login_fl']['USERNAME'],

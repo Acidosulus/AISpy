@@ -35,25 +35,34 @@ class Navbar_Button:
 	onclick: str
 
 class Button_Home(Navbar_Button):
-	href = '/'
-	title = 'В начало'
-	src = 'home.png'
+	def __init__(self, href='/', title='В начало', src='home.png', onclick=''):
+		self.href = href
+		self.title = title
+		self.src = src
+		self.onclick = onclick
+
+		
 
 class Button_Back(Navbar_Button):
-	href = ''
-	onclick = 'javascript:history.back(); return false;'
-	title = 'Назад'
-	src = 'home.png'
+	def __init__(self, href='', title='Назад', src='back.png', onclick='javascript:history.back(); return false;'):
+		self.href = href
+		self.title = title
+		self.src = src
+		self.onclick = onclick
+
 
 class Button_List(Navbar_Button):
-	href = '',
-	onclick = '',
-	title = 'Список',
-	src = 'list.png'
+	def __init__(self, href='', title='Список ранее сформированных отчетов', src='list.png', onclick=''):
+		self.href = href
+		self.title = title
+		self.src = src
+		self.onclick = onclick
+
 
 class Button_Excel(Navbar_Button):
-	href = '',
-	onclick = '',
-	title = 'Скачать отчет Excel',
-	src = 'excel.png'
+	def __init__(self, href='', title='Скачать отчет Excel', src='excel.png', onclick=''):
+		self.href = href
+		self.title = title
+		self.src = src
+		self.onclick = onclick
 

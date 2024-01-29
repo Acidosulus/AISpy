@@ -55,7 +55,8 @@ class Report:
 	
 	# return answer for start report with parameters dialog	
 	def report(self):
-		return render_template("parameters_dialog.html", parametesJSON = str(self.dialog), report_name=self.report_name)
+		return render_template("parameters_dialog.html", parametesJSON = str(self.dialog), report_name=self.report_name, navigation_buttons = [common.Button_Home(), common.Button_Back()])
+	
 	# return answer for start report from last formed data, recieved UserData.id
 	def report_from_history(self, user_id, user_data_id:int):
 		echo(style(text='report_from_history into class', bg='blue', fg='bright_yellow'))
@@ -69,9 +70,13 @@ class Report:
 		df = pandas.DataFrame(data)
 		return render_template("report.html", 
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
-							report_title=f"{self.report_humanread_name} {self.get_parameters_human_readable_string(parameters)}",
+							report_title=f"{self.report_humanread_name}  {self.get_parameters_human_readable_string(parameters)}",
 							data_object_id=user_data_id,
-							report_name = self.report_name)
+							report_name = self.report_name,
+							navigation_buttons =	[	common.Button_Home(),
+														common.Button_Back(),
+														common.Button_List(href=f"/report_history/{self.report_name}"),
+														common.Button_Excel(href=f"/download_excel/{user_data_id}")])
 	
 	#return history information humanreadable data from report parameters
 	def get_report_history_information(self, parameters:dict) -> list :
@@ -101,7 +106,11 @@ class Report:
 			foo['delete_link'] = f"""/delete_report/{row["id"]}"""
 			foo['view_link'] = f"""/Report_From_History/{self.report_name}/{row["id"]}"""
 			reportsList.append(foo)
-		return render_template("reports_index.html", reports=reportsList, list_title = self.report_humanread_name , list_sub_title = 'история формирования отчёта')
+		return render_template("reports_index.html",
+						 		reports=reportsList,
+								list_title = self.report_humanread_name,
+								list_sub_title = 'история формирования отчёта',
+								navigation_buttons = [common.Button_Home(), common.Button_Back()])
 	
 	
 	# return answer for view report into browser
@@ -123,7 +132,8 @@ class Report:
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
 							report_title=f"{self.report_humanread_name} {self.get_parameters_human_readable_string(parameters)}",
 							data_object_id=data_object_id,
-							report_name = self.report_name)
+							report_name = self.report_name,
+							navigation_buttons = [common.Button_Home(), common.Button_Back(), common.Button_List(href=f"/report_history/{self.report_name}")])
 	
 	# return answer excel report file download
 	def download_excel(self, user_object_id):
