@@ -174,7 +174,9 @@ def logout():
     return redirect(url_for("index"))
 
 
-
+@app.route("/test_dialog", methods=['GET', 'POST'])
+def test_dialog():
+	return str(dialogs.dialogtest)
 
 
 

@@ -107,18 +107,26 @@ dialogtest.append( dict(name = 'Второй параметр ввода тек�
 								default='многострочный\nтекст\nпо\nумолчанию',
 								data=[],
 								size=0) )
-"""
-dialogtest.append( DialogSection(name = 'Третий параметр - флажок',
+
+dialogtest.append( dict(name = 'Третий параметр - флажок',
 								lable = 'Третий параметр - флажок',
 								type='checkbox',
 								default='1',
 								data=[],
 								size=0) )
-dialogtest.append( DialogSection(name = 'Список значний',
-								lable = 'Список значний',
+dialogtest.append( dict(name = 'Список значeний',
+								lable = 'Список значeний',
 								type='listbox',
 								default='1',
 								data=[dict(id=1, value='Первое значение'), dict(id=2,value='Второе значение')],
 								size=0) )
-"""
+
+dialogtest.append( dict(name = 'Список значeний 1',
+								lable = 'Список значeний 1',
+								type='listbox',
+								default='1',
+								data=[dict(id=1, value='Первое значение'), dict(id=2,value='Второе значение')],
+								size=2) )
+
+
 print(str(dialogtest))
