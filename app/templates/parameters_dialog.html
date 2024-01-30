@@ -79,7 +79,6 @@ window.onload = function(event){
           foo[section.name]=document.getElementById(section.name).value;
           result.push(foo);
         }//if (section.type==`edit`)
-
       if (section.type==`text`){
           foo = {};
           foo[section.name]=document.getElementById(section.name).value;
@@ -96,8 +95,9 @@ window.onload = function(event){
           result.push(foo);
         }//if (section.type==`listbox`)
       }//for (let section of source.parameters)
-    console.log(result);
     }//if (source.parameters!=null)
+    console.log(result);
+    return result;
   }//function
 
 

@@ -12,10 +12,12 @@ class DialogParameters():
 	title = ''
 	parameters = []
 	backlink = ''
-	def __init__(self, title, backlink):
+	success_code = ''
+	def __init__(self, title='', backlink='', success_jscode=''):
 		self.title = title
 		self.parameters = []
 		self.backlink = backlink
+		self.success_jscode = success_jscode
 
 	def append(self, section):
 		self.parameters.append(section)
@@ -31,7 +33,7 @@ class DialogParameters():
 
 	def __str__(self) -> str:
 		print(self.parameters)
-		foo = ujson.dumps(dict(title=self.title, backlink=self.backlink, parameters= self.parameters), sort_keys=False, ensure_ascii=False)
+		foo = ujson.dumps(dict(title=self.title, backlink=self.backlink, parameters= self.parameters, success_jscode = self.success_jscode), sort_keys=False, ensure_ascii=False)
 		return foo
 
 	def add_months(self, lable='Месяц', name=''):
@@ -91,7 +93,7 @@ testdialog.add_years('Год', 'Year')
 print(testdialog)
 
 """
-dialogtest = DialogParameters(title='Заголовок диалога с параметрами', backlink='/RunReport/TestDialog')
+dialogtest = DialogParameters(title='Заголовок диалога с параметрами', backlink='/RunReport/TestDialog', success_jscode = '')
 
 dialogtest.append( dict(name = 'Первый параметр ввода строки из диалога',
 								lable = 'Первый параметр ввода строки из диалога',
