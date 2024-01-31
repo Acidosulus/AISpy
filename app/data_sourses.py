@@ -279,6 +279,14 @@ def Pays_from_date_to_date(parameters):
 	return get_queryresult_header_and_data(query_result)
 
 
+def Agreement_Data(row_id:int):
+	query_result = connection_ul.execute(text(f"""--sql
+																	select 
+										   								from stack.[Договор]
+										   								where row_id = {row_id}
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
 #print("=============================")
 #print(get_reports_hierarchy(-10))
 #print("=============================")
