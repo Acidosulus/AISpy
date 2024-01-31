@@ -83,12 +83,15 @@ def get_agreements_hierarchy(start_id:int) -> list:
 	counter = 0
 	while start_id is not None and start_id>0:
 		query_result = connection_ul.execute(text(f"""--sql
-										   				select [Папки] as parent, [Примечание] as name, row_id as row_id from stack.[Договор] where row_id = {start_id}
+										   				select [Папки] as parent, [Примечание] as name, row_id as row_id, [Номер] from stack.[Договор] where row_id = {start_id}
   														----------------------------------------------------------------------------------------------------------------------------------------------------
 												;""")).fetchall()
 		head, data = get_queryresult_header_and_data(query_result)
 		print(data)
 		start_id = data[0]['parent']
+		# for agreement number name must be number
+		if len(str(data[0]['Номер']))==10:
+			data[0]['name']=data[0]['Номер']
 		result.append({'parent':data[0]['parent'], 'name':data[0]['name'], 'row_id':data[0]['row_id']})
 		counter += 1
 	result = list(reversed(result))
@@ -281,12 +284,24 @@ def Pays_from_date_to_date(parameters):
 
 def Agreement_Data(row_id:int):
 	query_result = connection_ul.execute(text(f"""--sql
-																	select 
-										   								from stack.[Договор]
-										   								where row_id = {row_id}
+																	select  	
+																			agr.[Номер],
+																			agr.[Грузополучатель] as gr_row_id,
+																			gr.[Название] as gr_Название,
+																			agr.[Плательщик] as pl_row_id,
+																			pl.[Название] as pl_Название,
+																			agr.[Начало договора],
+																			agr.[Окончание],
+																			agr.[Дата подписания],
+																			agr.[Дата расторжения]
+																	from stack.[Договор] as agr
+																	left join stack.[Организации] as gr on gr.row_id = agr.[Грузополучатель]
+																	left join stack.[Организации] as pl on pl.row_id = agr.[Плательщик]
+																	where agr.row_id=113530;
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
-#print("=============================")
+print("=============================")
 #print(get_reports_hierarchy(-10))
-#print("=============================")
+print(Agreement_Data(113442))
+print("=============================")
