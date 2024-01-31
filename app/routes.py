@@ -73,9 +73,12 @@ def page_with_items(parent_id):
 				row['text'] = row['note']
 
 		if len(row['path'])==0:
+			# it's a folder
 			row['path'] = f'/page_with_items/{row["persistent_id"]}'
 		else:
+			# it's a item of list
 			report_name = row['path'].replace('/Report/','')
+			row['onclick'] = f"""openModal(`/Report_Get_Dialog_JSON/{report_name}`)"""
 			if len(report_name)>0:
 				if report_name in pull.report_names_list():
 					history_records_count = pull.reports[report_name].ready_reports_count(current_user.id)
@@ -117,6 +120,13 @@ def Report(report_name):
 		return pull.reports[report_name].report()
 	return redirect(url_for('index'))
 
+@app.route('/Report_Get_Dialog_JSON/<report_name>', methods=["GET", "POST"])
+def Report_Get_Dialog_JSON(report_name):
+	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
+	if report_name in pull.report_names_list():
+		return pull.reports[report_name].report_dialog_JSON()
+	return redirect(url_for('index'))
+
 
 @app.route('/download_excel/<user_object_id>')
 def download_excel(user_object_id):
@@ -130,8 +140,10 @@ def download_excel(user_object_id):
 @app.route('/RunReport/<report_name>', methods=['POST'])
 def RunReport(report_name):
 	echo(style(text='Report:', fg='black', bg='white') + ' ' + style(text=report_name, fg='bright_white'))
+	echo(style(request.form.items(), fg='bright_red'))
 	if report_name in pull.report_names_list():
 		parameters = pull.reports[report_name].dialog.get_answers(request.form.items())
+		echo(style(parameters, fg='bright_red'))
 	echo(style('dialog answer: ', fg='yellow')+style(parameters, fg='bright_yellow'))
 	if report_name in pull.report_names_list():
 		return pull.reports[report_name].run_report(parameters, current_user.id)

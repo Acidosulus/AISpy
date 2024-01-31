@@ -11,10 +11,9 @@ document.addEventListener("keydown", function (e) {
 });
 
 // open modal function
-async function openModal() {
+async function openModal(uri_for_get_JSON) {
     document.getElementById('mform').classList.remove("hidden");
-
-    await FillOutModalForm();
+    await FillOutModalForm(uri_for_get_JSON);
   };
 
 
@@ -25,13 +24,13 @@ async function asyncRequest (uri, method, data, debug=false){
     return response_promise.json();
 }
 
-async function FillOutModalForm(){
+async function FillOutModalForm(uri_for_get_JSON){
     const str_card_begin = `<div class="card text-secondary-emphasis bg-secondary-subtle border border-secondary-subtle rounded-3" style="padding: 1em;">`;
     const str_card_end = `</div>`;
 
 
 
-    let answer = await asyncRequest(`/test_dialog`, `POST`, {});
+    let answer = await asyncRequest(uri_for_get_JSON, `POST`, {});
     console.log('FillOutModalForm')
     console.log(answer);
     var source = answer;
@@ -76,18 +75,21 @@ async function FillOutModalForm(){
     }
     rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><div class="container"> <div class="row"><div class="col-sm-8"><button type="submit" class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button></div><div class="col-sm-4"><button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='closeModal();'>Отмена</button></div></div>`);
     const ok_button = document.getElementById('button_modal_dialog_ok');
-    if (source.backlink.length>0){
-      ok_button.onclick = function() { window.location.href = "${source.backlink}"; };
-    }else{
+    if (source.success_jscode.length>0){
       console.log(`jscode`);
       ok_button.onclick = function() { eval(source.success_jscode); };
     }
-
+    
+    if (source.backlink.length>0){
+      console.log(`backlink`  );
+      rootNode.action = source.backlink;
+    }
 }
 
 
   //  function read intered parameters an sent them on the server
   function Ok(source){
+    console.log('Ok function:')
     var result = [];
     if (source.parameters!=null){
     for (let section of source.parameters){
@@ -119,7 +121,6 @@ async function FillOutModalForm(){
         }//if (section.type==`listbox`)
       }//for (let section of source.parameters)
     }//if (source.parameters!=null)
-    console.log(result);
     return result;
   }//function
 

@@ -77,6 +77,9 @@ class Report:
 														common.Button_Back(),
 														common.Button_List(href=f"/report_history/{self.report_name}"),
 														common.Button_Excel(href=f"/download_excel/{user_data_id}")])
+
+	def report_dialog_JSON(self):
+		return str(self)
 	
 	#return history information humanreadable data from report parameters
 	def get_report_history_information(self, parameters:dict) -> list :
@@ -173,7 +176,7 @@ class Points_WithOut_Displays(Report):
 	def __init__(self):
 		self.report_name = 'ReportPointsWithoutDisplays'
 		self.report_humanread_name = get_human_readable_report_name(self.report_name)
-		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
+		self.dialog = dialogs.DialogParameters(title = get_human_readable_report_name(self.report_name), backlink=f'/RunReport/{self.report_name}')
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
@@ -193,14 +196,14 @@ class Points_WithOut_Displays(Report):
 		return result
 
 	def __str__(self):
-		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
+		return str(self.dialog)
 
 
 class Points_with_Constant_Consuming(Report):
 	def __init__(self):
 		self.report_name = 'Report_Points_with_Constant_Consuming'
 		self.report_humanread_name = get_human_readable_report_name(self.report_name)
-		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
+		self.dialog = dialogs.DialogParameters(title=get_human_readable_report_name(self.report_name), backlink=f'/RunReport/{self.report_name}')
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
@@ -220,16 +223,17 @@ class Points_with_Constant_Consuming(Report):
 		return result
 
 	def __str__(self):
-		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
+		return str(self.dialog)
 
 
 class Pays_from_date_to_date(Report):
 	def __init__(self):
 		self.report_name = 'Report_pays_from_date_to_date'
 		self.report_humanread_name = get_human_readable_report_name(self.report_name)
-		self.dialog = dialogs.DialogParameters(get_human_readable_report_name(self.report_name), f'/RunReport/{self.report_name}')
+		self.dialog = dialogs.DialogParameters(title=get_human_readable_report_name(self.report_name), backlink=f'/RunReport/{self.report_name}') #backlink=f'/RunReport/{self.report_name}
 		self.dialog.add_date('С', 'from', datetime.date.today().replace(day=1).isoformat())
 		self.dialog.add_date('По', 'to', last_day_of_month(datetime.date.today()).isoformat())
+		self.dialog.success_code=''
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 
 	def get_parameters_human_readable_string(self, parameters):
@@ -247,7 +251,7 @@ class Pays_from_date_to_date(Report):
 		return result
 
 	def __str__(self):
-		return f"""{self.report_name:self.report_name, 'dialog':str(self.dialog)}"""
+		return str(self.dialog)
 
 
 # adapter for dictionary of report objects

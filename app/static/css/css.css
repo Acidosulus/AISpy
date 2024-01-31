@@ -3,15 +3,15 @@
   .mform {
     gap: 0.4rem;
     width: 95%;
-    height: 95%;
+    height: 85%;
     padding: 1.3rem;
     min-height: 250px;
     position: absolute;
     z-index: 2;
-    top: 2.5%;
+    top: 10%;
     left: 2.5%;
     background-color: white;
-    border: 1px solid #ddd;
+    border: 1px solid #2426c2;
     border-radius: 15px;
   }
   

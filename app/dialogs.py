@@ -93,7 +93,7 @@ testdialog.add_years('Год', 'Year')
 print(testdialog)
 
 """
-dialogtest = DialogParameters(title='Заголовок диалога с параметрами', backlink='/RunReport/TestDialog', success_jscode = '')
+dialogtest = DialogParameters(title='Заголовок диалога с параметрами', backlink='', success_jscode = """""") #, backlink='/RunReport/TestDialog'
 
 dialogtest.append( dict(name = 'Первый параметр ввода строки из диалога',
 								lable = 'Первый параметр ввода строки из диалога',

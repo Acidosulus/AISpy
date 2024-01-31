@@ -3,9 +3,16 @@
       <div class="card border-info mb-3">
         
         <div class="card-body text-success">
-          <a href="{{ report.path }}"><h3 class="card-title">
-            {{ report.name }}
-          </h3></a>
+           
+          {% if report.onclick is not defined %}
+          <a href = "{{ report.path }}">
+          {% endif %}
+                <h3 class="card-title">
+                <u>  {{ report.name }} </u>
+                </h3>
+          {% if report.onclick is not defined %}
+          </a>
+          {% endif %}
           <div>
           {% if report.text is defined %}
           <p class="card-text"> {{ report.text }}</p>
@@ -19,7 +26,12 @@
           {% if report.text_3 is defined %}
           <p class="card-text"> {{ report.text_3 }}</p>
           {% endif %}
-          <a href="{{ report.path }}"> <img src="{{ report.icon }}" with="64" height="64"></a>&nbsp;&nbsp;&nbsp;&nbsp;
+          <a
+          {% if report.onclick is defined %}
+            onclick={{ report.onclick|safe }}
+          {% else %}
+            href={{ report.path }}
+          {% endif %}> <img src="{{ report.icon }}" with="64" height="64"></a>&nbsp;&nbsp;&nbsp;&nbsp;
           {% if report.history_link is defined %}
           <a href="{{ report.history_link }}"  class="card-link">
               <IMG WIDTH="64" HEIGHT="64"  title = "История" src="/static/images/history.png">
