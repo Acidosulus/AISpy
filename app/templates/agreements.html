@@ -32,7 +32,7 @@
     <tbody>
       {% for result in results %}
         <tr>
-          <td><a href="/agreements/{{ result.row_id }}"><b>{{ result.number }}</b></a></td>
+          <td><a href="/form_render/agreement_form/{{ result.row_id }}"><b>{{ result.number }}</b></a></td>
 
           <td>
             {% if result.number|length == 0 %}

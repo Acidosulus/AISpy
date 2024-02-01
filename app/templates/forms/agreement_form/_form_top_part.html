@@ -1,0 +1,116 @@
+  <!-- header of agreement with number and two organizations-->
+  <div class="row">
+    
+    <div class="col-4">
+
+      <div class="row">
+        
+        <div class="col">
+          <label class="form-label" for="Номер договора">Номер договора</label>
+        </div>
+        
+        <div class="col">
+          <input class="form-control form_text_input" type="text"  value={{ fdata.number }} id = "Номер договора">
+        </div>
+
+      </div>
+
+    </div>
+
+
+      
+      <div class="col-2">
+
+          <label class="form-label" for="Плательщик">Плательщик</label>
+
+      </div>    
+      <div class="col input-group">
+
+            <input class="form-control form_text_input" type="text"  value="{{ fdata.pl_name}}" aria-describedby="button-addon-Плательщик">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon-Плательщик">...</button>
+        
+      </div>
+   
+    </div>
+
+
+    <div class="row">
+    
+        <div class="col-4">
+           <div class="row">
+           
+            <div class="col">
+              <label class="form-label" for="Доп.Номер"></label>
+            </div>
+            
+            <div class="col">
+              <input class="form-control form_text_input" type="text"  value="" id = "Доп.Номер">
+            </div>
+    
+          </div>
+    
+        </div>
+    
+    
+          
+          <div class="col-2">
+    
+              <label class="form-label" for="Грузополучатель">Грузополучатель</label>
+    
+          </div>    
+          <div class="col input-group">
+    
+                <input class="form-control form_text_input" type="text"  value="{{ fdata.gr_name}}" aria-describedby="button-addon-Грузополучатель" >
+                <button class="btn btn-outline-secondary" type="button" id="button-addon-Грузополучатель">...</button>
+            
+          </div>
+       
+        </div>
+
+
+        <div class="row">
+    
+            <div class="col-4">
+               <div class="row">
+               
+                <div class="col">
+                  <label class="form-label" for="Тип договора">Тип договора</label>
+                </div>
+                
+                <div class="col">
+                  
+
+                    <select class="form-select">
+                        <option value="0" {% if fdata.agr_type == 0 %} selected {% endif %}></option>
+                        <option value="1" {% if fdata.agr_type == 1 %} selected {% endif %} >договор энергоснабжения</option>
+                        <option value="2" {% if fdata.agr_type == 2 %} selected {% endif %}>договор купли-продажи</option>
+                        <option value="3" {% if fdata.agr_type == 3 %} selected {% endif %}>договор население (квитанции)</option>
+                        <option value="4" {% if fdata.agr_type == 4 %} selected {% endif %}>договор хозяйственные нужды</option>
+                        <option value="5" {% if fdata.agr_type == 5 %} selected {% endif %}>компенсация потерь сетевых компания</option>
+                        <option value="6" {% if fdata.agr_type == 6 %} selected {% endif %}>договор оказания услуг по передаче электрической энергии</option>
+                        <option value="7" {% if fdata.agr_type == 7 %} selected {% endif %}>договор купли-продажи в целях компенсации фактических потерь, возникающих в электрических сетях</option>
+                        <option value="8" {% if fdata.agr_type == 8 %} selected {% endif %}>договор купли-продажи электричкой энергии в целях компенсации потерь электрической энергии в электрических сетях</option>
+                      </select>
+
+
+                </div>
+        
+              </div>
+        
+            </div>
+        
+        
+              
+              <div class="col-2">
+        
+                  <label class="form-label" for="Грузополучатель">Заказчик</label>
+        
+              </div>    
+              <div class="col input-group">
+        
+                    <input class="form-control form_text_input" type="text"  value="" aria-describedby="button-addon-Заказчик" >
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon-Заказчик">...</button>
+                
+              </div>
+           
+            </div>

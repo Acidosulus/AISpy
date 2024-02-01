@@ -159,9 +159,13 @@ def addresses(object_id):
 
 @app.route('/form_render/agreement_form/<row_id>')
 def form_render(row_id:int):
-	return render_template("agreement_form.html",
+	header, fdata = data_sourses.Agreement_Data(int(row_id))
+	prnt(fdata[0])
+	return render_template("/forms/agreement_form/agreement_form.html",
+							fdata = fdata[0],
 							parents = data_sourses.get_agreements_hierarchy(int(row_id)),
 							navigation_buttons = [common.Button_Home(), common.Button_Back()])
+
 
 @app.route('/register', methods=["GET", "POST"])
 def register():

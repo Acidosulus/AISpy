@@ -1,0 +1,58 @@
+
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock scripts %}
+
+<style>
+.form_text_input{
+  text-align: right;
+
+  font-weight: bold;
+}
+</style>
+{% block content %}
+
+{% include "_navigation_panel.html" %}
+
+
+<div class="container">
+  <h1>Договора ЮЛ</h1>
+  {%for parent in parents %}
+    <h4>{{ parent.indent|safe }}
+      <IMG width="24" height="24" src="/static/images/child_corner.png">
+      <a href="/agreements/{{ parent.row_id }}"  class="link-secondary">{{ parent.name }}</a></h4>
+  {% endfor %}
+</div>
+
+
+<form id="dialog_div"  style="margin: 20px; padding: 20px;" class="border border-3 rounded border-primary" method="" action="" >
+
+  {% include "/forms/agreement_form/_form_top_part.html" %}
+
+  <hr>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Главная</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Профиль</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Контакт</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+  </div>
+  
+
+
+</form>
+
+{% endblock %}

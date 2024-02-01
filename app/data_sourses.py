@@ -284,24 +284,36 @@ def Pays_from_date_to_date(parameters):
 
 def Agreement_Data(row_id:int):
 	query_result = connection_ul.execute(text(f"""--sql
-																	select  	
-																			agr.[Номер],
+																	select
+																			agr.[Номер] as number,
 																			agr.[Грузополучатель] as gr_row_id,
-																			gr.[Название] as gr_Название,
+																			gr.[Название] as gr_name,
 																			agr.[Плательщик] as pl_row_id,
-																			pl.[Название] as pl_Название,
-																			agr.[Начало договора],
-																			agr.[Окончание],
-																			agr.[Дата подписания],
-																			agr.[Дата расторжения]
+																			pl.[Название] as pl_name,
+																			agr.[Тип договора] as agr_type,
+																			case agr.[Тип договора]
+																				when 1 then 'договор энергоснабжения'
+																				when 2 then 'договор купли-продажи'
+																				when 3 then 'договор население (квитанции)'
+																				when 4 then 'договор хозяйственные нужды'
+																				when 5 then 'компенсация потерь сетевых компания'
+																				when 6 then 'договор оказания услуг по передаче электрической энергии'
+																				when 7 then 'договор купли-продажи в целях компенсации фактических потерь, возникающих в электрических сетях'
+																				when 8 then 'договор купли-продажи электричкой энергии в целях компенсации потерь электрической энергии в электрических сетях'
+																				else ''
+																			end as agr_type_name,																			
+																			agr.[Начало договора] as agr_begin,
+																			agr.[Окончание] as agr_end,
+																			agr.[Дата подписания] as agr_sign_begin,
+																			agr.[Дата расторжения] as agr_sign_end
 																	from stack.[Договор] as agr
 																	left join stack.[Организации] as gr on gr.row_id = agr.[Грузополучатель]
 																	left join stack.[Организации] as pl on pl.row_id = agr.[Плательщик]
-																	where agr.row_id=113530;
+																	where agr.row_id={row_id};
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
 print("=============================")
 #print(get_reports_hierarchy(-10))
-print(Agreement_Data(113442))
+prnt(Agreement_Data(113442))
 print("=============================")
