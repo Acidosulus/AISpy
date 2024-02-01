@@ -1,0 +1,75 @@
+ 
+
+<div class="row">
+	<div class="col-4">
+
+		<div class="row">
+			<div class="col">
+			  <label class="form-label" for="Номер договора">Начало договора</label>
+			</div>
+			<div class="col">
+			  <input class="form-control form_text_input" type="date"  value={{ fdata.agr_begin }} id = "Номер договора">
+			</div>
+		  </div>
+
+		  <div class="row">
+            <div class="col">
+              <label class="form-label" for="Доп.Номер">Окончание договора</label>
+            </div>
+            <div class="col">
+              <input class="form-control form_text_input" type="date"  value="{{ fdata.agr_end }}" id = "Доп.Номер">
+            </div>
+        </div>			
+		
+		<div class="row">
+			<div class="col">
+			  <label class="form-label" for="Тип договора">Дата подписания</label>
+			</div>
+			<div class="col">
+				<input class="form-control form_text_input" type="date"  value="{{ fdata.agr_sign_begin }}" id = "Доп.Номер">
+			</div>
+		  </div>
+
+
+		  <div class="row">
+			<div class="col">
+			  <label class="form-label" for="Дата расторжения">Дата расторжения</label>
+			</div>
+			<div class="col">
+				<input class="form-control form_text_input" type="date"  value="{{ fdata.agr_sign_end }}" id = "Дата расторжения">
+			</div>
+		  </div>
+
+
+
+
+	</div>
+
+
+
+
+
+
+	<div class="col">
+
+		<div class="row">
+		<div class="col-2">
+			<label class="form-label" for="Категория">Категория</label>
+		</div>    
+		<div class="col input-group">
+			  <input class="form-control form_text_input" type="text"  value="" aria-describedby="button-addon-Категория">
+			  <button class="btn btn-outline-secondary" type="button" id="button-addon-Категория">...</button>
+		</div>
+	</div>
+  
+
+
+
+	</div>
+
+
+</div>
+
+
+
+

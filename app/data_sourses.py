@@ -302,10 +302,10 @@ def Agreement_Data(row_id:int):
 																				when 8 then 'договор купли-продажи электричкой энергии в целях компенсации потерь электрической энергии в электрических сетях'
 																				else ''
 																			end as agr_type_name,																			
-																			agr.[Начало договора] as agr_begin,
-																			agr.[Окончание] as agr_end,
-																			agr.[Дата подписания] as agr_sign_begin,
-																			agr.[Дата расторжения] as agr_sign_end
+																			CONVERT(date, agr.[Начало договора], 1 ) as agr_begin,
+																			CONVERT(date, agr.[Окончание], 1 )  as agr_end,
+																			CONVERT(date, agr.[Дата подписания], 1 )  as agr_sign_begin,
+																			CONVERT(date, agr.[Дата расторжения], 1 )  as agr_sign_end
 																	from stack.[Договор] as agr
 																	left join stack.[Организации] as gr on gr.row_id = agr.[Грузополучатель]
 																	left join stack.[Организации] as pl on pl.row_id = agr.[Плательщик]
