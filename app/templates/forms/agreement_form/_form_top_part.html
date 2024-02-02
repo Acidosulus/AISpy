@@ -55,7 +55,7 @@
                   </div>    
                   <div class="col input-group"> <!--data-bs-target="#ModalПлательщик"-->
                         <input class="form-control form_text_input" type="text"  value="{{ fdata.pl_name}}" aria-describedby="button-addon-Плательщик">
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon-Show-modal" data-bs-toggle="modal" data-type="Плательщик" onclick="BeforeShowModal(this.dataset.type); " data-bs-target="#Modal">...</button>
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon-Show-modal" data-bs-toggle="modal" onclick="BeforeShowModal('Плательщик', 'organization', {{ fdata.pl_row_id }}, `FillOutOrganizationForm()`); " data-bs-target="#Modal" >...</button>
                   </div>
             </div>
 
@@ -88,11 +88,11 @@
 </button>
 -->
 <!-- Modal -->
-<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="true" >
+<div class="modal fade modal-xl" id="Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="true" >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="Modal_title">Modal title</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="forminsertpoint">
@@ -109,18 +109,64 @@
 
 <script>
   const elemModal = document.getElementById('Modal');
-  elemModal.addEventListener('shown.bs.modal', function(e) {
+   elemModal.addEventListener('shown.bs.modal', function(e) {
     console.log('shown.bs.modal');
     console.log(e);
   });
 
 
+function makeHttpObject() {
+  try {return new XMLHttpRequest();}
+  catch (error) {}
+  try {return new ActiveXObject("Msxml2.XMLHTTP");}
+  catch (error) {}
+  try {return new ActiveXObject("Microsoft.XMLHTTP");}
+  catch (error) {}
 
-
-function BeforeShowModal(element){
-
-  alert(element);
+  throw new Error("Could not create HTTP request object.");
 }
+
+
+
+
+function BeforeShowModal(title, modal_type, row_id, run_after_fill){
+  //alert(modal_type + ' ' + row_id);
+  document.getElementById("Modal_title").innerHTML=title;
+  document.getElementById("forminsertpoint").innerHTML='';
+  
+/*
+  (async () => {
+    var response = await fetch(`/organization_form/${row_id}`);
+    switch (response.status) {
+        // status "OK"
+        case 200:
+            var template = await response.text();
+            document.getElementById("forminsertpoint").insertAdjacentHTML('beforeend', template);
+            
+            break;
+        // status "Not Found"
+        case 404:
+            document.getElementById("forminsertpoint").insertAdjacentHTML('beforeend', `404 error`);
+            break;
+    }
+*/
+    var request = makeHttpObject();
+        request.open("GET", `/organization_form/${row_id}`, true);
+        request.send(null);
+        request.onreadystatechange = function() {
+          if (request.readyState == 4)
+            //alert(request.responseText);
+            document.getElementById("forminsertpoint").insertAdjacentHTML('beforeend', request.responseText);
+            eval(run_after_fill);
+        };
+
+
+
+    
+
+};
+
+
 
 
   </script>

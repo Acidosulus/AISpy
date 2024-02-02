@@ -125,7 +125,18 @@ async function FillOutModalForm(uri_for_get_JSON){
   }//function
 
 
-
+  async function FillOutOrganizationForm() {
+    let organization_id = document.getElementById(`row_id`).dataset.row_id;
+    console.log('organization_id:'+organization_id);
+  
+    let answer = await asyncRequest(`/get_organization_data/${organization_id}`, `POST`, {});
+    
+    console.log(answer);
+  
+    document.getElementById("Краткое название").value = answer.org_short_name;
+    document.getElementById("Полное название").value = answer.org_name;
+  
+  }
 
 /*
 
