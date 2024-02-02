@@ -13,7 +13,7 @@ import pandas
 import xlsxwriter
 import os
 import json
-
+import ujson
 
 @app.route('/agreements/<object_id>')
 def agreements(object_id:int):
@@ -167,6 +167,50 @@ def form_render(row_id:int):
 							navigation_buttons = [common.Button_Home(), common.Button_Back()])
 
 
+@app.route('/organization_form/<row_id>')
+def organization_form(row_id:int):
+	header, fdata = data_sourses.Organization_Data(int(row_id))
+	prnt(fdata[0])
+	return render_template("/forms/organization_form/organization_form.html",
+							row_id = row_id,
+							fdata = fdata[0],
+							navigation_buttons = [common.Button_Home(), common.Button_Back()])
+
+
+
+@app.route('/test/')
+def test():
+	#header, fdata = data_sourses.Agreement_Data(int(row_id))
+	return render_template("/forms/organization_form/organization_form.html",
+							navigation_buttons = [common.Button_Home(), common.Button_Back()])
+
+
+@app.route('/get_organization_data/<row_id>', methods=["GET", "POST"])
+def get_organization_data(row_id:int):
+	header, data = data_sourses.Organization_Data(int(row_id))
+	return ujson.dumps(data[0], sort_keys=False, ensure_ascii=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -176,8 +220,8 @@ def register():
         db.session.commit()
         return redirect(url_for("login"))
     return render_template("register.html")
- 
- 
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":

@@ -313,7 +313,22 @@ def Agreement_Data(row_id:int):
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+
+
+def Organization_Data(row_id:int):
+	query_result = connection_ul.execute(text(f"""--sql
+																	select
+										   								org.[Название] as org_short_name,
+										   								org.[Наименование] as org_name
+																	from stack.[Организации] as org
+																	where org.row_id={row_id};
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
 print("=============================")
 #print(get_reports_hierarchy(-10))
 prnt(Agreement_Data(113442))
+print("=============================")
+prnt(Organization_Data(48178))
 print("=============================")

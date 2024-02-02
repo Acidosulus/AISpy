@@ -1,0 +1,48 @@
+
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock scripts %}
+
+<style>
+.form_text_input{
+  text-align: right;
+  font-weight: bold;
+}
+</style>
+{% block content %}
+
+{% include "_navigation_panel.html" %}
+
+
+<form id="dialog_div"  style="margin: 20px; padding: 20px;" class="border border-3 rounded border-primary" method="" action="" >
+
+  {% include "/forms/organization_form/_form_top_part.html" %}
+
+</form>
+
+{% endblock %}
+
+<script defer>
+
+async function FillOutOrganizationForm() {
+  let organization_id = document.getElementById(`row_id`).dataset.row_id;
+  console.log('organization_id:'+organization_id);
+
+  let answer = await asyncRequest(`/get_organization_data/${organization_id}`, `POST`, {});
+  
+  console.log(answer);
+
+  document.getElementById("Краткое название").value = answer.org_short_name;
+  document.getElementById("Полное название").value = answer.org_name;
+
+}
+
+FillOutOrganizationForm();
+
+
+
+</script>
