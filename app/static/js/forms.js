@@ -28,8 +28,6 @@ async function FillOutModalForm(uri_for_get_JSON){
     const str_card_begin = `<div class="card text-secondary-emphasis bg-secondary-subtle border border-secondary-subtle rounded-3" style="padding: 1em;">`;
     const str_card_end = `</div>`;
 
-
-
     let answer = await asyncRequest(uri_for_get_JSON, `POST`, {});
     console.log('FillOutModalForm')
     console.log(answer);
@@ -136,6 +134,11 @@ async function FillOutModalForm(uri_for_get_JSON){
     document.getElementById("Краткое название").value = answer.org_short_name;
     document.getElementById("Полное название").value = answer.org_name;
   
+  }
+
+// run in screen form, fill and show
+  function RunInScreenForm () {
+
   }
 
 /*
