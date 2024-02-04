@@ -1,4 +1,15 @@
 
+function makeHttpObject() {
+  try {return new XMLHttpRequest();}
+  catch (error) {}
+  try {return new ActiveXObject("Msxml2.XMLHTTP");}
+  catch (error) {}
+  try {return new ActiveXObject("Microsoft.XMLHTTP");}
+  catch (error) {}
+
+  throw new Error("Could not create HTTP request object.");
+}
+
 const closeModal = function () {
     document.getElementById('mform').classList.add("hidden");
 };
@@ -19,8 +30,6 @@ async function openModal(uri_for_get_JSON) {
 
 async function asyncRequest (uri, method, data, debug=false){
     let response_promise = await fetch(uri, {method: method, headers: { 'Content-Type': 'application/json;charset=utf-8' }, body: JSON.stringify(data) } )
-    console.log('Response:')
-    console.log(response_promise);
     return response_promise.json();
 }
 
@@ -29,8 +38,6 @@ async function FillOutModalForm(uri_for_get_JSON){
     const str_card_end = `</div>`;
 
     let answer = await asyncRequest(uri_for_get_JSON, `POST`, {});
-    console.log('FillOutModalForm')
-    console.log(answer);
     var source = answer;
     const rootNode = document.getElementById('mform');
     rootNode.innerHTML = "";
@@ -39,7 +46,6 @@ async function FillOutModalForm(uri_for_get_JSON){
     }
     if (source.parameters!=null){
       for (let section of source.parameters){
-        console.log(section);
   
         if (section.type==`edit`){
           rootNode.insertAdjacentHTML(`beforeend`,`${str_card_begin}<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label></div><div class="col-8"><input class="container-fluid" autocomplete="off" type="text" name="${section.name}" id="${section.name}" value ="${section.default}"></div>${str_card_end}</div><br>` );
@@ -125,31 +131,51 @@ async function FillOutModalForm(uri_for_get_JSON){
 
   async function FillOutOrganizationForm() {
     let organization_id = document.getElementById(`row_id`).dataset.row_id;
-    console.log('organization_id:'+organization_id);
-  
     let answer = await asyncRequest(`/get_organization_data/${organization_id}`, `POST`, {});
-    
-    console.log(answer);
-  
     document.getElementById("Краткое название").value = answer.org_short_name;
     document.getElementById("Полное название").value = answer.org_name;
   
   }
 
-// run in screen form, fill and show
-  function RunInScreenForm () {
-
+  function CloseInScreenForm(form_id){
+   document.getElementById(form_id).remove();
   }
 
-/*
 
-{
-  let answer = await asyncRequest(`${APIServer}/get_syllable_full_data/`, `POST`, {command:``, comment:``, data:`${document.body.dataset.word}`});
-  console.log(answer)
-  document.body.dataset.syllable_id = answer.syllable_id;
-  document.getElementById(`id_transcription`).value = answer.transcription
-  document.getElementById(`id_translations`).value = answer.translations
-  for (var example of answer.examples) {
-                                        AddExamplToNewSyllablePage(document.getElementById(`id_examples`), example.example, example.translate, example.rowid, getRandomInt(1000000000000, 9999999999999));
-                                      }
-*/
+// run in screen form, fill and show
+  function RunInScreenForm (form_name, execute_after_load, request_link) {
+    let outerRootElement = document.getElementsByTagName(`body`)[0];
+    outerRootElement.insertAdjacentHTML(`afterBegin`,`<div id="${form_name}" class="dynamic-form"></div>`);
+   
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !document.getElementById(`${form_name}`).classList.contains("hidden")) {
+        document.getElementById(`${form_name}`).classList.add("hidden");
+      }
+    });
+
+    let xhr = new XMLHttpRequest();
+    xhr.open(`GET`, request_link);
+    xhr.send();
+    xhr.onload = function() {
+      document.getElementById(`${form_name}`).insertAdjacentHTML(`afterBegin`, xhr.responseText);
+
+      document.getElementById(`${form_name}`).insertAdjacentHTML(
+        `beforeEnd`,
+        `<hr><br>
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8">
+              <button type="submit" class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">
+                &nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp
+               </button>
+            </div>
+            <div class="col-sm-4">
+              <button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseInScreenForm('${form_name}');">
+                Отмена
+              </button>
+            </div></div>`);
+      eval(execute_after_load);
+    };
+    
+ }
+
