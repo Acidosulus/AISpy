@@ -1,19 +1,19 @@
  
 
 <div class="row">
-	<div class="col-4">
+	<div class="col-4  m-1">
 
 		<div class="row">
-			<div class="col">
+			<div class="col-4">
 			  <label class="form-label" for="Номер договора">Начало договора</label>
 			</div>
 			<div class="col">
 			  <input class="form-control form_text_input" type="date"  value={{ fdata.agr_begin }} id = "Номер договора">
 			</div>
-		  </div>
+		 </div>
 
-		  <div class="row">
-            <div class="col">
+		<div class="row  m-1">
+            <div class="col-4">
               <label class="form-label" for="Доп.Номер">Окончание договора</label>
             </div>
             <div class="col">
@@ -21,8 +21,8 @@
             </div>
         </div>			
 		
-		<div class="row">
-			<div class="col">
+		<div class="row  m-1">
+			<div class="col-4">
 			  <label class="form-label" for="Тип договора">Дата подписания</label>
 			</div>
 			<div class="col">
@@ -31,17 +31,28 @@
 		  </div>
 
 
-		  <div class="row">
-			<div class="col">
+		<div class="row  m-1">
+			<div class="col-4">
 			  <label class="form-label" for="Дата расторжения">Дата расторжения</label>
 			</div>
 			<div class="col">
 				<input class="form-control form_text_input" type="date"  value="{{ fdata.agr_sign_end }}" id = "Дата расторжения">
 			</div>
-		  </div>
+		</div>
 
 
-
+		<div class="row m-1" >
+			<div class="col-4">
+					<label class="form-label" for="Тип договора">Вид договора</label>
+			</div>
+			<div class="col">
+					  <select class="form-select">
+							{% for  tp in agreement_types_data %}
+							  <option value="0" {% if fdata.agr_VD_id == tp.row_id %} selected {% endif %}>{{ tp.name }}</option>
+							{% endfor %}
+						</select>
+			</div>
+	    </div>
 
 	</div>
 
@@ -52,19 +63,53 @@
 
 	<div class="col">
 
-		<div class="row">
-		<div class="col-2">
-			<label class="form-label" for="Категория">Категория</label>
-		</div>    
-		<div class="col input-group">
-			  <input class="form-control form_text_input" type="text"  value="" aria-describedby="button-addon-Категория">
-			  <button class="btn btn-outline-secondary" type="button" id="button-addon-Категория">...</button>
-		</div>
+		<div class="row  m-1">
+			<div class="col-2">
+				<label class="form-label" for="Категория">Категория</label>
+			</div>    
+			<div class="col input-group">
+				<input class="form-control form_text_input" type="text"  value="{{ fdata.agr_category_name }}" aria-describedby="button-addon-Категория">
+				<button class="btn btn-outline-secondary" type="button" id="button-addon-Категория">...</button>
+			</div>
+	     </div>
+
+		 <div class="row  m-1">
+			<div class="col-2">
+				<label class="form-label" for="Отрасль">Отрасль</label>
+			</div>    
+			<div class="col input-group">
+				<input class="form-control form_text_input" type="text"  value="{{ fdata.agr_OKVED_name }}" aria-describedby="button-addon-Отрасль">
+				<button class="btn btn-outline-secondary" type="button" id="button-addon-Отрасль">...</button>
+			</div>
+	     </div>
 	</div>
-  
 
 
-
+	<div class="row" >
+		<div class="col-6" >
+		<table class="table table-hover table-sm ">
+			<thead>
+			<tr>
+				<th>Название</th>
+				<th>Значение</th>
+				<th>Примечание</th>
+				<th>ДатНач</th>
+				<th>ДатКнц</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for row in agreement_parameters %}
+			<tr {% if row.active==0 %}class="table-warning"{% endif %}>
+				<td>{{ row.name }}</td>
+				<td>{{ row.value }}</td>
+				<td>{{ row.text }}</td>
+				<td class="fs-6">{{ row.date_begin }}</td>
+				<td><p class="fs-6">{{ row.date_end }}</p></td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
 	</div>
 
 

@@ -27,12 +27,12 @@ class DialogParameters():
 		for element in  form_elements:
 			result_dict[element[0]] = element[1]
 		echo(style(text='get_answer:', fg='yellow')+' '+style(text=result_dict, fg='green'))
-		print(str(self).replace("""`""",'"'))
+		#print(str(self).replace("""`""",'"'))
 		prnt(ujson.loads(str(self)))
 		return result_dict
 
 	def __str__(self) -> str:
-		print(self.parameters)
+		#print(self.parameters)
 		foo = ujson.dumps(dict(title=self.title, backlink=self.backlink, parameters= self.parameters, success_jscode = self.success_jscode), sort_keys=False, ensure_ascii=False)
 		return foo
 
@@ -131,4 +131,4 @@ dialogtest.append( dict(name = 'Список значeний 1',
 								size=2) )
 
 
-print(str(dialogtest))
+#print(str(dialogtest))

@@ -1,23 +1,12 @@
-
-function makeHttpObject() {
-  try {return new XMLHttpRequest();}
-  catch (error) {}
-  try {return new ActiveXObject("Msxml2.XMLHTTP");}
-  catch (error) {}
-  try {return new ActiveXObject("Microsoft.XMLHTTP");}
-  catch (error) {}
-
-  throw new Error("Could not create HTTP request object.");
-}
+var forms_zindex=1;
 
 const closeModal = function () {
     document.getElementById('mform').classList.add("hidden");
 };
 
-// close modal when the Esc key is pressed
 document.addEventListener("keydown", function (e) {
-  if (e.key === "Escape" && !document.getElementById('mform').classList.contains("hidden")) {
-    closeModal();
+  if (e.key === "Escape") {
+    CloseToplevelDynamicForm();
   }
 });
 
@@ -34,6 +23,7 @@ async function asyncRequest (uri, method, data, debug=false){
 }
 
 async function FillOutModalForm(uri_for_get_JSON){
+
     const str_card_begin = `<div class="card text-secondary-emphasis bg-secondary-subtle border border-secondary-subtle rounded-3" style="padding: 1em;">`;
     const str_card_end = `</div>`;
 
@@ -141,18 +131,29 @@ async function FillOutModalForm(uri_for_get_JSON){
    document.getElementById(form_id).remove();
   }
 
+  function CloseToplevelDynamicForm(){
+    nodes = document.getElementsByClassName(`dynamic-form`);
+    let maxIndex = -9999999999;
+    let toplevelFormId = ``;
+    for ( let node of document.getElementsByClassName(`dynamic-form`)){
+      if (maxIndex< Number(node.dataset.zindex)){
+        maxIndex = Number(node.dataset.zindex);
+        toplevelFormId = node.id;
+      } //if
+    } //for
+    if (toplevelFormId.length>0){
+      CloseInScreenForm(toplevelFormId);
+    }
+  }
 
 // run in screen form, fill and show
   function RunInScreenForm (form_name, execute_after_load, request_link) {
     let outerRootElement = document.getElementsByTagName(`body`)[0];
-    outerRootElement.insertAdjacentHTML(`afterBegin`,`<div id="${form_name}" class="dynamic-form"></div>`);
+    forms_zindex++;
+    console.log(forms_zindex);
+    outerRootElement.insertAdjacentHTML(`beforeEnd`,`<div id="${form_name}" style="background-color:#dee2e6;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 border-success" data-zindex="${forms_zindex}"></div>`);
+    document.getElementById(form_name).setAttribute(`z-index`, forms_zindex);
    
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !document.getElementById(`${form_name}`).classList.contains("hidden")) {
-        document.getElementById(`${form_name}`).classList.add("hidden");
-      }
-    });
-
     let xhr = new XMLHttpRequest();
     xhr.open(`GET`, request_link);
     xhr.send();
@@ -165,17 +166,26 @@ async function FillOutModalForm(uri_for_get_JSON){
         <div class="container">
           <div class="row">
             <div class="col-sm-8">
-              <button type="submit" class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">
+            <!--  <button type="submit" class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">
                 &nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp
-               </button>
+               </button>-->
             </div>
             <div class="col-sm-4">
-              <button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseInScreenForm('${form_name}');">
+              <button id="${form_name}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseInScreenForm('${form_name}');">
                 Отмена
               </button>
             </div></div>`);
       eval(execute_after_load);
+
+      console.log(document.getElementById(`${form_name}`).getBoundingClientRect().height);
+      console.log(document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top);
+      console.log(document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height);
+      document.getElementById(`${form_name}`).getBoundingClientRect().height = document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top
+                                                                             + document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height + 24;
+      let new_form_height = document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top + document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height + 16;
+      document.getElementById(`${form_name}`).setAttribute("style",`height:${new_form_height}px`);
+
+      
     };
-    
  }
 

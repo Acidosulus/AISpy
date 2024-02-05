@@ -305,14 +305,47 @@ def Agreement_Data(row_id:int):
 																			CONVERT(date, agr.[Начало договора], 1 ) as agr_begin,
 																			CONVERT(date, agr.[Окончание], 1 )  as agr_end,
 																			CONVERT(date, agr.[Дата подписания], 1 )  as agr_sign_begin,
-																			CONVERT(date, agr.[Дата расторжения], 1 )  as agr_sign_end
+																			CONVERT(date, agr.[Дата расторжения], 1 )  as agr_sign_end,
+										   									AgrTypes.[Название] as agr_VD_name,
+										   									agr.[СправочникВД-Договоры] as agr_VD_id,
+										   									category.[Название] as agr_category_name,
+										   									agr.[Категория-Договоры] as agr_category_row_id,
+										   									AgrOKVED.[Название] as agr_OKVED_name
 																	from stack.[Договор] as agr
-																	left join stack.[Организации] as gr on gr.row_id = agr.[Грузополучатель]
-																	left join stack.[Организации] as pl on pl.row_id = agr.[Плательщик]
+																		left join stack.[Организации] as gr on gr.row_id = agr.[Грузополучатель]
+																		left join stack.[Организации] as pl on pl.row_id = agr.[Плательщик]
+										   								left join (select row_id, [Название] from stack.[Классификаторы] where [Тип]=129) as AgrTypes on AgrTypes.row_id = agr.[СправочникВД-Договоры]
+										   								left join stack.[Категории договоров] as category on category.row_id = agr.[Категория-Договоры]
+										   								left join (select row_id, [Название] from stack.[Классификаторы]) as AgrOKVED on AgrOKVED.row_id = agr.[Отрасль-Договоры]
 																	where agr.row_id={row_id};
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+
+def Agreement_Types_Data():
+	query_result = connection_ul.execute(text(f"""--sql
+																	select 	row_id,
+										   									[Название] as name
+										   								from stack.[Классификаторы]
+										   								where [Тип]=129 and [Код]>0;
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Agreement_Parameters_Data(agreement_id:int):
+	query_result = connection_ul.execute(text(f"""--sql
+													select	kinds.[Наименование] as name,
+															options.[Значение] as value,
+															options.[Примечание] as text,
+															(case when GETDATE() between options.[ДатНач] and options.[ДатКнц] then 1 else 0 end) as active,
+															convert(date, options.[ДатНач], 1) as date_begin,
+															convert(date, options.[ДатКнц], 1) as date_end
+														from stack.[Свойства] as options
+														left join stack.[Виды параметров] as kinds on kinds.row_id = options.[Виды-Параметры]
+														where 		options.[Параметры-Договор] = {agreement_id}
+													;
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
 
 
 def Organization_Data(row_id:int):
@@ -326,9 +359,9 @@ def Organization_Data(row_id:int):
 	return get_queryresult_header_and_data(query_result)
 
 
-print("=============================")
-#print(get_reports_hierarchy(-10))
+#print("=============================")
+#print(Agreement_Parameters_Data(116602))
 #prnt(Agreement_Data(113442))
-print("=============================")
-prnt(Organization_Data(48178))
-print("=============================")
+#print("=============================")
+#prnt(Organization_Data(48178))
+#print("=============================")

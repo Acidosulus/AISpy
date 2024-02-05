@@ -157,14 +157,16 @@ def addresses(object_id):
 	return render_template("addresses.html", results=results, parents = data_sourses.get_addresses_hierarchy(int(object_id)), navigation_buttons = [common.Button_Home(), common.Button_Back()])
 
 
-@app.route('/form_render/agreement_form/<row_id>')
+@app.route('/agreement_form/<row_id>')
 def form_render(row_id:int):
 	header, fdata = data_sourses.Agreement_Data(int(row_id))
-	prnt(fdata[0])
+	header, agreement_types_data = data_sourses.Agreement_Types_Data()
+	header, agreement_parameters = data_sourses.Agreement_Parameters_Data(int(row_id))
 	return render_template("/forms/agreement_form/agreement_form.html",
 							fdata = fdata[0],
-							parents = data_sourses.get_agreements_hierarchy(int(row_id)),
-							navigation_buttons = [common.Button_Home(), common.Button_Back()])
+							agreement_types_data = agreement_types_data,
+							agreement_parameters = agreement_parameters
+							)
 
 
 @app.route('/organization_form/<row_id>')

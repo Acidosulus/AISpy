@@ -7,30 +7,13 @@
 {% block scripts %}
 {% endblock scripts %}
 
-<style>
-.form_text_input{
-  text-align: right;
 
-  font-weight: bold;
-}
-</style>
+
 {% block content %}
 
-<!--
-{% include "_navigation_panel.html" %}
+<h3>Данные договора</h3>
 
-
-<div class="container">
-  <h1>Договора ЮЛ</h1>
-  {%for parent in parents %}
-    <h4>{{ parent.indent|safe }}
-      <IMG width="24" height="24" src="/static/images/child_corner.png">
-      <a href="/agreements/{{ parent.row_id }}"  class="link-secondary">{{ parent.name }}</a></h4>
-  {% endfor %}
-</div>
--->
-
-<form id="dialog_div"  style="margin: 20px; padding: 20px;" class="border border-3 rounded border-primary" method="" action="" >
+<form id="dialog_div"  style="margin: 20px; padding: 20px; background-color:#CFCFCF;" class="border border-3 rounded border-primary" method="" action="" >
 
   {% include "/forms/agreement_form/_form_top_part.html" %}
 
