@@ -157,7 +157,7 @@ async function FillOutModalForm(uri_for_get_JSON){
     let outerRootElement = document.getElementsByTagName(`body`)[0];
     forms_zindex++;
     console.log(forms_zindex);
-    outerRootElement.insertAdjacentHTML(`beforeEnd`,`<div id="${form_name}" style="background-color:#dee2e6;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
+    outerRootElement.insertAdjacentHTML(`beforeEnd`,`<div id="${form_name}" style="background-color:#dee2e6; top:200px;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
     document.getElementById(form_name).setAttribute(`z-index`, forms_zindex);
    
     let xhr = new XMLHttpRequest();
@@ -189,7 +189,9 @@ async function FillOutModalForm(uri_for_get_JSON){
                                                                              + document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height + 24;
       let new_form_height = document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top + document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height + 16;
       document.getElementById(`${form_name}`).setAttribute("style",`height:${new_form_height}px`);
-
+      document.getElementById(`${form_name}`).style.setProperty("position", "absolute !important");
+      document.getElementById(`${form_name}`).style.setProperty("top", "200px");
+      
       
     };
  }
