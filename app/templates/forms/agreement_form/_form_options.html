@@ -87,7 +87,8 @@
 
 	<div class="row" >
 		<div class="col-6" >
-		<table class="table table-hover table-sm ">
+		<table class="table table-hover text-xsmall table-condensed table-responsive caption-top">
+			<caption>Дополнительные параметры договора</caption>
 			<thead>
 			<tr>
 				<th>Название</th>
@@ -99,17 +100,45 @@
 			</thead>
 			<tbody>
 			{% for row in agreement_parameters %}
-			<tr {% if row.active==0 %}class="table-warning"{% endif %}>
+			<tr {% if row.active==0 %}class="table-warning"{% endif %} style="font-size: 0.7rem;">
 				<td>{{ row.name }}</td>
 				<td>{{ row.value }}</td>
 				<td>{{ row.text }}</td>
-				<td class="fs-6">{{ row.date_begin }}</td>
-				<td><p class="fs-6">{{ row.date_end }}</p></td>
+				<td>{{ row.date_begin }}</td>
+				<td>{{ row.date_end }}</td>
 			</tr>
 			{% endfor %}
 			</tbody>
 		</table>
 	</div>
+
+
+	<div class="col" >
+		<table class="table table-hover text-xsmall table-condensed table-responsive caption-top">
+			<caption>Графики оплаты договора</caption>
+			<thead>
+			<tr>
+				<th>Действие графика с</th>
+				<th>Действие графика по</th>
+				<th>Дата платежа</th>
+				<th>%</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for row in agreement_payments_scedule %}
+			<tr {% if row.active==0 %}class="table-warning"{% endif %} style="font-size: 0.7rem;">
+				<td>{{ row.date_begin }}</td>
+				<td>{{ row.date_end }}</td>
+				<td>{{ row.day }}</td>
+				<td>{{ row.procent }}</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+
+
 	</div>
 
 

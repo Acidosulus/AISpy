@@ -348,6 +348,23 @@ def Agreement_Parameters_Data(agreement_id:int):
 	return get_queryresult_header_and_data(query_result)
 
 
+
+
+def Agreement_Payments_Schedule(agreement_id:int):
+	query_result = connection_ul.execute(text(f"""--sql
+													select  convert(date, [Месяц], 1 ) as date_begin,
+															convert(date, [МесяцПо],1) as date_end,
+															[День платежа] as day ,
+															[процентДоговорнойВеличины] as procent,
+															(case when GETDATE() between [Месяц] and [МесяцПо] then 1 else 0 end) as active
+														from stack.[График оплаты договора] as gr 
+														where [График-Договор]={agreement_id};
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
+
 def Organization_Data(row_id:int):
 	query_result = connection_ul.execute(text(f"""--sql
 																	select
@@ -360,7 +377,7 @@ def Organization_Data(row_id:int):
 
 
 #print("=============================")
-#print(Agreement_Parameters_Data(116602))
+#print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
 #print("=============================")
 #prnt(Organization_Data(48178))

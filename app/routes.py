@@ -162,10 +162,12 @@ def form_render(row_id:int):
 	header, fdata = data_sourses.Agreement_Data(int(row_id))
 	header, agreement_types_data = data_sourses.Agreement_Types_Data()
 	header, agreement_parameters = data_sourses.Agreement_Parameters_Data(int(row_id))
+	header, agreement_payments_scedule = data_sourses.Agreement_Payments_Schedule(int(row_id))
 	return render_template("/forms/agreement_form/agreement_form.html",
 							fdata = fdata[0],
 							agreement_types_data = agreement_types_data,
-							agreement_parameters = agreement_parameters
+							agreement_parameters = agreement_parameters,
+							agreement_payments_scedule = agreement_payments_scedule
 							)
 
 
