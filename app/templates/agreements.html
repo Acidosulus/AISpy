@@ -33,7 +33,10 @@
       {% for result in results %}
         <tr>
           <!--<td><a href="/form_render/agreement_form/{{ result.row_id }}"><b>{{ result.number }}</b></a></td>-->
-          <td><a href="" onclick="RunInScreenForm()"><b>{{ result.number }}</b></a></td>
+          <td><a href="#" {% if result.number|length == 10 %}
+                            onclick="RunInScreenForm(`agreement_form`, `FillOutOrganizationForm()`, `/agreement_form/{{ result.row_id }}`);">
+                          {% endif %}
+                            <b>{{ result.number }}</b></a></td>
           <td>
             {% if result.number|length == 0 %}
               <a href="/agreements/{{ result.row_id }}">

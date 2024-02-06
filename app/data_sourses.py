@@ -287,10 +287,14 @@ def Agreement_Data(row_id:int):
 																	select
 																			agr.[Номер] as number,
 																			agr.[Грузополучатель] as gr_row_id,
-																			gr.[Название] as gr_name,
+																			gr.[Наименование] as gr_name,
+										   									gr.[Телефон] as phone,
+										   									gr.[Адрес] as address,
+										   									agr.[Адрес доставки] as address_delivery,
 																			agr.[Плательщик] as pl_row_id,
-																			pl.[Название] as pl_name,
+																			pl.[Наименование] as pl_name,
 																			agr.[Тип договора] as agr_type,
+										   									agr.[Примечание] as note,
 																			case agr.[Тип договора]
 																				when 1 then 'договор энергоснабжения'
 																				when 2 then 'договор купли-продажи'
@@ -310,13 +314,38 @@ def Agreement_Data(row_id:int):
 										   									agr.[СправочникВД-Договоры] as agr_VD_id,
 										   									category.[Название] as agr_category_name,
 										   									agr.[Категория-Договоры] as agr_category_row_id,
-										   									AgrOKVED.[Название] as agr_OKVED_name
+										   									AgrOKVED.[Название] as agr_OKVED_name,
+										   									budgets.name as agr_budget_name,
+										   									agr.[Бюджет-Договоры] as ager_budget_row_id,
+										   									municipalformation.name as municipalformation_name,
+										   									municipalformation.row_id as municipalformation_row_id
 																	from stack.[Договор] as agr
 																		left join stack.[Организации] as gr on gr.row_id = agr.[Грузополучатель]
 																		left join stack.[Организации] as pl on pl.row_id = agr.[Плательщик]
 										   								left join (select row_id, [Название] from stack.[Классификаторы] where [Тип]=129) as AgrTypes on AgrTypes.row_id = agr.[СправочникВД-Договоры]
 										   								left join stack.[Категории договоров] as category on category.row_id = agr.[Категория-Договоры]
 										   								left join (select row_id, [Название] from stack.[Классификаторы]) as AgrOKVED on AgrOKVED.row_id = agr.[Отрасль-Договоры]
+										   								left join (select 	row_id,
+																							[Папки] as folder,
+																							[Код] as code,
+																							[Название] as name
+																						from stack.[Классификаторы]
+																						where 	[Папки] in (select row_id
+																												from stack.[Классификаторы]
+																												where	[Папки] in (select 	row_id
+																																	from stack.[Классификаторы]
+																																	where 	[Папки]=682)
+																														or [Папки]=682 )
+																								or [Папки]=682)
+										   											as budgets on budgets.row_id = agr.[Бюджет-Договоры]
+																		left join (	SELECT 	row_id,
+										   													[Код] as code,
+										   													[Название] as name
+										   											FROM stack.[Классификаторы]
+										   											WHERE [Папки] = (select top 1 row_id 
+										   																from stack.[Классификаторы]
+										   																where [Тип]=128 and [Папки]<0))
+										   											as municipalformation on municipalformation.row_id = agr.[СправочникМО-Договоры]
 																	where agr.row_id={row_id};
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
@@ -363,13 +392,47 @@ def Agreement_Payments_Schedule(agreement_id:int):
 	return get_queryresult_header_and_data(query_result)
 
 
+def Budgets():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	row_id,
+															[Папки] as folder,
+															[Код] as code,
+															[Название] as name
+														from stack.[Классификаторы]
+														where 	[Папки] in (select row_id
+																				from stack.[Классификаторы]
+																				where	[Папки] in (select 	row_id
+																									from stack.[Классификаторы]
+																									where 	[Папки]=682)
+																						or [Папки]=682 )
+																or [Папки]=682;
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
 
 
 def Organization_Data(row_id:int):
 	query_result = connection_ul.execute(text(f"""--sql
 																	select
-										   								org.[Название] as org_short_name,
-										   								org.[Наименование] as org_name
+										   								org.[Название] as short_name,
+										   								org.[Наименование] as name,
+										   								org.[ИНН] as inn,
+										   								org.[КПП] as kpp,
+										   								org.[ОГРН] as ogrn,
+																		case 	when org.[Отрасль] = 0 then 'ЮЛ'
+																				when org.[Отрасль] = 1 then 'Физ.лицо'
+																				when org.[Отрасль] = 2 then 'ИП'
+																				else ''
+																		end as org_type,
+										   								org.[Отрасль] as org_type_id,
+																		org_vid = 	CASE 
+																							when org.[Бюджет] = 1 then 'Бюджет'
+																							when org.[Бюджет] = 2 then 'Малый бизнес'
+																							when org.[Бюджет] = 3 then 'Средний бизнес'
+																							when org.[Бюджет] = 4 then 'Крупный бизнес'
+																							when org.[Бюджет] = 5 then 'Микропредприятия'
+																							else ''
+																						END,
+										   								org.[Бюджет] as org_vid_id
 																	from stack.[Организации] as org
 																	where org.row_id={row_id};
 			;""")).fetchall()
@@ -380,5 +443,5 @@ def Organization_Data(row_id:int):
 #print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
 #print("=============================")
-#prnt(Organization_Data(48178))
+prnt(Organization_Data(48178))
 #print("=============================")

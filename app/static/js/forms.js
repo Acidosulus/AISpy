@@ -4,6 +4,8 @@ const closeModal = function () {
     document.getElementById('mform').classList.add("hidden");
 };
 
+var border_colors = ["border-primary", "border-secondary", "border-success", "border-danger", "border-warning", "border-info", "border-light", "border-dark", "border-white"];
+
 document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
     CloseToplevelDynamicForm();
@@ -120,11 +122,15 @@ async function FillOutModalForm(uri_for_get_JSON){
 
 
   async function FillOutOrganizationForm() {
+    /*
     let organization_id = document.getElementById(`row_id`).dataset.row_id;
     let answer = await asyncRequest(`/get_organization_data/${organization_id}`, `POST`, {});
-    document.getElementById("Краткое название").value = answer.org_short_name;
-    document.getElementById("Полное название").value = answer.org_name;
-  
+    document.getElementById("Организация Краткое название").value = answer.org_short_name;
+    document.getElementById("Организация Полное название").value = answer.org_name;
+    document.getElementById("Организация ИНН").value = answer.inn;
+    document.getElementById("Организация КПП").value = answer.kpp;
+    document.getElementById("Организация ОРГН/ОРГИП").value = answer.ogrn;
+    */
   }
 
   function CloseInScreenForm(form_id){
@@ -151,7 +157,7 @@ async function FillOutModalForm(uri_for_get_JSON){
     let outerRootElement = document.getElementsByTagName(`body`)[0];
     forms_zindex++;
     console.log(forms_zindex);
-    outerRootElement.insertAdjacentHTML(`beforeEnd`,`<div id="${form_name}" style="background-color:#dee2e6;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 border-success" data-zindex="${forms_zindex}"></div>`);
+    outerRootElement.insertAdjacentHTML(`beforeEnd`,`<div id="${form_name}" style="background-color:#dee2e6;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
     document.getElementById(form_name).setAttribute(`z-index`, forms_zindex);
    
     let xhr = new XMLHttpRequest();
@@ -163,18 +169,17 @@ async function FillOutModalForm(uri_for_get_JSON){
       document.getElementById(`${form_name}`).insertAdjacentHTML(
         `beforeEnd`,
         `<hr><br>
-        <div class="container">
           <div class="row">
-            <div class="col-sm-8">
+            <div class="col-11">
             <!--  <button type="submit" class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">
                 &nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp
                </button>-->
             </div>
-            <div class="col-sm-4">
+            <div class="col-1">
               <button id="${form_name}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseInScreenForm('${form_name}');">
                 Отмена
               </button>
-            </div></div>`);
+            </div>`);
       eval(execute_after_load);
 
       console.log(document.getElementById(`${form_name}`).getBoundingClientRect().height);

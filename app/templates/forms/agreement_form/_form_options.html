@@ -3,7 +3,7 @@
 <div class="row">
 	<div class="col-4  m-1">
 
-		<div class="row">
+		<div class="row m-1">
 			<div class="col-4">
 			  <label class="form-label" for="Номер договора">Начало договора</label>
 			</div>
@@ -82,6 +82,54 @@
 				<button class="btn btn-outline-secondary" type="button" id="button-addon-Отрасль">...</button>
 			</div>
 	     </div>
+
+		 <div class="row  m-1">
+			<div class="col-2">
+				<label class="form-label" for="Отрасль">Бюджет</label>
+			</div>    
+			<div class="col input-group">
+				<input class="form-control form_text_input" type="text"  value="{{ fdata.agr_budget_name }}" aria-describedby="button-addon-Бюджет">
+				<button class="btn btn-outline-secondary" type="button" id="button-addon-Бюджет">...</button>
+			</div>
+	     </div>
+
+		 <div class="row  m-1">
+			<div class="col-2">
+				<label class="form-label" for="Отрасль">Муниципальное образование</label>
+			</div>    
+			<div class="col input-group">
+				<input class="form-control form_text_input" type="text"  value="{{ fdata.municipalformation_name }}" aria-describedby="button-addon-Бюджет">
+				<button class="btn btn-outline-secondary" type="button" id="button-addon-Бюджет">...</button>
+			</div>
+	     </div>
+
+		 <div class="row  m-1">
+			<div class="col-2">
+				<label class="form-label" for="Отрасль">Телефон</label>
+			</div>    
+			<div class="col input-group">
+				<input class="form-control form_text_input" type="text"  value="{{ fdata.phone }}" aria-describedby="button-addon-Бюджет">
+			</div>
+	     </div>
+
+		 <div class="row  m-1">
+			<div class="col-2">
+				<label class="form-label" for="Отрасль">Адрес</label>
+			</div>    
+			<div class="col input-group">
+				<input class="form-control form_text_input" type="text"  value="{{ fdata.address }}" aria-describedby="button-addon-Бюджет">
+			</div>
+	     </div>
+
+
+		 <div class="row  m-1">
+			<div class="col-2">
+				<label class="form-label" for="Отрасль">Адрес доставки</label>
+			</div>    
+			<div class="col input-group">
+				<input class="form-control form_text_input" type="text"  value="{{ fdata.address_delivery }}" aria-describedby="button-addon-Бюджет">
+			</div>
+	     </div>
 	</div>
 
 
@@ -90,7 +138,7 @@
 		<table class="table table-hover text-xsmall table-condensed table-responsive caption-top">
 			<caption>Дополнительные параметры договора</caption>
 			<thead>
-			<tr>
+			<tr class="table-secondary">
 				<th>Название</th>
 				<th>Значение</th>
 				<th>Примечание</th>
@@ -117,7 +165,7 @@
 		<table class="table table-hover text-xsmall table-condensed table-responsive caption-top">
 			<caption>Графики оплаты договора</caption>
 			<thead>
-			<tr>
+			<tr class="table-secondary">
 				<th>Действие графика с</th>
 				<th>Действие графика по</th>
 				<th>Дата платежа</th>
