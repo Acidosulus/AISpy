@@ -1,7 +1,7 @@
 var forms_zindex=1;
 
+// arrays of modal form IDs
 var forms = [];
-
 
 
 const closeModal = function () {
@@ -148,6 +148,12 @@ async function FillOutModalForm(uri_for_get_JSON){
   }
 
   function CloseToplevelDynamicForm(){
+    if (forms.length>0){
+      CloseInScreenForm(forms[forms.length - 1]);
+      forms.pop();
+    }
+
+    /*
     nodes = document.getElementsByClassName(`dynamic-form`);
     let maxIndex = -9999999999;
     let toplevelFormId = ``;
@@ -160,6 +166,7 @@ async function FillOutModalForm(uri_for_get_JSON){
     if (toplevelFormId.length>0){
       CloseInScreenForm(toplevelFormId);
     }
+    */
   }
 
 // run in screen form, fill and show
@@ -168,17 +175,12 @@ async function FillOutModalForm(uri_for_get_JSON){
     form_name = form_name + `_${getRandomInt(999999999999999999)}`
     forms_zindex++;
     console.log(forms_zindex);
-<<<<<<< HEAD
-    outerRootElement.insertAdjacentHTML(`beforeEnd`,`<div id="${form_name}" style="background-color:#dee2e6; top:200px;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
-    document.getElementById(form_name).setAttribute(`z-index`, forms_zindex);
-=======
     outerRootElement.insertAdjacentHTML(
       `beforeEnd`,
-      `<div id="${form_name}" style="background-color:#dee2e6;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
+      `<div id="${form_name}" class="dynamic-form container-fluid border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
     
     forms.push(form_name);
     document.getElementById(forms[forms.length-1]).setAttribute(`z-index`, forms_zindex);
->>>>>>> 17a663e9d150a6bf905c30d69ab5d3d6b34d356b
    
     let xhr = new XMLHttpRequest();
     xhr.open(`GET`, request_link);
@@ -196,24 +198,12 @@ async function FillOutModalForm(uri_for_get_JSON){
                </button>-->
             </div>
             <div class="col-1">
-              <button id="${forms[forms.length-1]}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseInScreenForm('${forms[forms.length-1]}');">
+              <button id="${forms[forms.length-1]}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseToplevelDynamicForm();">
                 Отмена
               </button>
             </div>`);
       eval(execute_after_load);
 
-<<<<<<< HEAD
-      console.log(document.getElementById(`${form_name}`).getBoundingClientRect().height);
-      console.log(document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top);
-      console.log(document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height);
-      document.getElementById(`${form_name}`).getBoundingClientRect().height = document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top
-                                                                             + document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height + 24;
-      let new_form_height = document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top + document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height + 16;
-      document.getElementById(`${form_name}`).setAttribute("style",`height:${new_form_height}px`);
-      document.getElementById(`${form_name}`).style.setProperty("position", "absolute !important");
-      document.getElementById(`${form_name}`).style.setProperty("top", "200px");
-      
-=======
       console.log(document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().height);
       console.log(document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top);
       console.log(document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height);
@@ -221,6 +211,8 @@ async function FillOutModalForm(uri_for_get_JSON){
                                                                              + document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 24;
       let new_form_height = document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top + document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 50;
       document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`height:${new_form_height}px`);
+      
+      /*
       if (typeof(document.getElementsByClassName('navbar')[0])=='undefined'){
           document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`top:${25}px`);
           console.log(150);
@@ -229,26 +221,46 @@ async function FillOutModalForm(uri_for_get_JSON){
         document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`top:${150}px`);
         console.log(25);
       }
->>>>>>> 17a663e9d150a6bf905c30d69ab5d3d6b34d356b
-      
+      */
     };
  }
 
- let timerId = setInterval(() => TimerProcceed(), 500);
+ let timerId = setInterval(() => TimerProcceed(), 50);
 function TimerProcceed(){
     nodes = document.getElementsByClassName(`dynamic-form`);
+  //  console.log('nodes.length: '+nodes.length);
     if (nodes.length>0){
-      document.getElementsByClassName(`navbar`)[0].classList.add("hidden");
+      /*
+      if (document.getElementsByClassName(`navbar`).length>0){
+        document.getElementsByClassName(`navbar`)[0].classList.add("hidden");
+      }
+*/
 
       for (let form of forms)   {
-        let   new_form_height = document.getElementById(forms[forms.length-1]).getElementById('dialog_div').getBoundingClientRect().top + document.getElementById(forms[forms.length-1]).getElementById('dialog_div').getBoundingClientRect().height + 50;
-              document.getElementById().setAttribute("style",`height:${new_form_height}px`);
-      
-        console.log('new_form_height: ' + form + '   ' + new_form_height);
-      }
 
-    }else{
-      document.getElementsByClassName(`navbar`)[0].classList.remove("hidden");
+
+
+        if (typeof(document.querySelector(`#${forms[forms.length-1]}`).querySelector('#dialog_div'))!='undefined') {
+
+              // for long forms
+              if (document.querySelector(`#${forms[forms.length-1]}`).getBoundingClientRect().top<0){
+                document.querySelector(`#${forms[forms.length-1]}`).setAttribute("style",`top:20px`);
+                //document.querySelector(`#${forms[forms.length-1]}`).querySelector('#dialog_div').setAttribute("style",`top:120px`);
+              }
+            }
+
+
+        let   new_form_height = Math.floor(document.querySelector(`#${forms[forms.length-1]}`).querySelector('#dialog_div').getBoundingClientRect().height) + 220; //Math.floor(document.querySelector(`#${forms[forms.length-1]}`).getBoundingClientRect().top) 
+              document.querySelector(`#${forms[forms.length-1]}`).setAttribute("style",`height:${new_form_height}px`);
+              
+      }
+    }
+    else{
+      /*
+      if (document.getElementsByClassName(`navbar`).length>0){
+        document.getElementsByClassName(`navbar`)[0].classList.remove("hidden");
+      }
+      */
     }
 
    

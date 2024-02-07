@@ -1,19 +1,4 @@
-  
- 
-  .mform {
-    gap: 0.4rem;
-    width: 95%;
-    padding: 1.3rem;
-    min-height: 250px;
-    position: absolute;
-    z-index: 2;
-    top: 10%;
-    left: 2.5%;
-    background-color: white;
-    border: 1px solid #2426c2;
-    border-radius: 15px;
-  }
-  
+
   .dynamic-form {
     gap: 0.4rem;
     width: 95%;
@@ -26,6 +11,8 @@
     background-color: white;
     border: 1px solid #2426c2;
     border-radius: 15px;
+    top:max(50px, 10%);
+    overflow-y: scroll;
   }
 
 
