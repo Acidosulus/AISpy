@@ -1,16 +1,26 @@
 var forms_zindex=1;
 
+var forms = [];
+
+
+
 const closeModal = function () {
     document.getElementById('mform').classList.add("hidden");
 };
 
 var border_colors = ["border-primary", "border-secondary", "border-success", "border-danger", "border-warning", "border-info", "border-light", "border-dark", "border-white"];
 
+
 document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
     CloseToplevelDynamicForm();
   }
 });
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 
 // open modal function
 async function openModal(uri_for_get_JSON) {
@@ -155,18 +165,28 @@ async function FillOutModalForm(uri_for_get_JSON){
 // run in screen form, fill and show
   function RunInScreenForm (form_name, execute_after_load, request_link) {
     let outerRootElement = document.getElementsByTagName(`body`)[0];
+    form_name = form_name + `_${getRandomInt(999999999999999999)}`
     forms_zindex++;
     console.log(forms_zindex);
+<<<<<<< HEAD
     outerRootElement.insertAdjacentHTML(`beforeEnd`,`<div id="${form_name}" style="background-color:#dee2e6; top:200px;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
     document.getElementById(form_name).setAttribute(`z-index`, forms_zindex);
+=======
+    outerRootElement.insertAdjacentHTML(
+      `beforeEnd`,
+      `<div id="${form_name}" style="background-color:#dee2e6;" class="dynamic-form position-absolute top-50 start-50 translate-middle border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
+    
+    forms.push(form_name);
+    document.getElementById(forms[forms.length-1]).setAttribute(`z-index`, forms_zindex);
+>>>>>>> 17a663e9d150a6bf905c30d69ab5d3d6b34d356b
    
     let xhr = new XMLHttpRequest();
     xhr.open(`GET`, request_link);
     xhr.send();
     xhr.onload = function() {
-      document.getElementById(`${form_name}`).insertAdjacentHTML(`afterBegin`, xhr.responseText);
+      document.getElementById(`${forms[forms.length-1]}`).insertAdjacentHTML(`afterBegin`, xhr.responseText);
 
-      document.getElementById(`${form_name}`).insertAdjacentHTML(
+      document.getElementById(`${forms[forms.length-1]}`).insertAdjacentHTML(
         `beforeEnd`,
         `<hr><br>
           <div class="row">
@@ -176,12 +196,13 @@ async function FillOutModalForm(uri_for_get_JSON){
                </button>-->
             </div>
             <div class="col-1">
-              <button id="${form_name}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseInScreenForm('${form_name}');">
+              <button id="${forms[forms.length-1]}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseInScreenForm('${forms[forms.length-1]}');">
                 Отмена
               </button>
             </div>`);
       eval(execute_after_load);
 
+<<<<<<< HEAD
       console.log(document.getElementById(`${form_name}`).getBoundingClientRect().height);
       console.log(document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().top);
       console.log(document.getElementById(`${form_name}_dialog_escape_button`).getBoundingClientRect().height);
@@ -192,7 +213,46 @@ async function FillOutModalForm(uri_for_get_JSON){
       document.getElementById(`${form_name}`).style.setProperty("position", "absolute !important");
       document.getElementById(`${form_name}`).style.setProperty("top", "200px");
       
+=======
+      console.log(document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().height);
+      console.log(document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top);
+      console.log(document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height);
+      document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().height = document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top
+                                                                             + document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 24;
+      let new_form_height = document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top + document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 50;
+      document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`height:${new_form_height}px`);
+      if (typeof(document.getElementsByClassName('navbar')[0])=='undefined'){
+          document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`top:${25}px`);
+          console.log(150);
+      }
+      else{
+        document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`top:${150}px`);
+        console.log(25);
+      }
+>>>>>>> 17a663e9d150a6bf905c30d69ab5d3d6b34d356b
       
     };
  }
+
+ let timerId = setInterval(() => TimerProcceed(), 500);
+function TimerProcceed(){
+    nodes = document.getElementsByClassName(`dynamic-form`);
+    if (nodes.length>0){
+      document.getElementsByClassName(`navbar`)[0].classList.add("hidden");
+
+      for (let form of forms)   {
+        let   new_form_height = document.getElementById(forms[forms.length-1]).getElementById('dialog_div').getBoundingClientRect().top + document.getElementById(forms[forms.length-1]).getElementById('dialog_div').getBoundingClientRect().height + 50;
+              document.getElementById().setAttribute("style",`height:${new_form_height}px`);
+      
+        console.log('new_form_height: ' + form + '   ' + new_form_height);
+      }
+
+    }else{
+      document.getElementsByClassName(`navbar`)[0].classList.remove("hidden");
+    }
+
+   
+ }
+
+
 
