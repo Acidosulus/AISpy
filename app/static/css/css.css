@@ -9,9 +9,15 @@
     border: 1px solid #2426c2;
     border-radius: 15px;
     top:max(50px, 10%);
+    overflow-y: auto;
+    max-height: 90%;
   }
 
 
   .hidden {
     display: none;
   }
+
+
+
+

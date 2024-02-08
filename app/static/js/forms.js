@@ -144,7 +144,7 @@ async function FillOutModalForm(uri_for_get_JSON){
   }
 
   function CloseInScreenForm(form_id){
-   document.getElementById(form_id).remove();
+   document.querySelector(`#${form_id}`).remove();
   }
 
   function CloseToplevelDynamicForm(){
@@ -152,21 +152,6 @@ async function FillOutModalForm(uri_for_get_JSON){
       CloseInScreenForm(forms[forms.length - 1]);
       forms.pop();
     }
-
-    /*
-    nodes = document.getElementsByClassName(`dynamic-form`);
-    let maxIndex = -9999999999;
-    let toplevelFormId = ``;
-    for ( let node of document.getElementsByClassName(`dynamic-form`)){
-      if (maxIndex< Number(node.dataset.zindex)){
-        maxIndex = Number(node.dataset.zindex);
-        toplevelFormId = node.id;
-      } //if
-    } //for
-    if (toplevelFormId.length>0){
-      CloseInScreenForm(toplevelFormId);
-    }
-    */
   }
 
 // run in screen form, fill and show
@@ -178,7 +163,8 @@ async function FillOutModalForm(uri_for_get_JSON){
     outerRootElement.insertAdjacentHTML(
       `beforeEnd`,
       `<div id="${form_name}" class="dynamic-form container-fluid border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
-    
+    console.log('forms.length: '+ forms.length);
+
     forms.push(form_name);
     document.getElementById(forms[forms.length-1]).setAttribute(`z-index`, forms_zindex);
    
@@ -223,15 +209,12 @@ async function FillOutModalForm(uri_for_get_JSON){
       }
       */
 
-				$( `#${form_name}` ).scrollFollow(
-					{
-						speed: 1,
-            offset: 200,
-					});
+
 
  }
 
 }
+
 
  let timerId = setInterval(() => TimerProcceed(), 50);
 function TimerProcceed(){

@@ -178,7 +178,6 @@ def agreement_form(row_id:int):
 	header, agreement_payments_scedule = data_sourses.Agreement_Payments_Schedule(int(row_id))
 	header, agreement_points_list = data_sourses.Points_Data(int(row_id))
 	header, calc_data = data_sourses.Calc_Data(int(row_id))
-	prnt(calc_data)
 	return render_template("/forms/agreement_form/agreement_form.html",
 							fdata = fdata[0],
 							agreement_types_data = agreement_types_data,
