@@ -1,0 +1,42 @@
+ 
+
+<div class="row">
+	<table class="table table-hover text-xsmall table-condensed table-responsive caption-top">
+		<caption>Точки учета</caption>
+		<thead>
+		<tr class="table-secondary">
+			<th>Номер</th>
+			<th>Наименование</th>
+			<th>Напр.</th>
+			<th>Ц.категория</th>
+			<th>М.мощ</th>
+			<th>Сетевая компания</th>
+			<th>Тип ПУ</th>
+			<th>Зав.Номер</th>
+			<th>Адрес</th>
+			<th>Группа ТУ (Ф46)</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for row in agreement_points_list %}
+			<tr>
+			<td>{{ row.number }}</td>
+			<td>{{ row.name }}</td>
+			<td>{{ row.service }}</td>
+			<td>{{ row.category_name }}</td>
+			<td></td>
+			<td>{{ row.netowner }}</td>
+			<td>{{ row.pu_type_name}}</td>
+			<td>{{ row.pu_number }}</td>
+			<td>{{ row.address }}</td>
+			<td>{{ row.anal_name }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+
+</div>
+
+
+
+

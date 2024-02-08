@@ -222,8 +222,16 @@ async function FillOutModalForm(uri_for_get_JSON){
         console.log(25);
       }
       */
-    };
+
+				$( `#${form_name}` ).scrollFollow(
+					{
+						speed: 1,
+            offset: 200,
+					});
+
  }
+
+}
 
  let timerId = setInterval(() => TimerProcceed(), 50);
 function TimerProcceed(){
@@ -244,8 +252,9 @@ function TimerProcceed(){
 
               // for long forms
               if (document.querySelector(`#${forms[forms.length-1]}`).getBoundingClientRect().top<0){
-                document.querySelector(`#${forms[forms.length-1]}`).setAttribute("style",`top:20px`);
-                //document.querySelector(`#${forms[forms.length-1]}`).querySelector('#dialog_div').setAttribute("style",`top:120px`);
+                
+                //document.querySelector(`#${forms[forms.length-1]}`).setAttribute("style",`top:20px`);
+                
               }
             }
 

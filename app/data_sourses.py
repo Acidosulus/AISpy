@@ -491,6 +491,95 @@ def Organization_Data(row_id:int):
 	return get_queryresult_header_and_data(query_result)
 
 
+
+def Points_Data(agreement_row_id:int):
+	query_result = connection_ul.execute(text(f"""--sql
+														select	ls.row_id,
+																ls.[Номер] as number,
+										   						ls.[Примечание] as name,
+																ls.[АдресЛС] as address,
+																voltages.service,
+																netowners.name as netowner,
+																pu.pu_number as pu_number,
+																pu.pu_type_name as pu_type_name,
+																categories.category_name,
+																la.[Название] as anal_name
+															from stack.[Лицевые счета] as ls
+															left join ( select    stack.[Лицевые счета].row_id,
+																			replace(left(service.[Услуга],3),':','') AS service
+																		from  stack.[Лицевые счета]
+																		LEFT JOIN (SELECT stack.[Список услуг].[Счет-Услуги],stack.[Типы услуг].[Название] AS [Услуга]
+																			FROM stack.[Список услуг]
+																			LEFT JOIN stack.[Типы услуг] ON stack.[Типы услуг].row_id = stack.[Список услуг].[Вид-Услуги] 
+																			WHERE (getdate() BETWEEN ДатНач AND ДатКнц) AND ДатНач >= convert(datetime,'2022-09-01',21)) service ON service.[Счет-Услуги] = stack.[Лицевые счета].row_id)
+																			as voltages on voltages.row_id = ls.row_id
+															left join (select ls.row_id, left(org.Название,250) as name
+																		from stack.[Лицевые счета] ls
+																		left join stack.[Поставщики] ps on ps.[Счет-Список поставщиков] = ls.ROW_ID  and ( getdate() between ps.ДатНач and ps.ДатКнц) and ps.[Услуги-Список поставщиков] = 14
+																		left join stack.[Организации] org on ps.[Поставщики-Список] = org.ROW_ID )
+																		as netowners on netowners.row_id = ls.row_id
+															left join ( select obj.[Объекты-Счет] as point_id,
+																				obj.[ЗаводскойНомер] as pu_number,
+																				nm.[Наименование] as pu_type_name
+																			from stack.[Список объектов] as obj
+																			left join stack.[Номенклатура] as nm on nm.ROW_ID = obj.[Номенклатура-Объекты]
+																			where 		nm.[Номенклатура-НСИ]>0 
+																					and getdate() between obj.[ДатНач] and obj.[ДатКнц]
+																					and obj.[Объект-Услуга] = 14)
+																		as pu on pu.point_id = ls.row_id
+															left join (
+																		select 	ls.row_id as point_id,  
+																				pr.Значение + 1 as category,
+																				case pr.Значение
+																					when 0 then 'Первая'
+																					when 1 then 'Вторая'
+																					when 2 then 'Третья'
+																					when 3 then 'Четвертая'
+																					when 4 then 'Пятая'
+																					when 5 then 'Шестая'
+																					ELSE ''
+																				end as category_name
+																			from
+																			(select * from stack.[Свойства] where (getdate() between ДатНач and ДатКнц) and [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='СОСТОЯНИЕ') and [Значение]=0) as used,
+																			stack.[Лицевые счета] ls
+																			left join (select * from stack.[Свойства] where (getdate() between ДатНач and ДатКнц) and [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='ЦКАТЕГОРИЯ')) as pr on pr.[Счет-Параметры] = ls.row_id 
+																			where 
+																			ls.row_id = used.[Счет-Параметры] and 
+																			(pr.Значение is not null))
+																		as categories on categories.point_id = ls.row_id
+															left join stack.[Лицевых аналитики] as la on la.row_id = ls.[Счет-Аналитика1]
+															where ls.ROW_ID  in (select ld.[Лицевой]
+																					FROM stack.[Лицевые договора] as ld 
+																					where 	ld.[Договор]={agreement_row_id}
+																						AND	getdate() between ld.[ДатНач] and ld.[ДатКнц]);
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Calc_Data(agreement_row_id:int):
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	dr.[Договор] as agr_id,
+															dr.[Лицевой] as point_id,
+															ls.[Номер] as point_number,
+															ls.[Примечание] as point_name,
+															tu.[Номер услуги] as usl_number,
+															tu.[Наименование] as usl_name,
+															dr.[Кол_во] as consuming,
+															dr.[Тариф] as tariff,
+															dr.[СуммаБезНДС] as money_withoutnds,
+															dr.[Сумма] as money
+														from stack.[Лицевые счета] as ls 
+														left join (select 	*
+																from stack.[Детализация расчета]
+																WHERE  		[Номер услуги]<=1999
+										   								and	[Месяц] = '2023-12-01')
+															as dr on dr.[Лицевой] = ls.ROW_ID 
+														left join stack.[Типы услуг] 
+															as tu on tu.[Номер услуги]  = dr.[Номер услуги]
+										   				where dr.[Договор]={agreement_row_id};
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
 #print("=============================")
 #print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
