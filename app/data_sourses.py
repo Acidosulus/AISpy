@@ -293,8 +293,8 @@ def Agreement_Data(row_id:int):
 										   									agr.[Адрес доставки] as address_delivery,
 																			agr.[Плательщик] as pl_row_id,
 																			pl.[Наименование] as pl_name,
-																			agr.[Тип договора] as agr_type,
-										   									agr.[Примечание] as note,
+																			agr.[Примечание] as note,								
+										   									agr.[Тип договора] as agr_type,
 																			case agr.[Тип договора]
 																				when 1 then 'договор энергоснабжения'
 																				when 2 then 'договор купли-продажи'
@@ -410,6 +410,42 @@ def Budgets():
 	return get_queryresult_header_and_data(query_result)
 
 
+def Ref_Agreement_Types():
+	return ['row_id', 'name'], [	{'row_id':0, 'name':''},
+									{'row_id':1, 'name':'договор энергоснабжения'},
+									{'row_id':2, 'name':'договор купли-продажи'},
+									{'row_id':3, 'name':'договор население (квитанции)'},
+									{'row_id':4, 'name':'договор хозяйственные нужды'},
+									{'row_id':5, 'name':'компенсация потерь сетевых компания'},
+									{'row_id':6, 'name':'договор оказания услуг по передаче электрической энергии'},
+									{'row_id':7, 'name':'договор купли-продажи в целях компенсации фактических потерь, возникающих в электрических сетях'},
+									{'row_id':8, 'name':'договор купли-продажи электричкой энергии в целях компенсации потерь электрической энергии в электрических сетях'}]
+
+
+def Ref_Organizaion_Vid():
+	return ['row_id', 'name'], [	{'row_id':0, 'name':''},
+									{'row_id':1, 'name':'Бюджет'},
+									{'row_id':2, 'name':'Малый бизнес'},
+									{'row_id':3, 'name':'Средний бизнес'},
+									{'row_id':4, 'name':'Крупный бизнес'},
+									{'row_id':5, 'name':'Микропредприятия'}	]
+
+def Ref_Organizaion_Type():
+	return ['row_id', 'name'], [	{'row_id':0, 'name':'ЮЛ'},
+									{'row_id':1, 'name':'Физ.лицо'},
+									{'row_id':2, 'name':'ИП'}	]
+
+def Ref_Organizaion_NDS():
+	return ['row_id', 'name'], [	{'row_id':0, 'name':'Плательщик'},
+									{'row_id':1, 'name':'Не облагается'}	]
+
+def Ref_Organizaion_Debtor_Category():
+	return ['row_id', 'name'], [	{'row_id':0, 'name':'Прочие потребители/покупатели ЭЭ'},
+									{'row_id':1, 'name':'ЖК, ТСЖ, ЖСК и прочие собственники помещений в МКД'},
+									{'row_id':2, 'name':'УК, тепло- и водо- снабжающие организации'},
+									{'row_id':3, 'name':'Бюджет'}	]
+
+
 def Organization_Data(row_id:int):
 	query_result = connection_ul.execute(text(f"""--sql
 																	select
@@ -432,7 +468,23 @@ def Organization_Data(row_id:int):
 																							when org.[Бюджет] = 5 then 'Микропредприятия'
 																							else ''
 																						END,
-										   								org.[Бюджет] as org_vid_id
+										   								org.[ОКОНХ] as okonh,
+										   								org.[ОКПО] as okpo,
+										   								org.[ОКВЭД] as OKVED,
+										   								org.[Бюджет] as org_vid_id,
+										   								org.[Вариант НДС] as nds_type,
+										   								org.[Категория] as debtor_category,
+										   								org.[Примечание] as note,
+										   								org.[Адрес] as address,
+										   								org.[ФактАдрес] as fact_address,
+										   								org.[Телефон] as phone,
+										   								org.[Факс] as faks,
+										   								org.[Режим работы] as regime,
+										   								org.[email] as email,
+										   								convert(date, org.[ДатаРегистрации], 1) as date_begin,
+										   								convert(date, org.[ДатаЛиквидации], 1) as date_end,
+										   								org.www as www,
+										   								org.[ИдентификаторЭДО] as EDO
 																	from stack.[Организации] as org
 																	where org.row_id={row_id};
 			;""")).fetchall()
@@ -443,5 +495,6 @@ def Organization_Data(row_id:int):
 #print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
 #print("=============================")
-prnt(Organization_Data(48178))
+#prnt(Organization_Data(48178))
+#print(Ref_Agreement_Types())
 #print("=============================")

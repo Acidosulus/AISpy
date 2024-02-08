@@ -2,92 +2,309 @@
   <div id="row_id" data-row_id="{{ row_id }}">
 
 
-  <div class="row">
 
-                <div class="row m-1">
-                 <div class="col-2">
-                          <label class="form-label" for="Краткое название">Краткое название</label>
-                  </div>
-                  <div class="col-10">
-                          <input class="form-control form_text_input" type="text"  value="{{ fdata.short_name }}" id = "Организация Краткое название">
-                  </div>
-                </div>
-
-              <div class="row m-1">
-                <div class="col-2">
-                        <label class="form-label" for="Полное название"">Полное название</label>
-                </div>
-                <div class="col-10">
-                        <input class="form-control form_text_input" type="text"  value="{{ fdata.name }}" id = "Организация Полное название">
-                </div>
-            </div>
+		<div class="row m-1">
+			 <div class="col-2">
+						  <label class="form-label" for="Краткое название">Краткое название</label>
+				  </div>
+				  <div class="col-10">
+						  <input class="form-control form_text_input" type="text"  value="{{ fdata.short_name }}" id = "Организация Краткое название">
+				  </div>
+			</div>
 
 
-            <div class="row m-1">
-                
-                <div class="col-3">
-                        <div class="row">
-                                <div class="col-3">
-                                        <label class="form-label" for="ИНН">ИНН</label>
-                                </div>
-                                <div class="col-9">
-                                        <input class="form-control form_text_input" type="text"  value="{{ fdata.inn }}" id = "Организация ИНН">
-                                </div>
-                        </div>
-                </div>
-            
-        
-                <div class="col-3">
-                        <div class="row">
-                                <div class="col-3">
-                                        <label class="form-label" for="КПП">КПП</label>
-                                </div>
-                                <div class="col-9">
-                                        <input class="form-control form_text_input" type="text"  value="{{ fdata.kpp }}" id = "Организация КПП">
-                                </div>
-                        </div>
-                </div>
-
-                
-
-                <div class="col-2">
-                        <div class="row">
-                                <div class="col-3">
-                                        <label class="form-label" for="ОРГН/ОРГИП">ОРГН/ОРГИП</label>
-                                </div>
-                                <div class="col-9">
-                                        <input class="form-control form_text_input" type="text"  value="{{ fdata.ogrn }}" id = "Организация ОРГН/ОРГИП">
-                                </div>
-                        </div>
-                </div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 
-                <div class="col-2">
-                        <div class="row">
-                                <div class="col-3">
-                                        <label class="form-label" for="ВИД">ВИД</label>
-                                </div>
-                                <div class="col-9">
-                                        <input class="form-control form_text_input" type="text"  value="" id = "Организация ВИД">
-                                </div>
-                        </div>
-                </div>
+			
+	  	<div class="row m-1">
+					<div class="col-2">
+							<label class="form-label" for="Полное название">Полное название</label>
+					</div>
+					<div class="col-10">
+							<input class="form-control form_text_input" type="text"  value="{{ fdata.name }}" id = "Организация Полное название">
+					</div>
+		</div>
 
 
 
-                <div class="col-2">
-                        <div class="row">
-                                <div class="col-3">
-                                        <label class="form-label" for="ТИП">ТИП</label>
-                                </div>
-                                <div class="col-9">
-                                        <input class="form-control form_text_input" type="text"  value="" id = "Организация ТИП">
-                                </div>
-                        </div>
-                </div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 
-        </div>
+
+
+		<div class="row m-1">
+				<div class="col-3">
+						<div class="row">
+								<div class="col-3">
+										<label class="form-label" for="ИНН">ИНН</label>
+								</div>
+								<div class="col-9">
+										<input class="form-control form_text_input" type="text"  value="{{ fdata.inn }}" id = "Организация ИНН">
+								</div>
+						</div>
+				</div>
+			
+		
+				<div class="col-3">
+						<div class="row">
+								<div class="col-3">
+										<label class="form-label" for="КПП">КПП</label>
+								</div>
+								<div class="col-9">
+										<input class="form-control form_text_input" type="text"  value="{{ fdata.kpp }}" id = "Организация КПП">
+								</div>
+						</div>
+				</div>
+
+				
+
+				<div class="col-2">
+						<div class="row">
+								<div class="col-3">
+										<label class="form-label" for="ОРГН/ОРГИП">ОРГН/ОРГИП</label>
+								</div>
+								<div class="col-9">
+										<input class="form-control form_text_input" type="text"  value="{{ fdata.ogrn }}" id = "Организация ОРГН/ОРГИП">
+								</div>
+						</div>
+				</div>
+
+
+				<div class="col-2">
+						<div class="row">
+								<div class="col-3">
+										<label class="form-label" for="ВИД">ВИД</label>
+								</div>
+								<div class="col-9">
+										<select class="form-select">
+												{{ html_for_select_organization_vid|safe }}
+										</select>
+								</div>
+						</div>
+				</div>
+
+
+
+				<div class="col-2">
+						<div class="row">
+								<div class="col-3">
+										<label class="form-label" for="ТИП">ТИП</label>
+								</div>
+								<div class="col-9">
+										<select class="form-select">
+												{{ html_for_select_organization_type|safe }}
+										</select>
+								</div>
+						</div>
+				</div>
+
+		</div>
+
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+
+
+
+
+		<div class="row m-1">
+			<div class="col-3">
+					<div class="row">
+							<div class="col-3">
+									<label class="form-label" for="ОКОНХ">ОКОНХ</label>
+							</div>
+							<div class="col-9">
+									<input class="form-control form_text_input" type="text"  value="{{ fdata.okonh }}" id = "Организация ОКОНХ">
+							</div>
+					</div>
+			</div>
+		
+	
+			<div class="col-3">
+					<div class="row">
+							<div class="col-3">
+									<label class="form-label" for="ОКПО">ОКПО</label>
+							</div>
+							<div class="col-9">
+									<input class="form-control form_text_input" type="text"  value="{{ fdata.okpo }}" id = "Организация ОКПО">
+							</div>
+					</div>
+			</div>
+
+			
+
+			<div class="col-2">
+					<div class="row">
+							<div class="col-3">
+									<label class="form-label" for="ОРГН/ОРГИП">ОКВЭД</label>
+							</div>
+							<div class="col-9">
+									<input class="form-control form_text_input" type="text"  value="{{ fdata.okved }}" id = "Организация ОКВЭД">
+							</div>
+					</div>
+			</div>
+
+
+			<div class="col-4">
+					<div class="row">
+							<div class="col-3">
+									<label class="form-label" for="ВИД">ВИД</label>
+							</div>
+							<div class="col-9">
+									<select class="form-select">
+											{{ html_for_select_organization_NDS|safe }}
+									</select>
+							</div>
+					</div>
+			</div>
+
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Категория должника">Категория должника</label>
+	</div>
+	<div class="col-10">
+		<select class="form-select">
+			{{ html_for_select_organization_Debtor_Category|safe }}
+		</select>
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Примечание">Примечание</label>
+	</div>
+	<div class="col-10">
+			<input class="form-control form_text_input" type="text"  value="{{ fdata.note }}" id = "Организация Примечание">
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Адрес">Адрес</label>
+	</div>
+	<div class="col-10">
+			<input class="form-control form_text_input" type="text"  value="{{ fdata.address }}" id = "Организация Адрес">
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Факт. адрес">Факт. адрес</label>
+	</div>
+	<div class="col-10">
+			<input class="form-control form_text_input" type="text"  value="{{ fdata.fact_address }}" id = "Организация Факт. адрес">
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Телефон">Телефон</label>
+	</div>
+	<div class="col-10">
+			<input class="form-control form_text_input" type="text"  value="{{ fdata.phone }}" id = "Телефон">
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Факс">Факс</label>
+	</div>
+	<div class="col-10">
+			<input class="form-control form_text_input" type="text"  value="{{ fdata.faks }}" id = "Факс">
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Режим работы">Режим работы</label>
+	</div>
+	<div class="col-10">
+			<input class="form-control form_text_input" type="text"  value="{{ fdata.regime }}" id = "Режим работы">
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-8">
+		<div class="row">
+			<div class="col-3">
+					<label class="form-label" for="e-mail">e-mail</label>
+			</div>
+			<div class="col-9">
+					<input class="form-control form_text_input" type="text"  value="{{ fdata.email }}" id = "e-mail">
+			</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6">
+					<label class="form-label" for="Дата регистрации">Дата регистрации</label>
+			</div>
+			<div class="col-6">
+					<input class="form-control form_text_input" type="date"  value="{{ fdata.date_begin }}" id = "Дата регистрации">
+			</div>
+		</div>
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-8">
+		<div class="row">
+			<div class="col-3">
+					<label class="form-label" for="www">www</label>
+			</div>
+			<div class="col-9">
+					<input class="form-control form_text_input" type="text"  value="{{ fdata.www }}" id = "www">
+			</div>
+		</div>
+	</div>
+	<div class="col-4">
+		<div class="row">
+			<div class="col-6">
+					<label class="form-label" for="Дата Ликвидации">Дата ликвидации</label>
+			</div>
+			<div class="col-6">
+					<input class="form-control form_text_input" type="date"  value="{{ fdata.date_end }}" id = "Дата ликвидации">
+			</div>
+		</div>
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<div class="row m-1">
+	<div class="col-2">
+			<label class="form-label" for="Идентификатор ЭДО">Идентификатор ЭДО</label>
+	</div>
+	<div class="col-10">
+			<input class="form-control form_text_input" type="text"  value="{{ fdata.EDO }}" id = "Идентификатор ЭДО">
+	</div>
+</div>
+<!--------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+
 
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	</div>

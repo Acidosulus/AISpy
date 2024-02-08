@@ -157,17 +157,32 @@ def addresses(object_id):
 	return render_template("addresses.html", results=results, parents = data_sourses.get_addresses_hierarchy(int(object_id)), navigation_buttons = [common.Button_Home(), common.Button_Back()])
 
 
+def generate_select_options_html( header_data:tuple, current_row_id=0):
+	header = header_data[0]
+	data =header_data[1]
+	result = ''
+	for row in data:
+		st = ''
+		for key, value in row.items():
+			if key != 'row_id':
+				st += ' '+value
+		result += f"""<option value="{row[header[0]]}" {( 'selected' if current_row_id == row[header[0]] else '')}>{st}</option>\n"""
+	return result
+
+
 @app.route('/agreement_form/<row_id>')
-def form_render(row_id:int):
+def agreement_form(row_id:int):
 	header, fdata = data_sourses.Agreement_Data(int(row_id))
 	header, agreement_types_data = data_sourses.Agreement_Types_Data()
 	header, agreement_parameters = data_sourses.Agreement_Parameters_Data(int(row_id))
 	header, agreement_payments_scedule = data_sourses.Agreement_Payments_Schedule(int(row_id))
+	
 	return render_template("/forms/agreement_form/agreement_form.html",
 							fdata = fdata[0],
 							agreement_types_data = agreement_types_data,
 							agreement_parameters = agreement_parameters,
-							agreement_payments_scedule = agreement_payments_scedule
+							agreement_payments_scedule = agreement_payments_scedule,
+							html_for_select_agreement_types = generate_select_options_html( data_sourses.Ref_Agreement_Types(), fdata[0]['agr_type'] )
 							)
 
 
@@ -178,6 +193,10 @@ def organization_form(row_id:int):
 	return render_template("/forms/organization_form/organization_form.html",
 							row_id = row_id,
 							fdata = fdata[0],
+							html_for_select_organization_vid = generate_select_options_html( data_sourses.Ref_Organizaion_Vid(), fdata[0]['org_vid_id']),
+							html_for_select_organization_type = generate_select_options_html( data_sourses.Ref_Organizaion_Type(), fdata[0]['org_type_id']),
+							html_for_select_organization_NDS = generate_select_options_html( data_sourses.Ref_Organizaion_NDS(), fdata[0]['nds_type']),
+							html_for_select_organization_Debtor_Category = generate_select_options_html( data_sourses.Ref_Organizaion_Debtor_Category(), fdata[0]['debtor_category']),
 							navigation_buttons = [common.Button_Home(), common.Button_Back()])
 
 

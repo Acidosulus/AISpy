@@ -1,18 +1,14 @@
 
   .dynamic-form {
-    gap: 0.4rem;
     width: 95%;
     height: 95%;
-    padding: 1.3rem;
-    position: absolute;
+    position: fixed;
     z-index: 2;
-    top: 2.5%;
     left: 2.5%;
     background-color: white;
     border: 1px solid #2426c2;
     border-radius: 15px;
     top:max(50px, 10%);
-    overflow-y: scroll;
   }
 
 
