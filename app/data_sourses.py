@@ -285,7 +285,8 @@ def Pays_from_date_to_date(parameters):
 def Agreement_Data(row_id:int):
 	query_result = connection_ul.execute(text(f"""--sql
 																	select
-																			agr.[Номер] as number,
+																			agr.row_id as agreement_id,
+										   									agr.[Номер] as number,
 																			agr.[Грузополучатель] as gr_row_id,
 																			gr.[Наименование] as gr_name,
 										   									gr.[Телефон] as phone,
@@ -556,7 +557,7 @@ def Points_Data(agreement_row_id:int):
 	return get_queryresult_header_and_data(query_result)
 
 
-def Calc_Data(agreement_row_id:int):
+def Calc_Data(agreement_row_id:int, period:str):
 	query_result = connection_ul.execute(text(f"""--sql
 													select 	dr.[Договор] as agr_id,
 															dr.[Лицевой] as point_id,
@@ -572,7 +573,8 @@ def Calc_Data(agreement_row_id:int):
 														left join (select 	*
 																from stack.[Детализация расчета]
 																WHERE  		[Номер услуги]<=1999
-										   								and	[Месяц] = '2023-12-01')
+										   								and	[Месяц] = '{period}-01'
+										   								and [Месяц]=[ЗаМесяц])
 															as dr on dr.[Лицевой] = ls.ROW_ID 
 														left join stack.[Типы услуг] 
 															as tu on tu.[Номер услуги]  = dr.[Номер услуги]

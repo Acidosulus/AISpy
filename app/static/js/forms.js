@@ -3,12 +3,29 @@ var forms_zindex=1;
 // arrays of modal form IDs
 var forms = [];
 
+var periods = [ '2022-09',
+                '2022-10',
+                '2022-11',
+                '2022-12',
+                '2023-01',
+                '2023-02',
+                '2023-03',
+                '2023-04',
+                '2023-05',
+                '2023-06',
+                '2023-07',
+                '2023-08',
+                '2023-09',
+                '2023-10',
+                '2023-11',
+                '2023-12'
+              ];
 
 const closeModal = function () {
     document.getElementById('mform').classList.add("hidden");
 };
 
-var border_colors = ["border-primary", "border-secondary", "border-success", "border-danger", "border-warning", "border-info", "border-light", "border-dark", "border-white"];
+var border_colors = ["border-primary", "border-secondary", "border-success", "border-danger", "border-warning", "border-info", "border-dark"];
 
 
 document.addEventListener("keydown", function (e) {
@@ -132,6 +149,7 @@ async function FillOutModalForm(uri_for_get_JSON){
 
 
   async function FillOutOrganizationForm() {
+    console.log(`FillOutOrganizationForm`);
     /*
     let organization_id = document.getElementById(`row_id`).dataset.row_id;
     let answer = await asyncRequest(`/get_organization_data/${organization_id}`, `POST`, {});
@@ -154,16 +172,46 @@ async function FillOutModalForm(uri_for_get_JSON){
     }
   }
 
+
+function onClickToAgreementCalcPeriod(element, agreement_id) {
+  console.log(`onClickToAgreementCalcPeriod`);
+  console.log(agreement_id);
+  $(`#AgreementPeriodsDropDownList`).text ( `расчётный период:  ` + element.text );
+  Load_Data_Into_Agreement_Calc_View(agreement_id, element.text);
+}
+
+function Load_Data_Into_Agreement_Calc_View(agreement_id, period){
+  console.log(agreement_id, period);
+  document.getElementById(`agreeemnt_calc_data`).innerHTML=``;
+  let xhr = new XMLHttpRequest();
+  xhr.open(`GET`, `/agreement_form_part_calc_table/${agreement_id}/${period}`);
+  xhr.send();
+  xhr.onload = function() {
+    document.getElementById(`agreeemnt_calc_data`).insertAdjacentHTML(`afterBegin`, xhr.responseText);
+  }
+}
+
+function Fill_Agreement_Periods_DropDownList(){
+  console.log(`Fill_Agreement_Periods_DropDownList`);
+  if (typeof(document.querySelector(`#AgreementPeriodsDropDownListDropMenu`))=='object'){
+    document.querySelector(`#AgreementPeriodsDropDownListDropMenu`).innerHTML=``;
+    for (let period of periods){
+      $(`#AgreementPeriodsDropDownList`).text ( `расчётный период:  ` + period );
+      $(`#AgreementPeriodsDropDownListDropMenu`).append(`<li><a class="dropdown-item" href="#" onclick="onClickToAgreementCalcPeriod(this,${document.querySelector(`#AgreementPeriodsDropDownListDropMenu`).dataset.agreementid})">${period}</a></li>`);
+    }
+  }
+
+}
+
 // run in screen form, fill and show
   function RunInScreenForm (form_name, execute_after_load, request_link) {
     let outerRootElement = document.getElementsByTagName(`body`)[0];
-    form_name = form_name + `_${getRandomInt(999999999999999999)}`
+    form_name = form_name + `_${getRandomInt(999999999999999)}`
     forms_zindex++;
     console.log(forms_zindex);
     outerRootElement.insertAdjacentHTML(
       `beforeEnd`,
       `<div id="${form_name}" class="dynamic-form container-fluid border-5 ${border_colors[forms_zindex%9]}" data-zindex="${forms_zindex}"></div>`);
-    console.log('forms.length: '+ forms.length);
 
     forms.push(form_name);
     document.getElementById(forms[forms.length-1]).setAttribute(`z-index`, forms_zindex);
@@ -198,18 +246,6 @@ async function FillOutModalForm(uri_for_get_JSON){
       let new_form_height = document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top + document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 50;
       document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`height:${new_form_height}px`);
       
-      /*
-      if (typeof(document.getElementsByClassName('navbar')[0])=='undefined'){
-          document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`top:${25}px`);
-          console.log(150);
-      }
-      else{
-        document.getElementById(`${forms[forms.length-1]}`).setAttribute("style",`top:${150}px`);
-        console.log(25);
-      }
-      */
-
-
 
  }
 
@@ -219,40 +255,13 @@ async function FillOutModalForm(uri_for_get_JSON){
  let timerId = setInterval(() => TimerProcceed(), 50);
 function TimerProcceed(){
     nodes = document.getElementsByClassName(`dynamic-form`);
-  //  console.log('nodes.length: '+nodes.length);
     if (nodes.length>0){
-      /*
-      if (document.getElementsByClassName(`navbar`).length>0){
-        document.getElementsByClassName(`navbar`)[0].classList.add("hidden");
-      }
-*/
-
       for (let form of forms)   {
-
-
-
-        if (typeof(document.querySelector(`#${forms[forms.length-1]}`).querySelector('#dialog_div'))!='undefined') {
-
-              // for long forms
-              if (document.querySelector(`#${forms[forms.length-1]}`).getBoundingClientRect().top<0){
-                
-                //document.querySelector(`#${forms[forms.length-1]}`).setAttribute("style",`top:20px`);
-                
-              }
-            }
-
-
-        let   new_form_height = Math.floor(document.querySelector(`#${forms[forms.length-1]}`).querySelector('#dialog_div').getBoundingClientRect().height) + 220; //Math.floor(document.querySelector(`#${forms[forms.length-1]}`).getBoundingClientRect().top) 
+        let   new_form_height = Math.floor($(`#${forms[forms.length-1]}`).children('#dialog_div').height()) + 220; //Math.floor(document.querySelector(`#${forms[forms.length-1]}`).getBoundingClientRect().top) 
               document.querySelector(`#${forms[forms.length-1]}`).setAttribute("style",`height:${new_form_height}px`);
-              
       }
     }
     else{
-      /*
-      if (document.getElementsByClassName(`navbar`).length>0){
-        document.getElementsByClassName(`navbar`)[0].classList.remove("hidden");
-      }
-      */
     }
 
    

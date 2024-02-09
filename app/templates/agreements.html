@@ -34,7 +34,7 @@
         <tr>
           <!--<td><a href="/form_render/agreement_form/{{ result.row_id }}"><b>{{ result.number }}</b></a></td>-->
           <td><a class = 'a' {% if result.number|length == 10 %}
-                            onclick="RunInScreenForm(`agreement_form`, `FillOutOrganizationForm()`, `/agreement_form/{{ result.row_id }}`);">
+                            onclick="RunInScreenForm(`agreement_form`, `FillOutOrganizationForm(); Fill_Agreement_Periods_DropDownList();  Load_Data_Into_Agreement_Calc_View({{ result.row_id }}, periods[periods.length-1]);`, `/agreement_form/{{ result.row_id }}`);">
                           {% endif %}
                             <b>{{ result.number }}</b></a></td>
           <td>

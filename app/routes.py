@@ -177,7 +177,7 @@ def agreement_form(row_id:int):
 	header, agreement_parameters = data_sourses.Agreement_Parameters_Data(int(row_id))
 	header, agreement_payments_scedule = data_sourses.Agreement_Payments_Schedule(int(row_id))
 	header, agreement_points_list = data_sourses.Points_Data(int(row_id))
-	header, calc_data = data_sourses.Calc_Data(int(row_id))
+	#header, calc_data = data_sourses.Calc_Data(int(row_id))
 	return render_template("/forms/agreement_form/agreement_form.html",
 							fdata = fdata[0],
 							agreement_types_data = agreement_types_data,
@@ -185,9 +185,15 @@ def agreement_form(row_id:int):
 							agreement_payments_scedule = agreement_payments_scedule,
 							html_for_select_agreement_types = generate_select_options_html( data_sourses.Ref_Agreement_Types(), fdata[0]['agr_type'] ),
 							agreement_points_list = agreement_points_list,
-							calc_data = calc_data
 							)
 
+
+@app.route('/agreement_form_part_calc_table/<row_id>/<period>')
+def agreement_form_part_calc_table(row_id:int,period:str):
+	header, calc_data = data_sourses.Calc_Data(int(row_id),period)
+	return render_template("/forms/agreement_form/__form_calc_table.html",
+							calc_data = calc_data
+							)
 
 @app.route('/organization_form/<row_id>')
 def organization_form(row_id:int):

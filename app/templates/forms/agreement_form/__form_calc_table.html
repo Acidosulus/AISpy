@@ -1,0 +1,27 @@
+	<table class="table table-hover text-xsmall table-condensed table-responsive caption-top">
+		<caption>Точки учета</caption>
+		<thead>
+		<tr class="table-secondary">
+			<th>Номер ТУ</th>
+			<th>Название ТУ</th>
+			<th>Услуга</th>
+			<th>Тариф</th>
+			<th>Стоимость</th>
+			<th>Стоимость с НДС</th>
+			<th>Потребление</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for row in calc_data %}
+		<tr {% if row.consuming<0==0 %}class="table-warning"{% endif %} style="font-size: 0.7rem;">
+			<td>{{ row.point_number }}</td>
+			<td>{{ row.point_name }}</td>
+			<td>{{ row.usl_number }} {{ row.usl_name }} </td>
+			<td>{{ row.tariff }}</td>
+			<td>{{ row.money_withoutnds }}</td>
+			<td>{{ row.money}}</td>
+			<td>{{ row.consuming }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
