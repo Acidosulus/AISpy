@@ -267,4 +267,25 @@ function TimerProcceed(){
  }
 
 
-
+var Get_Agreements_Search_Result_request_int_progress = 0
+ async function Get_Agreements_Search_Result(lc_value){
+  if (Get_Agreements_Search_Result_request_int_progress==0){
+    if (lc_value.length>3){
+            Get_Agreements_Search_Result_request_int_progress = 1
+            let response = await fetch('/get_agremments_search_result', {
+                                                                    method: 'POST',
+                                                                    headers: {
+                                                                      'Content-Type': 'application/json;charset=utf-8'
+                                                                    },
+                                                                    body: JSON.stringify({ search_substring:lc_value
+                                                                                          })
+                                                                                        }
+                                                                    );
+              let answer = await response.text();
+              $(`#div_for_substitustion_of_search_results`).empty();
+              $(`#div_for_substitustion_of_search_results`).append(answer);
+              Get_Agreements_Search_Result_request_int_progress = 0
+    }
+  else $(`#div_for_substitustion_of_search_results`).empty();
+  }
+}    

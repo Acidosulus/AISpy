@@ -1,0 +1,48 @@
+{% block content %}
+    <hr>
+    <div class="container">
+      <h4>Найденные договора:</h4>
+    </div>
+
+   <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Номер</th>
+        <th>Название</th>
+        <th>ИНН</th>
+        <th>КПП</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for result in results %}
+        <tr>
+          <!--<td><a href="/form_render/agreement_form/{{ result.row_id }}"><b>{{ result.number }}</b></a></td>-->
+          <td><a class = 'a' {% if result.number|length == 10 %}
+                            onclick="RunInScreenForm(`agreement_form`, `FillOutOrganizationForm(); Fill_Agreement_Periods_DropDownList();  Load_Data_Into_Agreement_Calc_View({{ result.row_id }}, periods[periods.length-1]);`, `/agreement_form/{{ result.row_id }}`);">
+                          {% endif %}
+                            <b>{{ result.number }}</b></a></td>
+          <td>
+            {% if result.number|length == 0 %}
+              <a href="/agreements/{{ result.row_id }}">
+              <b>
+            {% endif %}
+
+                {{ result.name }}
+            {% if result.descendants_count>0 %}
+              <sup class="text-success">{{ result.descendants_count }}</sup>
+            {% endif %}
+            {% if result.number|length == 0 %}
+              </b></a>
+            {% endif %}
+          </td>
+
+          <td>{{ result.inn }}</td>
+
+          <td>{{ result.kpp }}</td>
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

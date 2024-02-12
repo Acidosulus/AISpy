@@ -351,13 +351,44 @@ def Agreement_Data(row_id:int):
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+def Agreements_Search_Data(substring:str):
+	query_result = connection_ul.execute(text(f"""--sql
+											select * 
+												from (
+														select 
+															agr.row_id,
+															agr.[Папки] as folder_id,
+															case
+																when len(agr.[Номер])<10 then ''
+																else agr.[Номер]
+															end as number,
+															CASE 
+																when len(agr.[Номер])<10 then coalesce((select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки]),0)
+																else 0
+															END as descendants_count,
+															case
+																when len(agr.[Номер])<10 then agr.[Примечание]
+																else trim(org.[Наименование]) + trim(agr.[Примечание])
+															end as name,
+															org.[ИНН] as inn,
+															org.[КПП] as kpp
+														from stack.[Договор] as agr
+														left join stack.[Организации] as org on org.row_id = agr.[Грузополучатель]
+														where 		agr.[Номер] like '%{substring}%'
+																or	org.[Наименование] like '%{substring}%')
+												as ct
+										order by number, name
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
 
 def Agreement_Types_Data():
 	query_result = connection_ul.execute(text(f"""--sql
 																	select 	row_id,
 										   									[Название] as name
 										   								from stack.[Классификаторы]
-										   								where [Тип]=129 and [Код]>0;
+										   								where [Тип]=129 and [Код]>0
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 

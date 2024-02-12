@@ -21,7 +21,8 @@ connection_url_fl = URL.create(
 	database=config['login_fl']['DATABASE'],
 	query={
 		"driver": config['login_fl']['DRIVER'],
-		"TrustServerCertificate": "yes"	},
+		"TrustServerCertificate": "yes",
+		"extra_params": "MARS_Connection=Yes"	},
 )
 connection_url_ul = URL.create(
 	config['login_ul']['ENGINE'],
@@ -32,7 +33,8 @@ connection_url_ul = URL.create(
 	database=config['login_ul']['DATABASE'],
 	query={
 		"driver": config['login_ul']['DRIVER'],
-		"TrustServerCertificate": "yes"	},
+		"TrustServerCertificate": "yes",
+		"extra_params": "MARS_Connection=Yes"	},
 )
 
 echo(style(text=connection_url_fl, bg='blue', fg='bright_green'))

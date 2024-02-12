@@ -1,13 +1,16 @@
 {% block content %}
-
+<h3> Поиск договоров </h3>
 <form id="search_form row">
-
   <div class="col input-group">
-    <input class="form-control form_text_input" type="text"  value="" aria-describedby="button-addon-search" >
-    <button class="btn btn-outline-secondary" type="button" id="button-addon-search">...</button>
-</div>
-
+    <input class="form-control form_text_input" type="text"  value="" aria-describedby="button-addon-search" oninput="Get_Agreements_Search_Result(this.value);" id = "form_text_input_for_agreements_search">
+    <button class="btn btn-outline-secondary" type="button" id="button-addon-search"><img width="30" height="30" src="/static/images/filter_delete.png" onclick="$(`#form_text_input_for_agreements_search`).val(''); $(`#form_text_input_for_agreements_search`).trigger('oninput');"></button>
+    <button class="btn btn-outline-secondary" type="button" id="button-addon-search"><img width="30" height="30" src="/static/images/lupe.png"></button>
+  </div>
 </form>
+
+<div id="div_for_substitustion_of_search_results">
+
+</div>
 
 {% endblock %}
 

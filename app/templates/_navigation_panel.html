@@ -2,10 +2,16 @@
 <nav class="navbar sticky-top bg-body-tertiary" role="navigation">
   <div class="container">
     {% for button in navigation_buttons %}
-      <a class="navbar-brand" 
+        <a class="navbar-brand" 
+
       {% if button.href is defined %}
-        href="{{ button.href }}"
+        {% if button.onclick|length>1 %}
+        
+        {% else %}
+            href="{{ button.href }}"
+        {% endif %}
       {% endif %} 
+
       {% if button.onclick is defined %}
         onclick="{{ button.onclick }}"
       {% endif %} 

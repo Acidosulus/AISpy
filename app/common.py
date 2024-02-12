@@ -34,6 +34,7 @@ class Navbar_Button:
 	src: str
 	onclick: str
 
+
 class Button_Home(Navbar_Button):
 	def __init__(self, href='/', title='В начало', src='home.png', onclick=''):
 		self.href = href
@@ -66,3 +67,10 @@ class Button_Excel(Navbar_Button):
 		self.src = src
 		self.onclick = onclick
 
+
+class Agreements_Search(Navbar_Button):
+	def __init__(self, href='', title='Поиск договоров', src='lupe.png', onclick='RunInScreenForm(`agreements_search`, `FillOutOrganizationForm();`, `/agreement_search_form`);'):
+		self.href = href
+		self.title = title
+		self.src = src
+		self.onclick = onclick

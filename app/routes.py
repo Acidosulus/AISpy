@@ -26,7 +26,10 @@ def agreements(object_id:int):
 		#	print(type(row['descendants_count']))
 		#prnt(row)
 		row['descendants_count'] =  int(row['descendants_count'])
-	return render_template("agreements.html", results=data, parents=data_sourses.get_agreements_hierarchy(int(object_id)), navigation_buttons = [common.Button_Home(), common.Button_Back()])
+	return render_template("agreements.html",
+							results=data,
+							parents=data_sourses.get_agreements_hierarchy(int(object_id)),
+							navigation_buttons = [common.Button_Home(), common.Agreements_Search(), common.Button_Back()])
 
 
 @app.route('/')
@@ -205,8 +208,21 @@ def organization_form(row_id:int):
 							html_for_select_organization_type = generate_select_options_html( data_sourses.Ref_Organizaion_Type(), fdata[0]['org_type_id']),
 							html_for_select_organization_NDS = generate_select_options_html( data_sourses.Ref_Organizaion_NDS(), fdata[0]['nds_type']),
 							html_for_select_organization_Debtor_Category = generate_select_options_html( data_sourses.Ref_Organizaion_Debtor_Category(), fdata[0]['debtor_category']),
-							navigation_buttons = [common.Button_Home(), common.Button_Back()])
+							navigation_buttons = [common.Button_Home(), common.Button_Back(), ])
 
+
+
+@app.route('/agreement_search_form')
+def agreement_search_form():
+	return render_template("/forms/search_form/search_form.html",
+							)
+
+@app.route('/get_agremments_search_result', methods=["POST"])
+def get_agremments_search_result():
+	header, results = data_sourses.Agreements_Search_Data(request.get_json()['search_substring'])
+	return render_template("/forms/search_form/_agreements.html",	
+							results = results
+							)
 
 
 @app.route('/test/')
