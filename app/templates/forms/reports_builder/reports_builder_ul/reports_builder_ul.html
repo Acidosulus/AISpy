@@ -1,0 +1,38 @@
+
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+{% include "_navigation_panel.html"%}
+
+{% block content %}
+
+<h3>Конструктор отчётов</h3>
+
+  <form id="dialog_div"  style="margin: 20px; padding: 20px; background-color:#CFCFCF;" class="border border-3 rounded border-primary" method="" action="" >
+    <div class="row">
+        <div class="col-3">
+          <select class="form-select" size="24">
+            {% for  tp in agreement_types_data %}
+              <option>{{ tp.name }}</option>
+            {% endfor %}
+          </select>
+          <div class="row">
+            <button class="btn btn-primary col-6" id="button_data_insert">Добавить строки</button>
+            <button class="btn btn-secondary col-6" id="button_data_clear">Очистить</button>
+          </div>
+        </div>
+
+        <div class="col-8">
+          <select class="form-select" size="24">
+            {% for  tp in agreement_types_data %}
+              <option>{{ tp.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+    </div>
+
+  </form>
+
+{% endblock %}

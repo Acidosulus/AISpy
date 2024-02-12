@@ -198,6 +198,13 @@ def agreement_form_part_calc_table(row_id:int,period:str):
 							calc_data = calc_data
 							)
 
+
+@app.route('/reports_builder_ul')
+def reports_builder_ul():
+	return render_template("/forms/reports_builder/reports_builder_ul/reports_builder_ul.html",
+							navigation_buttons = [common.Button_Home(), common.Button_Back()]
+							)
+
 @app.route('/organization_form/<row_id>')
 def organization_form(row_id:int):
 	header, fdata = data_sourses.Organization_Data(int(row_id))
