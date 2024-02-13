@@ -1,11 +1,11 @@
-from datetime import datetime, timezone
+import datetime
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
 from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull, connection, data_sourses
 from click import echo, style
 import pprint
 from sqlalchemy import text
-from app.models import Users
+from app.models import Users, UserObject
 from flask_login import login_user, logout_user, current_user
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
@@ -299,8 +299,27 @@ def test_dialog():
 
 
 
+def designer_ul_clear_data(user_id:int):
+	connection.execute(db.delete(models.UserObject).where(models.UserObject.user_id==user_id, models.UserObject.name=='data_designer_ul'))
+	connection.commit()
+	return ''
 
+@app.route("/designer_ul_add_all_agreements", methods=['GET', 'POST'])
+def designer_ul_add_all_agreements():
+	designer_ul_clear_data(current_user.id)
+	head, data = data_sourses.All_Agreement_Numbers()
+	user_object = UserObject(	user_id = current_user.id,
+								name = 'data_designer_ul',
+								data = json.dumps({'source':data}),
+								dt= datetime.date.today()	)
+	db.session.add(user_object)
+	db.session.commit()
+	designer_ul_get_source()
+	return 'ok'
 
-
-
+@app.route("/designer_ul_get_source", methods=['GET', 'POST'])
+def designer_ul_get_source():
+	header, data = data_sourses.get_queryresult_header_and_data(connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).fetchall())
+	print(data[0]['data']['source'])
+	return ''
 

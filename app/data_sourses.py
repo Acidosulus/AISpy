@@ -613,6 +613,18 @@ def Calc_Data(agreement_row_id:int, period:str):
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+
+def All_Agreement_Numbers():
+	query_result = connection_ul.execute(text(f"""--sql
+											select 	agr.[Номер] as agreement,
+										   			'          ' as point
+												from stack.[Договор] as agr
+												where len(agr.[Номер])=10
+												order by agreement
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
 #print("=============================")
 #print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
