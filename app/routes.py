@@ -298,11 +298,16 @@ def test_dialog():
 	return str(dialogs.dialogtest)
 
 
+@app.route("/designer_ul_clear_data_endpoint", methods=['GET', 'POST'])
+def designer_ul_clear_data_endpoint():
+	designer_ul_clear_data(current_user.id)
+	return ''
 
 def designer_ul_clear_data(user_id:int):
 	connection.execute(db.delete(models.UserObject).where(models.UserObject.user_id==user_id, models.UserObject.name=='data_designer_ul'))
 	connection.commit()
 	return ''
+
 
 @app.route("/designer_ul_add_all_agreements", methods=['GET', 'POST'])
 def designer_ul_add_all_agreements():
@@ -317,9 +322,26 @@ def designer_ul_add_all_agreements():
 	designer_ul_get_source()
 	return 'ok'
 
+
+@app.route("/designer_ul_add_all_points", methods=['GET', 'POST'])
+def designer_ul_add_all_points():
+	designer_ul_clear_data(current_user.id)
+	head, data = data_sourses.All_Point_Numbers()
+	user_object = UserObject(	user_id = current_user.id,
+								name = 'data_designer_ul',
+								data = json.dumps({'source':data}),
+								dt= datetime.date.today()	)
+	db.session.add(user_object)
+	db.session.commit()
+	designer_ul_get_source()
+	return 'ok'
+
+
 @app.route("/designer_ul_get_source", methods=['GET', 'POST'])
 def designer_ul_get_source():
 	header, data = data_sourses.get_queryresult_header_and_data(connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).fetchall())
-	print(data[0]['data']['source'])
-	return ''
+	if len(data)>0:
+		return json.loads(data[0]['data'])['source']
+	else:
+		return ''
 

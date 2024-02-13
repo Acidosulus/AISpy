@@ -625,6 +625,19 @@ def All_Agreement_Numbers():
 	return get_queryresult_header_and_data(query_result)
 
 
+def All_Point_Numbers():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															convert(varchar, ls.[Номер]) as point
+														from (select * from stack.[Лицевые договора] where getdate() between [ДатНач] and [ДатКнц]) ld
+														inner join stack.[Договор] as agr on agr.row_id = ld.[Договор]
+														inner join stack.[Лицевые счета] as ls on ls.row_id = ld.[Лицевой]
+														order by point
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
 #print("=============================")
 #print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
