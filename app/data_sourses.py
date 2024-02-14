@@ -625,6 +625,34 @@ def All_Agreement_Numbers():
 	return get_queryresult_header_and_data(query_result)
 
 
+def Opened_Agreement_Numbers():
+	query_result = connection_ul.execute(text(f"""--sql
+											select 	agr.[Номер] as agreement,
+										   			'          ' as point
+												from stack.[Договор] as agr
+												where 		len(agr.[Номер])=10 and
+															(Окончание is null or (getdate()<=Окончание)) and 
+															([Дата расторжения] is null or (getdate()<=[Дата расторжения]))
+												order by agreement
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
+def Point_Numbers_of_Opened_Agreements():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															convert(varchar, ls.[Номер]) as point
+														from (select * from stack.[Лицевые договора] where getdate() between [ДатНач] and [ДатКнц]) ld
+														inner join (select * from stack.[Договор] where (Окончание is null or (getdate()<=Окончание)) and ([Дата расторжения] is null or (getdate()<=[Дата расторжения]))) as agr  on agr.row_id = ld.[Договор]
+														inner join stack.[Лицевые счета] as ls on ls.row_id = ld.[Лицевой]
+														order by point
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
 def All_Point_Numbers():
 	query_result = connection_ul.execute(text(f"""--sql
 													select 	

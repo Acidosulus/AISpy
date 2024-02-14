@@ -323,6 +323,20 @@ def designer_ul_add_all_agreements():
 	return 'ok'
 
 
+@app.route("/designer_ul_add_opened_agreements", methods=['GET', 'POST'])
+def designer_ul_add_opened_agreements():
+	designer_ul_clear_data(current_user.id)
+	head, data = data_sourses.Opened_Agreement_Numbers()
+	user_object = UserObject(	user_id = current_user.id,
+								name = 'data_designer_ul',
+								data = json.dumps({'source':data}),
+								dt= datetime.date.today()	)
+	db.session.add(user_object)
+	db.session.commit()
+	designer_ul_get_source()
+	return 'ok'
+
+
 @app.route("/designer_ul_add_all_points", methods=['GET', 'POST'])
 def designer_ul_add_all_points():
 	designer_ul_clear_data(current_user.id)
@@ -336,6 +350,18 @@ def designer_ul_add_all_points():
 	designer_ul_get_source()
 	return 'ok'
 
+@app.route("/designer_ul_add_all_points_of_opened_agreements", methods=['GET', 'POST'])
+def designer_ul_add_all_points_of_opened_agreements():
+	designer_ul_clear_data(current_user.id)
+	head, data = data_sourses.Point_Numbers_of_Opened_Agreements()
+	user_object = UserObject(	user_id = current_user.id,
+								name = 'data_designer_ul',
+								data = json.dumps({'source':data}),
+								dt= datetime.date.today()	)
+	db.session.add(user_object)
+	db.session.commit()
+	designer_ul_get_source()
+	return 'ok'
 
 @app.route("/designer_ul_get_source", methods=['GET', 'POST'])
 def designer_ul_get_source():
@@ -345,3 +371,7 @@ def designer_ul_get_source():
 	else:
 		return ''
 
+@app.route("/insert_data_agreements_from_clipboard", methods=['GET', 'POST'])
+def insert_data_agreements_from_clipboard():
+	print(request.get_data())
+	return ''

@@ -12,7 +12,7 @@
   <form id="report_designer_ul"  style="margin: 20px; padding: 20px; background-color:#CFCFCF;" class="border border-3 rounded border-primary">
     <div class="row">
         <div class="col-3 p-1">
-          <h5>Договора - Точки учета</h5>
+          <h5 id="agreements_points_lable">Договора - Точки учета</h5>
           <select class="form-select" size="24" id="agreements_and_points_list">
             {% for  tp in agreement_types_data %}
               <option>{{ tp.name }}</option>
@@ -23,12 +23,12 @@
               <div class="dropdown dropend">
               <button type="button" class="btn btn-primary col-12 dropdown-toggle" id="button_data_insert" id="AgreementPeriodsDropDownList" data-bs-toggle="dropdown" aria-expanded="false"><img width="24" height="24" src="/static/images/paste.png" align="left"> Добавить строки</button>
               <ul class="dropdown-menu dropdown-menu-dark " aria-labelledby="button_data_insert" id="button_data_insertDropMenu" data-agreementid="-==-">
-                <li><a class="dropdown-item" href="#" onclick="">Договора из буфера обмена</a></li>
-                <li><a class="dropdown-item" href="#" onclick="">Только действуюшие Договора</a></li>
+                <li><a class="dropdown-item" href="#" onclick="InsertDataAgreementsFromClipboard()">Договора из буфера обмена</a></li>
+                <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddOpenedAgreements();">Только действуюшие Договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddAllAgreements();">Все Договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="">--------------------------------------------</a></li>
                 <li><a class="dropdown-item" href="#" onclick="">Точки учёта из буфера обмена</a></li>
-                <li><a class="dropdown-item" href="#" onclick="">Только Точки учёта связанные с Договорами</a></li>
+                <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddAllPointsOfOpenedAgreements()">Только Точки учёта связанные с открытыми Договорами</a></li>
                 <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddAllPoints();">Все Точки учёта</a></li>
               </ul>
               </div>
@@ -43,7 +43,7 @@
 
         <div class="col-9 p-1">
           <h5>Добавляемые поля</h5>
-          <select class="form-select" size="24">
+          <select class="form-select" size="24" id="added_fields_list">
             {% for  tp in agreement_types_data %}
               <option>{{ tp.name }}</option>
             {% endfor %}
