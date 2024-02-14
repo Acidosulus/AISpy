@@ -88,7 +88,6 @@ function GetSourceFromServer(){
                 }));
                 counter++;
           }
-          
           $(`#agreements_points_lable`).text('Договора - Точки учета');
           $(`#agreements_points_lable`).append(` <sup class="text-success">${counter}</sp>`);
         }}); //get_source
@@ -103,21 +102,29 @@ async function GetDataFromClipboard(){
 
 async function InsertDataAgreementsFromClipboard() {
   let insertedtext = await GetDataFromClipboard();
-
-
   $.ajax({
     url: '/insert_data_agreements_from_clipboard',
     method: 'post',
     dataType: 'html',
-    data: {text: insertedtext},
+    data: insertedtext,
     success: function(data){
         GetSourceFromServer();
       }
     }); 
-
-
 }
 
+async function InsertDataPointsFromClipboard() {
+  let insertedtext = await GetDataFromClipboard();
+  $.ajax({
+    url: '/insert_data_points_from_clipboard',
+    method: 'post',
+    dataType: 'html',
+    data: insertedtext,
+    success: function(data){
+        GetSourceFromServer();
+      }
+    }); 
+}
 
 
 
@@ -130,3 +137,5 @@ if ($('#report_designer_ul').length) {
   GetSourceFromServer();
   
 }
+
+

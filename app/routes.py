@@ -319,7 +319,7 @@ def designer_ul_add_all_agreements():
 								dt= datetime.date.today()	)
 	db.session.add(user_object)
 	db.session.commit()
-	designer_ul_get_source()
+	#designer_ul_get_source()
 	return 'ok'
 
 
@@ -333,7 +333,7 @@ def designer_ul_add_opened_agreements():
 								dt= datetime.date.today()	)
 	db.session.add(user_object)
 	db.session.commit()
-	designer_ul_get_source()
+	#designer_ul_get_source()
 	return 'ok'
 
 
@@ -347,7 +347,7 @@ def designer_ul_add_all_points():
 								dt= datetime.date.today()	)
 	db.session.add(user_object)
 	db.session.commit()
-	designer_ul_get_source()
+	#designer_ul_get_source()
 	return 'ok'
 
 @app.route("/designer_ul_add_all_points_of_opened_agreements", methods=['GET', 'POST'])
@@ -360,7 +360,7 @@ def designer_ul_add_all_points_of_opened_agreements():
 								dt= datetime.date.today()	)
 	db.session.add(user_object)
 	db.session.commit()
-	designer_ul_get_source()
+	#designer_ul_get_source()
 	return 'ok'
 
 @app.route("/designer_ul_get_source", methods=['GET', 'POST'])
@@ -373,5 +373,43 @@ def designer_ul_get_source():
 
 @app.route("/insert_data_agreements_from_clipboard", methods=['GET', 'POST'])
 def insert_data_agreements_from_clipboard():
-	print(request.get_data())
+	designer_ul_clear_data(current_user.id)
+	agreements = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
+	dict_list = []
+	for agreement in agreements:
+		dict_list.append({'agreement':agreement, 'point':'          '})
+	print('inserted data:', dict_list)
+
+	user_object = UserObject(	user_id = current_user.id,
+								name = 'data_designer_ul',
+								data = json.dumps({'source':dict_list}),
+								dt= datetime.date.today()	)
+	db.session.add(user_object)
+	db.session.commit()
+	return ''
+
+
+@app.route("/insert_data_points_from_clipboard", methods=['GET', 'POST'])
+def insert_data_points_from_clipboard():
+	designer_ul_clear_data(current_user.id)
+	points = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
+
+	pointsagrs={}
+	head, data = data_sourses.All_Point_Numbers()
+	for row in data:
+		if len(row['point'].strip())==10 and len(row['agreement'].strip())==10:
+			pointsagrs[ row['point'].strip() ] = row['agreement'].strip()
+
+	dict_list = []
+	for point in points:
+		dict_list.append({'agreement':(pointsagrs[point.strip()] if point.strip() in pointsagrs else '          '), 'point':point.strip()})
+
+	print('inserted data:', dict_list)
+
+	user_object = UserObject(	user_id = current_user.id,
+								name = 'data_designer_ul',
+								data = json.dumps({'source':dict_list}),
+								dt= datetime.date.today()	)
+	db.session.add(user_object)
+	db.session.commit()
 	return ''
