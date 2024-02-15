@@ -128,14 +128,52 @@ async function InsertDataPointsFromClipboard() {
 
 
 
-
+function AddData_Agreement_name(){
+  $.ajax({
+    url: '/designer_ul_add_data',
+    method: 'post',
+    dataType: 'json',
+    data: JSON.stringify({type:'agreement_names'}),
+    success: function(data){
+      GetSourceFromServer();
+    }});
+}
 
 
 
 if ($('#report_designer_ul').length) {
-
   GetSourceFromServer();
-  
 }
 
 
+
+async function AskText(){
+
+  // Создаётся объект promise
+  var AskText_promise = await new Promise((AskText_resolve, AskText_reject) => {
+   
+      FillOutModalForm({"title":"Вставьте номера договоров из Excel",
+                        "backlink":"",
+                        "parameters":[{ "lable":"Номера договоров",
+                                        "name":"agreements",
+                                        "type":"text",
+                                        "default":"",
+                                        "size":24,
+                                        "data":[]}],
+                        "success_jscode":"", "escape_jscode":""});
+
+                        $('#button_modal_dialog_ok').on('click', function() {
+                          let ctext = AskText_resolve($('#agreements').val());
+                          closeModal();
+                          return ctext;
+                        });
+
+                        $('#button_modal_dialog_escape').on('click', function() {
+                          closeModal();
+                          return AskText_reject();
+                        });
+
+            });
+
+  return await AskText_promise;
+}

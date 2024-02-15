@@ -22,6 +22,7 @@ var periods = [ '2022-09',
 
 const closeModal = function () {
     document.getElementById('mform').classList.add("hidden");
+    document.getElementById('mdiv').classList.add("hidden");
 };
 
 var border_colors = ["border-primary", "border-secondary", "border-success", "border-danger", "border-warning", "border-info", "border-dark"];
@@ -40,8 +41,11 @@ function getRandomInt(max) {
 
 // open modal function
 async function openModal(uri_for_get_JSON) {
-    document.getElementById('mform').classList.remove("hidden");
-    await FillOutModalForm(uri_for_get_JSON);
+    
+    let answer = await asyncRequest(uri_for_get_JSON, `POST`, {});
+    var source = answer;
+
+    await FillOutModalForm(source);
   };
 
 
@@ -50,14 +54,16 @@ async function asyncRequest (uri, method, data, debug=false){
     return response_promise.json();
 }
 
-async function FillOutModalForm(uri_for_get_JSON){
+async function FillOutModalForm(source){
+    console.log(JSON.stringify(source));
+    
 
     const str_card_begin = `<div class="card text-secondary-emphasis bg-secondary-subtle border border-secondary-subtle rounded-3" style="padding: 1em;">`;
     const str_card_end = `</div>`;
 
-    let answer = await asyncRequest(uri_for_get_JSON, `POST`, {});
-    var source = answer;
-    const rootNode = document.getElementById('mform');
+    const rootNode = document.getElementById(source.backlink.length>0?'mform':'mdiv');
+
+    rootNode.classList.remove("hidden");
     rootNode.innerHTML = "";
     if (source.title!=null){
       rootNode.insertAdjacentHTML(`beforeend`,`<h1 class="p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">${source.title}</h1><hr><hr>`);
@@ -79,7 +85,7 @@ async function FillOutModalForm(uri_for_get_JSON){
         } //checkbox
   
         if (section.type==`text`){
-          rootNode.insertAdjacentHTML(`beforeend`, `${str_card_begin}<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label></div><div class="col-8"><textarea class="container-fluid" autocomplete="off" name="${section.name}" id="${section.name}" >${section.default}</textarea></div>${str_card_end}</div><br>`
+          rootNode.insertAdjacentHTML(`beforeend`, `${str_card_begin}<div class="row"><div class="col-4"><label for="${section.name}">${section.lable} </label></div><div class="col-8"><textarea ${(Number(section.size)>0?'rows="'+section.size+'"':'')} class="container-fluid" autocomplete="off" name="${section.name}" id="${section.name}" >${section.default}</textarea></div>${str_card_end}</div><br>`
           );
         } //textarea
       if (section.type==`listbox`){
@@ -95,16 +101,25 @@ async function FillOutModalForm(uri_for_get_JSON){
         } //listbox
       }
     }
-    rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><div class="container"> <div class="row"><div class="col-sm-8"><button type="submit" class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button></div><div class="col-sm-4"><button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='closeModal();'>Отмена</button></div></div>`);
+    rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><div class="container"> <div class="row"><div class="col-sm-8"><button ${(source.backlink.length>0)?'type="submit"':''} class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button></div><div class="col-sm-4"><button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='closeModal();' id="button_modal_dialog_escape">Отмена</button></div></div>`);
     const ok_button = document.getElementById('button_modal_dialog_ok');
     if (source.success_jscode.length>0){
       console.log(`jscode`);
       ok_button.onclick = function() { eval(source.success_jscode); };
     }
     
+    const escape_button = document.getElementById('button_modal_dialog_escape');
+    if (source.escape_jscode.length>0){
+      console.log(`escape`);
+      escape_button.onclick = function() { eval(source.escape_jscode); };
+    }
+
     if (source.backlink.length>0){
       console.log(`backlink`  );
       rootNode.action = source.backlink;
+      rootNode.method = 'POST';}
+    else{
+      
     }
 }
 

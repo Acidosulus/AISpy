@@ -17,7 +17,37 @@
   .hidden {
     display: none;
   }
+  
+  .mform {
+    gap: 0.4rem;
+    width: 95%;
+    padding: 1.3rem;
+    max-height: 85%;
+    min-height: 250px;
+    position: absolute;
+    z-index: 2;
+    top: 10%;
+    left: 2.5%;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+  }
 
+  .mform .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
+  .mform input {
+    padding: 0.7rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9em;
+  }
 
-
+  .mform p {
+    font-size: 0.9rem;
+    color: #777;
+    margin: 0.4rem 0 0.2rem;
+  }

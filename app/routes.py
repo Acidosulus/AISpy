@@ -413,3 +413,18 @@ def insert_data_points_from_clipboard():
 	db.session.add(user_object)
 	db.session.commit()
 	return ''
+
+@app.route("/designer_ul_add_data", methods=['POST','GET'])
+def designer_ul_add_data():
+	print('>>>>>>>>>>>>>>>>>>>>>>>')
+	print(f"""{json.loads(request.get_data())}""")
+	response = json.loads(request.get_data())
+	if 'type' in response:
+			designer_object = connection.execute(
+									db.	select(models.UserObject).
+										where(	models.UserObject.user_id==current_user.id, 
+												models.UserObject.name=='data_designer_ul')).fetchall()
+			print(designer_object.data)
+
+	print('>>>>>>>>>>>>>>>>>>>>>>>')
+	return ''
