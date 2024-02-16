@@ -42,6 +42,22 @@ function ClearSourceData(){
   $('#agreements_and_points_list').empty();
 }
 
+
+function ClearSourceDataonServerParameters(){
+  $.ajax({
+    url: '/designer_ul_clear_data_parameters',
+    method: 'post',
+    dataType: 'html',
+    data: {text: 'Текст'},
+    success: function(data){
+      GetSourceFromServer();
+    }});
+}
+
+function ClearSourceDataParameters(){
+  $('#added_fields_list').empty();
+}
+
 // add all points into list for current_user
 function DataDesignerULAddAllPoints(){
   // add_all_agreements
@@ -79,6 +95,7 @@ function GetSourceFromServer(){
         dataType: 'html',
         data: {text: 'Текст'},
         success: function(data){
+          console.log(data);
           var counter = 0;
           ClearSourceData()
           for (let row of JSON.parse(data)){
@@ -99,9 +116,19 @@ async function GetDataFromClipboard(){
   return await navigator.clipboard.readText();
 }
 
+async function InsertDataAgreementsFromClipboard_ShowInterface() {
+  FillOutModalForm({"title":"Вставьте номера договоров из Excel",
+                    "backlink":"",
+                    "parameters":[{ "lable":"Номера договоров",
+                                    "name":"agreements",
+                                    "type":"text",
+                                    "default":"",
+                                    "size":24,
+                                    "data":[]}],
+                    "success_jscode":"InsertDataAgreementsFromClipboard($('#agreements').val());closeModal();", "escape_jscode":"closeModal();"});
+}
 
-async function InsertDataAgreementsFromClipboard() {
-  let insertedtext = await GetDataFromClipboard();
+async function InsertDataAgreementsFromClipboard(insertedtext) {
   $.ajax({
     url: '/insert_data_agreements_from_clipboard',
     method: 'post',
@@ -113,8 +140,22 @@ async function InsertDataAgreementsFromClipboard() {
     }); 
 }
 
-async function InsertDataPointsFromClipboard() {
-  let insertedtext = await GetDataFromClipboard();
+
+async function InsertDataPointsFromClipboard_ShowInterface() {
+  FillOutModalForm({"title":"Вставьте номера точек учета из Excel",
+                    "backlink":"",
+                    "parameters":[{ "lable":"Номера Точек Учета",
+                                    "name":"points",
+                                    "type":"text",
+                                    "default":"",
+                                    "size":24,
+                                    "data":[]}],
+                    "success_jscode":"InsertDataPointsFromClipboard($('#points').val());closeModal();", "escape_jscode":"closeModal();"});
+}
+
+
+
+async function InsertDataPointsFromClipboard(insertedtext) {
   $.ajax({
     url: '/insert_data_points_from_clipboard',
     method: 'post',
@@ -149,6 +190,17 @@ if ($('#report_designer_ul').length) {
 
 async function AskText(){
 
+  FillOutModalForm({"title":"Вставьте номера договоров из Excel",
+                    "backlink":"",
+                    "parameters":[{ "lable":"Номера договоров",
+                                    "name":"agreements",
+                                    "type":"text",
+                                    "default":"",
+                                    "size":24,
+                                    "data":[]}],
+                    "success_jscode":"console.log($('#agreements').val());closeModal();", "escape_jscode":"console.log('escape');closeModal();"});
+
+  /*
   // Создаётся объект promise
   var AskText_promise = await new Promise((AskText_resolve, AskText_reject) => {
    
@@ -174,6 +226,9 @@ async function AskText(){
                         });
 
             });
+  return AskText_promise;
+            */
 
-  return await AskText_promise;
+
+  
 }

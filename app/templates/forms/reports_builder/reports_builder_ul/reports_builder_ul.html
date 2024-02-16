@@ -7,6 +7,12 @@
 
 {% block content %}
 
+<form class="mform hidden" id="mform">
+</form>
+<div class="mform hidden" id="mdiv">
+</div>
+
+
 <h3>Конструктор отчётов</h3>
 
   <form id="report_designer_ul"  style="margin: 20px; padding: 20px; background-color:#CFCFCF;" class="border border-3 rounded border-primary">
@@ -23,11 +29,11 @@
               <div class="dropdown dropend">
               <button type="button" class="btn btn-primary col-12 dropdown-toggle" id="button_data_insert" id="AgreementPeriodsDropDownList" data-bs-toggle="dropdown" aria-expanded="false"><img width="24" height="24" src="/static/images/paste.png" align="left"> Добавить строки</button>
               <ul class="dropdown-menu dropdown-menu-dark " aria-labelledby="button_data_insert" id="button_data_insertDropMenu" data-agreementid="-==-">
-                <li><a class="dropdown-item" href="#" onclick="InsertDataAgreementsFromClipboard()">Договора из буфера обмена</a></li>
+                <li><a class="dropdown-item" href="#" onclick="InsertDataAgreementsFromClipboard_ShowInterface()">Договора из буфера обмена</a></li>
                 <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddOpenedAgreements();">Только действуюшие Договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddAllAgreements();">Все Договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="">--------------------------------------------</a></li>
-                <li><a class="dropdown-item" href="#" onclick="InsertDataPointsFromClipboard();">Точки учёта из буфера обмена</a></li>
+                <li><a class="dropdown-item" href="#" onclick="InsertDataPointsFromClipboard_ShowInterface();">Точки учёта из буфера обмена</a></li>
                 <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddAllPointsOfOpenedAgreements()">Только Точки учёта связанные с открытыми Договорами</a></li>
                 <li><a class="dropdown-item" href="#" onclick="DataDesignerULAddAllPoints();">Все Точки учёта</a></li>
               </ul>
@@ -36,7 +42,7 @@
 
 
             <div class="col-6 p-1">
-              <button type="button" class="btn btn-secondary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/clear.png" align="left">Очистить</button>
+              <button type="button" class="btn btn-warning col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/clear.png" align="left">Очистить</button>
             </div>
           </div>
         </div>
@@ -44,9 +50,6 @@
         <div class="col-9 px-4">
           <h5>Добавляемые поля</h5>
           <select class="form-select" size="24" id="added_fields_list">
-            {% for  tp in agreement_types_data %}
-              <option>{{ tp.name }}</option>
-            {% endfor %}
           </select>
 
           <div class="row p-1">
@@ -68,15 +71,32 @@
               <button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">Точки учета</button>
             </div>
 
-
-
+          
             <div class="col-4 p-1">
               <button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">Приборы учета</button>
             </div>
 
+          </div>
 
+          <div class="row p-1">
+
+            <div class="col-4 p-1">
+              <button type="button" class="btn btn-success col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/excel.png" align="left">Вывести в Excel</button>
+            </div>
+
+
+            <div class="col-4 p-1">
+              <button type="button" class="btn btn-secondary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/repeat.png" align="left">Повторить</button>
+            </div>
+
+
+            <div class="col-4 p-1">
+              <button type="button" class="btn btn-warning col-12" id="button_data_clear" onclick="ClearSourceDataonServerParameters();ClearSourceDataParameters();"><img width="24" height="24" src="/static/images/clear.png" align="left">Очистить</button>
+            </div>
 
           </div>
+
+          
 
         </div>
 

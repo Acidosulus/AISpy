@@ -65,4 +65,5 @@ class UserObject (db.Model):
 	name				=	db.Column(db.String)
 	parameters			=	db.Column(db.String)
 	data				=	db.Column(db.String)
+	data_01				=	db.Column(db.String)
 

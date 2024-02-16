@@ -9,8 +9,6 @@
 
 
 <form class="mform hidden" id="mform">
-
-
 </form>
 <div class="mform hidden" id="mdiv">
 </div>
@@ -27,7 +25,7 @@
       <hr>
       <hr>
       <!--FillOutModalForm({"title":"Реестр платежей","backlink":"","parameters":[{"lable":"Номера договоров","name":"agreements","type":"text","default":"","size":24,"data":[]}],"success_jscode":""})-->
-      <input class="btn btn-primary" id="test_button" type="button" value="test 1" onclick='AskText();' />
+      <input class="btn btn-primary" id="test_button" type="button" value="test 1" onclick='console.log(AskText());' />
       <a href="/organization_form/48178"><input class="btn btn-primary" id="test_button" type="button" value="test 2" /></a>
       <a onclick="RunInScreenForm(`organization_form`, `FillOutOrganizationForm()`, `/organization_form/48178`);"><input class="btn btn-primary" id="test_button" type="button" value="test Organization" /></a>
       <a onclick="RunInScreenForm(`agreement_form`, `FillOutOrganizationForm(); Fill_Agreement_Periods_DropDownList();`, `/agreement_form/117246`);"><input class="btn btn-primary" id="test_button" type="button" value="test Agreement" /></a>

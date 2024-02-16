@@ -304,7 +304,21 @@ def designer_ul_clear_data_endpoint():
 	return ''
 
 def designer_ul_clear_data(user_id:int):
-	connection.execute(db.delete(models.UserObject).where(models.UserObject.user_id==user_id, models.UserObject.name=='data_designer_ul'))
+	connection.execute(db.update(models.UserObject).where(models.UserObject.user_id==user_id, models.UserObject.name=='data_designer_ul').values(data='{}'))
+	connection.commit()
+	return ''
+
+def designer_ul_get_data_id(user_id):
+	data = connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==user_id, models.UserObject.name=='data_designer_ul')).first()
+	print('===================')
+	prnt(data)
+	print('===================')
+	return data
+	
+
+@app.route("/designer_ul_clear_data_parameters", methods=['GET', 'POST'])
+def designer_ul_clear_data_parameters():
+	connection.execute(db.update(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').values(data_01='{}'))
 	connection.commit()
 	return ''
 
@@ -312,64 +326,99 @@ def designer_ul_clear_data(user_id:int):
 @app.route("/designer_ul_add_all_agreements", methods=['GET', 'POST'])
 def designer_ul_add_all_agreements():
 	designer_ul_clear_data(current_user.id)
+	
 	head, data = data_sourses.All_Agreement_Numbers()
-	user_object = UserObject(	user_id = current_user.id,
-								name = 'data_designer_ul',
-								data = json.dumps({'source':data}),
-								dt= datetime.date.today()	)
+
+	user_object = designer_ul_get_data_id(current_user.id)
+	if user_object == None:
+		user_object = UserObject(	user_id = current_user.id,
+									name = 'data_designer_ul',
+									data = json.dumps({'source':data}),
+									dt= datetime.date.today()	)
+	else:
+		user_object.data = json.dumps({'source':data})
+
 	db.session.add(user_object)
 	db.session.commit()
-	#designer_ul_get_source()
 	return 'ok'
 
 
 @app.route("/designer_ul_add_opened_agreements", methods=['GET', 'POST'])
 def designer_ul_add_opened_agreements():
 	designer_ul_clear_data(current_user.id)
+
 	head, data = data_sourses.Opened_Agreement_Numbers()
-	user_object = UserObject(	user_id = current_user.id,
-								name = 'data_designer_ul',
-								data = json.dumps({'source':data}),
-								dt= datetime.date.today()	)
+
+	user_object = designer_ul_get_data_id(current_user.id)
+	if user_object == None:
+		user_object = UserObject(	user_id = current_user.id,
+									name = 'data_designer_ul',
+									data = json.dumps({'source':data}),
+									dt= datetime.date.today()	)
+	else:
+		user_object.data = json.dumps({'source':data})
+		
 	db.session.add(user_object)
 	db.session.commit()
-	#designer_ul_get_source()
 	return 'ok'
 
 
 @app.route("/designer_ul_add_all_points", methods=['GET', 'POST'])
 def designer_ul_add_all_points():
 	designer_ul_clear_data(current_user.id)
+
 	head, data = data_sourses.All_Point_Numbers()
-	user_object = UserObject(	user_id = current_user.id,
-								name = 'data_designer_ul',
-								data = json.dumps({'source':data}),
-								dt= datetime.date.today()	)
+
+	user_object = designer_ul_get_data_id(current_user.id)
+	if user_object == None:
+		user_object = UserObject(	user_id = current_user.id,
+									name = 'data_designer_ul',
+									data = json.dumps({'source':data}),
+									dt= datetime.date.today()	)
+	else:
+		user_object.data = json.dumps({'source':data})
+
 	db.session.add(user_object)
 	db.session.commit()
-	#designer_ul_get_source()
 	return 'ok'
 
 @app.route("/designer_ul_add_all_points_of_opened_agreements", methods=['GET', 'POST'])
 def designer_ul_add_all_points_of_opened_agreements():
 	designer_ul_clear_data(current_user.id)
+
 	head, data = data_sourses.Point_Numbers_of_Opened_Agreements()
-	user_object = UserObject(	user_id = current_user.id,
-								name = 'data_designer_ul',
-								data = json.dumps({'source':data}),
-								dt= datetime.date.today()	)
+
+	user_object = designer_ul_get_data_id(current_user.id)
+	if user_object == None:
+		user_object = UserObject(	user_id = current_user.id,
+									name = 'data_designer_ul',
+									data = json.dumps({'source':data}),
+									dt= datetime.date.today()	)
+	else:
+		print('data:', user_object.data)
+		user_object.data = json.dumps({'source':data})
+
 	db.session.add(user_object)
 	db.session.commit()
-	#designer_ul_get_source()
 	return 'ok'
 
 @app.route("/designer_ul_get_source", methods=['GET', 'POST'])
 def designer_ul_get_source():
 	header, data = data_sourses.get_queryresult_header_and_data(connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).fetchall())
 	if len(data)>0:
-		return json.loads(data[0]['data'])['source']
+		if 'source' in json.loads(data[0]['data']):
+			return json.loads(data[0]['data'])['source']
+	return ''
+
+@app.route("/designer_ul_get_source_parameters", methods=['GET', 'POST'])
+def designer_ul_get_source_parameters():
+	header, data = data_sourses.get_queryresult_header_and_data(connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).fetchall())
+	if len(data)>0:
+		return json.loads(data[0]['data'])['parameters']
 	else:
 		return ''
+
+
 
 @app.route("/insert_data_agreements_from_clipboard", methods=['GET', 'POST'])
 def insert_data_agreements_from_clipboard():
@@ -423,8 +472,8 @@ def designer_ul_add_data():
 			designer_object = connection.execute(
 									db.	select(models.UserObject).
 										where(	models.UserObject.user_id==current_user.id, 
-												models.UserObject.name=='data_designer_ul')).fetchall()
-			print(designer_object.data)
+												models.UserObject.name=='data_designer_ul')).first()
+			designer_object.data
 
 	print('>>>>>>>>>>>>>>>>>>>>>>>')
 	return ''
