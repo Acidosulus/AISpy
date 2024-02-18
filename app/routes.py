@@ -6,7 +6,7 @@ from click import echo, style
 import pprint
 from sqlalchemy import text
 from app.models import Users, UserObject
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 import pandas
@@ -34,6 +34,7 @@ def agreements(object_id:int):
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
 	##### working db insert code ######
 	#u = models.User(nickname='john', email='john@email.com', role=models.ROLE_ADMIN)
@@ -200,6 +201,7 @@ def agreement_form_part_calc_table(row_id:int,period:str):
 
 
 @app.route('/reports_builder_ul')
+@login_required
 def reports_builder_ul():
 	return render_template("/forms/reports_builder/reports_builder_ul/reports_builder_ul.html",
 							navigation_buttons = [common.Button_Home(), common.Button_Back()]
@@ -314,7 +316,7 @@ def designer_ul_get_data_id(user_id):
 
 @app.route("/designer_ul_clear_data_parameters", methods=['GET', 'POST'])
 def designer_ul_clear_data_parameters():
-	connection.execute(db.update(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').values(data_01='{}'))
+	connection.execute(db.update(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').values(parameters='[]'))
 	connection.commit()
 	return ''
 
@@ -404,16 +406,16 @@ def designer_ul_add_all_points_of_opened_agreements():
 @app.route("/designer_ul_get_source", methods=['GET', 'POST'])
 def designer_ul_get_source():
 	data = connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).first()
-	if len(data)!=None:
+	if data!=None:
 		if 'source' in json.loads(data.data):
 			return json.loads(data.data)['source']
 	return ''
 
 @app.route("/designer_ul_get_source_parameters", methods=['GET', 'POST'])
 def designer_ul_get_source_parameters():
-	header, data = data_sourses.get_queryresult_header_and_data(connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).fetchall())
-	if len(data)>0:
-		return json.loads(data[0]['data'])['parameters']
+	data = connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).first()
+	if data!=None:
+		return json.loads(data.parameters)
 	else:
 		return ''
 
@@ -482,6 +484,7 @@ def insert_data_points_from_clipboard():
 		user_object = UserObject(	user_id = current_user.id,
 									name = 'data_designer_ul',
 									data = json.dumps({'source':dict_list}),
+									parameters='[]',
 									dt= datetime.date.today()	)
 	else:
 		user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
@@ -498,11 +501,19 @@ def designer_ul_add_data():
 	print(f"""{json.loads(request.get_data())}""")
 	response = json.loads(request.get_data())
 	if 'type' in response:
-			designer_object = connection.execute(
-									db.	select(models.UserObject).
-										where(	models.UserObject.user_id==current_user.id, 
-												models.UserObject.name=='data_designer_ul')).first()
-			designer_object.data
-
-	print('>>>>>>>>>>>>>>>>>>>>>>>')
+			user_object = designer_ul_get_data_id(current_user.id)
+			if user_object == None:
+				user_object = UserObject(	user_id = current_user.id,
+											name = 'data_designer_ul',
+											data = 	'',
+											parameters=f'[{response}]',
+											dt= datetime.date.today()	)
+				db.session.add(user_object)
+			else:
+				user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
+				parameterst = json.loads(user_object.parameters)
+				parameterst.append(response)
+				user_object.parameters = json.dumps(parameterst, ensure_ascii=False)
+				db.session.add(user_object)
+	db.session.commit()
 	return ''

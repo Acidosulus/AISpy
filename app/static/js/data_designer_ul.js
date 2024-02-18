@@ -50,7 +50,7 @@ function ClearSourceDataonServerParameters(){
     dataType: 'html',
     data: {text: 'Текст'},
     success: function(data){
-      GetSourceFromServer();
+      GetSourceFromServerParameters();
     }});
 }
 
@@ -87,17 +87,16 @@ function DataDesignerULAddAllPoints(){
   
   
 function GetSourceFromServer(){
+      ClearSourceData();
       $(`#agreements_points_lable`).text('Договора - Точки учета');
       //get_source
       $.ajax({
         url: '/designer_ul_get_source',
         method: 'post',
         dataType: 'html',
-        data: {text: 'Текст'},
+        data: '',
         success: function(data){
-          console.log(data);
           var counter = 0;
-          ClearSourceData()
           for (let row of JSON.parse(data)){
                   $('#agreements_and_points_list').append($('<option>', {
                     value: '',
@@ -108,9 +107,32 @@ function GetSourceFromServer(){
           $(`#agreements_points_lable`).text('Договора - Точки учета');
           $(`#agreements_points_lable`).append(` <sup class="text-success">${counter}</sp>`);
         }}); //get_source
-
 }
 
+
+
+function GetSourceFromServerParameters(){
+  $(`#parameters_lable`).text('Добавляемые поля');
+  ClearSourceDataParameters();
+  //get_source
+  $.ajax({
+    url: '/designer_ul_get_source_parameters',
+    method: 'post',
+    dataType: 'html',
+    data: '',
+    success: function(data){
+      var counter = 0;
+      for (let row of JSON.parse(data)){
+              row = JSON.parse(row.replaceAll(`'`,`"`));
+              $('#added_fields_list').append($('<option>', {
+                text: row.name
+            }));
+            counter++;
+      }
+      $(`#parameters_lable`).text('Добавляемые поля');
+      $(`#parameters_lable`).append(` <sup class="text-success">${counter}</sp>`);
+    }}); //get_source
+}
 
 async function GetDataFromClipboard(){
   return await navigator.clipboard.readText();
@@ -169,14 +191,14 @@ async function InsertDataPointsFromClipboard(insertedtext) {
 
 
 
-function AddData_Agreement_name(){
+async function Add_Parameter(jsonParameter){
   $.ajax({
     url: '/designer_ul_add_data',
     method: 'post',
     dataType: 'json',
-    data: JSON.stringify({type:'agreement_names'}),
-    success: function(data){
-      GetSourceFromServer();
+    data: JSON.stringify(jsonParameter),
+    complete: function(data){
+      GetSourceFromServerParameters();
     }});
 }
 
@@ -184,6 +206,7 @@ function AddData_Agreement_name(){
 
 if ($('#report_designer_ul').length) {
   GetSourceFromServer();
+  GetSourceFromServerParameters();
 }
 
 
