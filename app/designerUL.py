@@ -13,10 +13,11 @@ prnt = printer.pprint
 
 def Data_Construct(csource:str, cparameters:str):
 	source = json.loads(csource)
-	print(cparameters.replace("""'""",'"'))
-	parameters = json.loads(cparameters.replace("""'""",'"'))
+	#print(cparameters.replace("""'""",'"'))
+	parameters = json.loads(cparameters)
 	#prnt(source)
 	prnt(parameters)
+	print(type(parameters[0]))
 	#for srow in source:
 	#	prnt(srow)
 	#print(parameters.keys())
