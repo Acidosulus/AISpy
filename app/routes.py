@@ -1,7 +1,7 @@
 import datetime
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull, connection, data_sourses
+from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull, connection, data_sourses, designerUL
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -14,6 +14,7 @@ import xlsxwriter
 import os
 import json
 import ujson
+
 
 @app.route('/agreements/<object_id>')
 def agreements(object_id:int):
@@ -310,8 +311,12 @@ def designer_ul_clear_data(user_id:int):
 	connection.commit()
 	return ''
 
+# get record designer_ul for user_id
 def designer_ul_get_data_id(user_id):
-	return connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==user_id, models.UserObject.name=='data_designer_ul')).first()
+	return connection.execute(
+			db.select(models.UserObject).
+			where(	models.UserObject.user_id==user_id,
+		 			models.UserObject.name=='data_designer_ul')).first()
 	
 
 @app.route("/designer_ul_clear_data_parameters", methods=['GET', 'POST'])
@@ -331,11 +336,11 @@ def designer_ul_add_all_agreements():
 	if user_object == None:
 		user_object = UserObject(	user_id = current_user.id,
 									name = 'data_designer_ul',
-									data = json.dumps({'source':data}),
+									data = json.dumps(data),
 									dt= datetime.date.today()	)
 	else:
 		user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
-		user_object.data  = json.dumps({'source':data})
+		user_object.data  = json.dumps(data)
 
 	db.session.add(user_object)
 	db.session.commit()
@@ -352,11 +357,11 @@ def designer_ul_add_opened_agreements():
 	if user_object == None:
 		user_object = UserObject(	user_id = current_user.id,
 									name = 'data_designer_ul',
-									data = json.dumps({'source':data}),
+									data = json.dumps(data),
 									dt= datetime.date.today()	)
 	else:
 		user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
-		user_object.data  = json.dumps({'source':data})
+		user_object.data  = json.dumps(data)
 		
 	db.session.add(user_object)
 	db.session.commit()
@@ -373,11 +378,11 @@ def designer_ul_add_all_points():
 	if user_object == None:
 		user_object = UserObject(	user_id = current_user.id,
 									name = 'data_designer_ul',
-									data = json.dumps({'source':data}),
+									data = json.dumps(data),
 									dt= datetime.date.today()	)
 	else:
 		user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
-		user_object.data  = json.dumps({'source':data})
+		user_object.data  = json.dumps(data)
 
 	db.session.add(user_object)
 	db.session.commit()
@@ -393,11 +398,11 @@ def designer_ul_add_all_points_of_opened_agreements():
 	if user_object == None:
 		user_object = UserObject(	user_id = current_user.id,
 									name = 'data_designer_ul',
-									data = json.dumps({'source':data}),
+									data = json.dumps(data),
 									dt= datetime.date.today()	)
 	else:
 		user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
-		user_object.data  = json.dumps({'source':data})
+		user_object.data  = json.dumps(data)
 
 	db.session.add(user_object)
 	db.session.commit()
@@ -407,8 +412,7 @@ def designer_ul_add_all_points_of_opened_agreements():
 def designer_ul_get_source():
 	data = connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).first()
 	if data!=None:
-		if 'source' in json.loads(data.data):
-			return json.loads(data.data)['source']
+		return json.loads(data.data)
 	return ''
 
 @app.route("/designer_ul_get_source_parameters", methods=['GET', 'POST'])
@@ -416,8 +420,7 @@ def designer_ul_get_source_parameters():
 	data = connection.execute(db.select(models.UserObject).where(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul')).first()
 	if data!=None:
 		return json.loads(data.parameters)
-	else:
-		return ''
+	return ''
 
 
 
@@ -430,21 +433,15 @@ def insert_data_agreements_from_clipboard():
 		dict_list.append({'agreement':agreement, 'point':'          '})
 	print('inserted data:', dict_list)
 
-	#user_object = UserObject(	user_id = current_user.id,
-	#							name = 'data_designer_ul',
-	#							data = json.dumps({'source':dict_list}),
-	#							dt= datetime.date.today()	)
-	
-	
 	user_object = designer_ul_get_data_id(current_user.id)
 	if user_object == None:
 		user_object = UserObject(	user_id = current_user.id,
 									name = 'data_designer_ul',
-									data = json.dumps({'source':dict_list}),
+									data = json.dumps(dict_list),
 									dt= datetime.date.today()	)
 	else:
 		user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
-		user_object.data  = json.dumps({'source':dict_list})
+		user_object.data  = json.dumps(dict_list)
 
 	
 	
@@ -473,22 +470,17 @@ def insert_data_points_from_clipboard():
 
 	print('inserted data:', dict_list)
 
-	#user_object = UserObject(	user_id = current_user.id,
-	#							name = 'data_designer_ul',
-	#							data = json.dumps({'source':dict_list}),
-	#							dt= datetime.date.today()	)
-	
 	
 	user_object = designer_ul_get_data_id(current_user.id)
 	if user_object == None:
 		user_object = UserObject(	user_id = current_user.id,
 									name = 'data_designer_ul',
-									data = json.dumps({'source':dict_list}),
+									data = json.dumps(dict_list),
 									parameters='[]',
 									dt= datetime.date.today()	)
 	else:
 		user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
-		user_object.data  = json.dumps({'source':dict_list})
+		user_object.data  = json.dumps(dict_list)
 	
 	
 	db.session.add(user_object)
@@ -497,8 +489,7 @@ def insert_data_points_from_clipboard():
 
 @app.route("/designer_ul_add_data", methods=['POST','GET'])
 def designer_ul_add_data():
-	print('>>>>>>>>>>>>>>>>>>>>>>>')
-	print(f"""{json.loads(request.get_data())}""")
+	print(f"""==============>>{json.loads(request.get_data())}""")
 	response = json.loads(request.get_data())
 	if 'type' in response:
 			user_object = designer_ul_get_data_id(current_user.id)
@@ -506,14 +497,29 @@ def designer_ul_add_data():
 				user_object = UserObject(	user_id = current_user.id,
 											name = 'data_designer_ul',
 											data = 	'',
-											parameters=f'[{response}]',
+											parameters=json.dumps([response]),
 											dt= datetime.date.today()	)
 				db.session.add(user_object)
 			else:
 				user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
-				parameterst = json.loads(user_object.parameters)
+				
+				parameterst = json.loads((user_object.parameters if type(user_object.parameters)==str else '[]'))
 				parameterst.append(response)
 				user_object.parameters = json.dumps(parameterst, ensure_ascii=False)
 				db.session.add(user_object)
 	db.session.commit()
+	return ''
+
+
+@app.route("/designer_ul_get_excel_result", methods=['POST','GET'])
+def designer_ul_get_excel_result():
+	print('>>>>>>>>>>> designer_ul_get_excel_result >>>>>>>>>>>>')
+	user_object = designer_ul_get_data_id(current_user.id)
+	if user_object == None:
+		print(">>>>>>>>>>> designer data doesn't exists")
+		return ''
+	echo(style(text=user_object.parameters, fg='bright_yellow'))
+	echo(style(text=user_object.data, fg='bright_green'))
+
+	designerUL.Data_Construct(user_object.data, user_object.parameters)
 	return ''

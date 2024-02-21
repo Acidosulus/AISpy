@@ -122,6 +122,8 @@ function GetSourceFromServerParameters(){
     data: '',
     success: function(data){
       var counter = 0;
+      console.log('Добавляемые поля:');
+      console.log(data);
       for (let row of JSON.parse(data)){
               row = JSON.parse(row.replaceAll(`'`,`"`));
               $('#added_fields_list').append($('<option>', {
@@ -255,3 +257,17 @@ async function AskText(){
 
   
 }
+
+
+function GetDesdignerULExcelResult(){
+  $.ajax({
+    url: '/designer_ul_get_excel_result',
+    method: 'post',
+    dataType: 'json',
+    data: '{}',
+    complete: function(data){
+      
+    }});  
+}
+
+
