@@ -491,6 +491,10 @@ def insert_data_points_from_clipboard():
 def designer_ul_add_data():
 	print(f"""==============>>{json.loads(request.get_data())}""")
 	response = json.loads(request.get_data())
+	echo(style(text=request.get_data(), fg='bright_yellow'))
+	echo(style(text=type(request.get_data()), fg='bright_green'))
+	echo(style(text=response, fg='bright_cyan'))
+	echo(style(text=type(response), fg='bright_blue'))
 	if 'type' in response:
 			user_object = designer_ul_get_data_id(current_user.id)
 			if user_object == None:
@@ -520,6 +524,7 @@ def designer_ul_get_excel_result():
 		return ''
 	echo(style(text=user_object.parameters, fg='bright_yellow'))
 	echo(style(text=user_object.data, fg='bright_green'))
-
-	designerUL.Data_Construct(user_object.data, user_object.parameters)
-	return ''
+	return send_file( designerUL.Data_Construct(current_user.id,
+											 	user_object.data,
+												user_object.parameters)
+					 )

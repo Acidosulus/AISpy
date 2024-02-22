@@ -666,10 +666,202 @@ def All_Point_Numbers():
 	return get_queryresult_header_and_data(query_result)
 
 
+def Get_Agreement_Names():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[Название] as name
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Грузополучатель] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Address_gr():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[Адрес] as address_gr
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Грузополучатель] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Address_Fact_gr():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[ФактАдрес] as address_fact_gr
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Грузополучатель] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Address_pl():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[Адрес] as address_pl
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Плательщик] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Address_Fact_pl():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[ФактАдрес] as address_fact_pl
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Плательщик] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Get_Agreement_Date_Begin():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															convert(date, agr.[Начало договора],1) as date_begin
+														from stack.[Договор] as agr
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Date_Begin_Sign():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															convert(date, agr.[Дата подписания],1) as date_begin_sign
+														from stack.[Договор] as agr
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Date_End():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															convert(date, agr.[Окончание],1) as date_end
+														from stack.[Договор] as agr
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Date_End_Sign():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															convert(date, agr.[Дата расторжения],1) as date_end_sign
+														from stack.[Договор] as agr
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
+def Get_Agreement_Phone_gr():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[Телефон] as phone_gr
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Грузополучатель] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Phone_pl():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[Телефон] as phone_pl
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Плательщик] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Get_Agreement_INN_pl():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[ИНН] as inn_pl
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Плательщик] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Get_Agreement_KPP_pl():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[КПП] as kpp_pl
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Плательщик] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Get_Agreement_INN_gr():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[ИНН] as inn_gr
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Грузополучатель] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Get_Agreement_KPP_gr():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[КПП] as kpp_gr
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Грузополучатель] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_FIO():
+	query_result = connection_ul.execute(text(f"""--sql
+														select		
+																				left(stack.[Договор].Номер,10) as agreement,
+																				staff1.ФИО as fio1,
+																				staff2.ФИО as fio2,
+																				staff3.ФИО as fio3,
+																				staff4.ФИО as fio4
+																	from 	 
+																			stack.[Договор]
+																	left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = stack.[Договор].Сотрудник1
+																	left join stack.[Сотрудники] as staff2 on staff2.ROW_ID = stack.[Договор].Сотрудник2
+																	left join stack.[Сотрудники] as staff3 on staff3.ROW_ID = stack.[Договор].Сотрудник3
+																	left join stack.[Сотрудники] as staff4 on staff4.ROW_ID = stack.[Договор].Сотрудник4
+										   										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+# for list of dictionaries  [{'key':'1', value:'a'}, {'key':'2', value:'b'}, {'key':'3', value:'c'} ... ] return dictionary { '1':'a', '2':'b', '3':'c' ... }
+def Join_Pairs(list_of_dictionaries:list, key,value:str):
+	result = {}
+	for element in list_of_dictionaries:
+		result[element[key]] = element[value]
+	return result
 #print("=============================")
 #print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
 #print("=============================")
 #prnt(Organization_Data(48178))
-#print(Ref_Agreement_Types())
+#h, v = Get_Agreement_Names()
+#print(Join_Pairs(v, 'agreement', 'name'))
 #print("=============================")

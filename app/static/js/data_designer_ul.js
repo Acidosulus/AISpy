@@ -125,7 +125,6 @@ function GetSourceFromServerParameters(){
       console.log('Добавляемые поля:');
       console.log(data);
       for (let row of JSON.parse(data)){
-              row = JSON.parse(row.replaceAll(`'`,`"`));
               $('#added_fields_list').append($('<option>', {
                 text: row.name
             }));
@@ -263,11 +262,23 @@ function GetDesdignerULExcelResult(){
   $.ajax({
     url: '/designer_ul_get_excel_result',
     method: 'post',
-    dataType: 'json',
-    data: '{}',
-    complete: function(data){
-      
-    }});  
+    dataType: 'binary',
+    xhrFields: {
+        'responseType': 'blob'
+    },
+    success: function(response, status, xhr) {
+        var downloadUrl = URL.createObjectURL(response);
+        var a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = 'designer_ul.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+      }
+    }
+  );  
+
 }
+
 
 
