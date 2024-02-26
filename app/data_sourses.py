@@ -810,6 +810,17 @@ def Get_Agreement_KPP_pl():
 										   			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+def Get_Agreement_ORGN_pl():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[ОГРН] as ogrn_pl
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Плательщик] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
 
 def Get_Agreement_INN_gr():
 	query_result = connection_ul.execute(text(f"""--sql
@@ -834,6 +845,20 @@ def Get_Agreement_KPP_gr():
 										   			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+
+def Get_Agreement_ORGN_gr():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															org.[ОГРН] as ogrn_gr
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as org on agr.[Грузополучатель] = org.row_id
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
 def Get_Agreement_FIO():
 	query_result = connection_ul.execute(text(f"""--sql
 														select		
@@ -851,6 +876,24 @@ def Get_Agreement_FIO():
 										   										   			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+def Get_Agreement_Folders():
+	query_result = connection_ul.execute(text(f"""--sql
+														select  stack.[Договор].[Номер] as agreement, folders.[Примечание] as folder, folders.area
+															from stack.[Договор]
+															left join (select sp.row_id, sp.Папки, sp.Примечание, COALESCE (pp.[Примечание], sp.[Примечание]) as area
+																			from stack.[Договор] sp
+																			left join (select *
+																							from stack.[Договор] 
+																							where [Папки] = 80540
+																						) as pp on pp.row_id = sp.[Папки] 
+															where (sp.Папки_ADD=0 and sp.Заказчик>0) or sp.Папки=-10 ) as folders
+															on folders.[row_id] = stack.[Договор].Иерархия2 
+															where len(stack.[Договор].[Номер])>=10
+												;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
 # for list of dictionaries  [{'key':'1', value:'a'}, {'key':'2', value:'b'}, {'key':'3', value:'c'} ... ] return dictionary { '1':'a', '2':'b', '3':'c' ... }
 def Join_Pairs(list_of_dictionaries:list, key,value:str):
 	result = {}
@@ -862,6 +905,8 @@ def Join_Pairs(list_of_dictionaries:list, key,value:str):
 #prnt(Agreement_Data(113442))
 #print("=============================")
 #prnt(Organization_Data(48178))
-#h, v = Get_Agreement_Names()
-#print(Join_Pairs(v, 'agreement', 'name'))
+#h, v = Get_Agreement_Folders()
+#print(Join_Pairs(v, 'agreement', 'folder'))
+#print()
+#print(Join_Pairs(v, 'agreement', 'area'))
 #print("=============================")

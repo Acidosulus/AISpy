@@ -80,6 +80,19 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 		if parameter['type']=='agreement_manager':
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_FIO, key='agreement', value='fio3', parameter_name=parameter['name'])
 
+		if parameter['type']=='agreement_ogrn_pl':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_ORGN_pl, key='agreement', value='ogrn_pl', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_ogrn_gr':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_ORGN_gr, key='agreement', value='ogrn_gr', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_folder':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Folders, key='agreement', value='folder', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_department':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Folders, key='agreement', value='area', parameter_name=parameter['name'])
+
+
 	print(source)
 	return download_excel(source, current_user_id)
 
