@@ -136,7 +136,10 @@ class Report:
 							report_title=f"{self.report_humanread_name} {self.get_parameters_human_readable_string(parameters)}",
 							data_object_id=data_object_id,
 							report_name = self.report_name,
-							navigation_buttons = [common.Button_Home(), common.Button_Back(), common.Button_List(href=f"/report_history/{self.report_name}")])
+							navigation_buttons = [	common.Button_Home(),
+							 						common.Button_Back(),
+													common.Button_List(href=f"/report_history/{self.report_name}"),
+													common.Button_Excel(href=f"/download_excel/{data_object_id}")])
 	
 	# return answer excel report file download
 	def download_excel(self, user_object_id):
