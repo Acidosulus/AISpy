@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+flask_login
+pyodbc
+psycopg2
+ujson
+pandas
+xlsxwriter

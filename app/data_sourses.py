@@ -894,12 +894,37 @@ def Get_Agreement_Folders():
 	return get_queryresult_header_and_data(query_result)
 
 
-# for list of dictionaries  [{'key':'1', value:'a'}, {'key':'2', value:'b'}, {'key':'3', value:'c'} ... ] return dictionary { '1':'a', '2':'b', '3':'c' ... }
+def Get_Agreement_Organization_Type():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															case 	when orggr.[Отрасль] = 0 then 'ЮЛ'
+																	when orggr.[Отрасль] = 0 then 'Физ.лицо'
+										   							when orggr.[Отрасль] = 0 then 'ИП'
+										   						else ''
+										   					end as org_type_gr,
+															case 	when orgpl.[Отрасль] = 0 then 'ЮЛ'
+																	when orgpl.[Отрасль] = 0 then 'Физ.лицо'
+										   							when orgpl.[Отрасль] = 0 then 'ИП'
+										   						else ''
+										   					end as org_type_pl
+														from stack.[Договор] as agr
+														inner join stack.[Организации] as orggr on agr.[Грузополучатель] = orggr.row_id
+														inner join stack.[Организации] as orgpl on agr.[Плательщик] = orgpl.row_id
+														order by agreement
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
+
 def Join_Pairs(list_of_dictionaries:list, key,value:str):
 	result = {}
 	for element in list_of_dictionaries:
 		result[element[key]] = element[value]
 	return result
+
+
 #print("=============================")
 #print(Agreement_Payments_Schedule(113442))
 #prnt(Agreement_Data(113442))
