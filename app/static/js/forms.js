@@ -3,6 +3,8 @@ var forms_zindex=1;
 // arrays of modal form IDs
 var forms = [];
 
+var returnedModalFormJSON = {};
+
 var periods = [ '2022-09',
                 '2022-10',
                 '2022-11',
@@ -121,7 +123,12 @@ async function FillOutModalForm(source){
     const ok_button = document.getElementById('button_modal_dialog_ok');
     if (source.success_jscode.length>0){
       console.log(`jscode`);
-      ok_button.onclick = function() { eval(source.success_jscode); };
+      if (source.success_jscode=='returnJSON'){
+        ok_button.onclick = function() { returnedModalFormJSON = Ok(JSON.stringify(source)); closeModal(); }
+      }
+      else{
+        ok_button.onclick = function() { eval(source.success_jscode); };
+      }
     }
     
     const escape_button = document.getElementById('button_modal_dialog_escape');
@@ -134,15 +141,13 @@ async function FillOutModalForm(source){
       console.log(`backlink`  );
       rootNode.action = source.backlink;
       rootNode.method = 'POST';}
-    else{
-      
-    }
 }
 
 
   //  function read intered parameters an sent them on the server
   function Ok(source){
     console.log('Ok function:')
+    source = JSON.parse(source);
     var result = [];
     if (source.parameters!=null){
     for (let section of source.parameters){

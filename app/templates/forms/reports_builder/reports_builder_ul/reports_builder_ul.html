@@ -89,7 +89,12 @@
                                                                                                                                         Категория договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_lk', 'name':'Наличие у договора ЛК'}); ">
                                                                                                                                         Наличие у договора ЛК</a></li>
-
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_avans_schedule', 'name':'График авансовых платежей'}); ">
+                                                                                                                                        График авансовых платежей</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_fsk', 'name':'Наличие точек с тарифами ФСК'}); ">
+                                                                                                                                        Наличие точек с тарифами ФСК</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_id', 'name':'Идентификатор договора'}); ">
+                                                                                                                                        Идентификатор договора</a></li>
               </div>
             </div>
 
@@ -148,12 +153,21 @@
 
 
 
-            <div class="col-3 p-1">
+            <div class="col-2 p-1">
               <button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">Точки учета</button>
             </div>
 
+
+            <div class="col-2 p-1">
+              <button type="button" class="btn btn-primary col-12" id="button_bills_and_pays" data-bs-toggle="dropdown" aria-expanded="false"><img width="24" height="24" src="/static/images/add.png" align="left">Нач. и опл. по дог.</button>
+              <ul class="dropdown-menu dropdown-menu-dark " aria-labelledby="button_bills_and_pays" id="button_data_insertDropMenu">
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter_Return_Reconcilation_Act({'type':'agreement_Return_Reconcilation_Act', 'name':'Возврат акта сверки'}); ">
+                                                                                                                      Возврат акта сверки</a></li>
+              </ul>
+            </div>
+
           
-            <div class="col-3 p-1">
+            <div class="col-2 p-1">
               <button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">Приборы учета</button>
             </div>
 

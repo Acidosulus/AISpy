@@ -677,6 +677,43 @@ def Get_Agreement_Names():
 										   			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+
+def Get_Agreement_FSK():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	agr.[Номер] as agreement,
+																fsk.nc as agreement_fsk
+															from stack.[Договор] as agr
+															left join (select distinct left(agr.[Номер],10) as nc
+																			from    stack.[Лицевые счета] ls,
+																					stack.[Лицевые договора] ld,
+																					stack.[Договор] agr
+																			where   ls.ROW_ID  in (
+																									select [Счет-Параметры]
+																										from stack.[Свойства]
+																										where   [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='ФСК') AND  
+																										(getdate() between [ДатНач] and [ДатКнц])) and 
+																					(getdate()  between ld.ДатНач and ld.ДатКнц) and
+																					agr.ROW_ID  = ld.[Договор] and
+																					ls.row_id = ld.[Лицевой]) as fsk
+															on fsk.nc = agr.Номер
+															order by agreement
+														;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
+
+def Get_Agreement_Id():
+	query_result = connection_ul.execute(text(f"""--sql
+													select 	
+															agr.[Номер] as agreement,
+															agr.row_id as agreement_row_id
+														from stack.[Договор] as agr
+														order by agreement
+										   			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
 def Get_Agreement_Address_gr():
 	query_result = connection_ul.execute(text(f"""--sql
 													select 	
@@ -1028,6 +1065,21 @@ def Get_Agreement_LK():
 																	   where       agrin.row_id = pp.[Привязка-Договор]
 																		       and pp.[Состояние] > 0 ) as lk on lk.nc = agr.[Номер]
 														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Payments_Shedule():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	agr.[Номер] as agreement,
+																day1 		= (select top 1 [День платежа] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=1 and (GETDATE() between [Месяц] and [МесяцПо])),
+																procent1 	= (select top 1 [процентДоговорнойВеличины] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=1 and (GETDATE() between [Месяц] and [МесяцПо])),
+																day10 		= (select top 1 [День платежа] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=10 and (GETDATE() between [Месяц] and [МесяцПо])),
+																procent10 	= (select top 1 [процентДоговорнойВеличины] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=10 and (GETDATE() between [Месяц] and [МесяцПо])),
+																day25 		= (select top 1 [День платежа] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=25 and (GETDATE() between [Месяц] and [МесяцПо])),
+																procent25 	= (select top 1 [процентДоговорнойВеличины] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=25 and (GETDATE() between [Месяц] and [МесяцПо]))
+															from stack.[Договор] as agr
+															order by agreement
+															;
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
 

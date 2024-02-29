@@ -31,7 +31,13 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 		
 		if parameter['type']=='agreement_names':
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Names, key='agreement', value='name', parameter_name=parameter['name'])
-	
+
+		if parameter['type']=='agreement_id':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Id, key='agreement', value='agreement_row_id', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_fsk':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_FSK, key='agreement', value='agreement_fsk', parameter_name=parameter['name'])
+
 		if parameter['type']=='agreement_date_begin':
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Date_Begin, key='agreement', value='date_begin', parameter_name=parameter['name'])
 
@@ -130,6 +136,14 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 
 		if parameter['type']=='agreement_lk':
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_LK, key='agreement', value='lk', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_avans_schedule':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='day1', key='agreement', parameter_name=parameter['name'] + '1е число')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='procent1', key='agreement', parameter_name=parameter['name'] + '% 1е число')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='day10', key='agreement', parameter_name=parameter['name'] + '10е число')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='procent10', key='agreement', parameter_name=parameter['name'] + '% 10е число')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='day25', key='agreement', parameter_name=parameter['name'] + '25е число')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='procent25', key='agreement', parameter_name=parameter['name'] + '% 25е число')
 
 	print(source)
 	return download_excel(source, current_user_id)
