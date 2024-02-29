@@ -930,6 +930,107 @@ def Get_Agreement_Budget():
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+def Get_Agreement_Vid():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+															class01.[Код] as vd_kod,
+															class01.[Название] as vd_name
+														from stack.[Договор] as agr
+														left join stack.[Классификаторы] as class01 on class01.ROW_ID = agr.[СправочникВД-Договоры]
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Otrasl():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+															class01.[Код] as ot_kod,
+															class01.[Название] as ot_name,
+															class01.МакетаКод10112 as ot_kod10112
+														from stack.[Договор] as agr
+														left join stack.[Классификаторы] as class01 on class01.ROW_ID = agr.[Отрасль-Договоры]
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Category():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+															categories.[Код] as category_kod,
+															categories.[Название] as category_name
+														from stack.[Договор] as agr
+														left join stack.[Категории договоров] as categories on categories.ROW_ID = agr.[Категория-Договоры]
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Organization_Vid_gr():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+																	vid_org_gr =   CASE 
+											                                        when org.[Бюджет] = 1 then 'Бюджет'
+											                                        when org.[Бюджет] = 2 then 'Малый бизнес'
+											                                        when org.[Бюджет] = 3 then 'Средний бизнес'
+											                                        when org.[Бюджет] = 4 then 'Крупный бизнес'
+											                                        when org.[Бюджет] = 5 then 'Микропредприятия'
+											                                        else ''
+											                                    END
+											            from stack.[Договор] as agr
+														left join stack.[Организации] as org on org.ROW_ID = agr.[Грузополучатель]
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Organization_Vid_pl():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+																	vid_org_pl =   CASE 
+											                                        when org.[Бюджет] = 1 then 'Бюджет'
+											                                        when org.[Бюджет] = 2 then 'Малый бизнес'
+											                                        when org.[Бюджет] = 3 then 'Средний бизнес'
+											                                        when org.[Бюджет] = 4 then 'Крупный бизнес'
+											                                        when org.[Бюджет] = 5 then 'Микропредприятия'
+											                                        else ''
+											                                    END
+											            from stack.[Договор] as agr
+														left join stack.[Организации] as org on org.ROW_ID = agr.[Плательщик]
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_Organization_email():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+															orggr.email as email_gr,
+															orgpl.email as email_pl
+											            from stack.[Договор] as agr
+														left join stack.[Организации] as orggr on orggr.ROW_ID = agr.[Грузополучатель]
+														left join stack.[Организации] as orgpl on orgpl.ROW_ID = agr.[Плательщик]
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+def Get_Agreement_LK():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+															lk.lk
+											            from stack.[Договор] as agr
+											            left join ( select distinct left(agrin.[Номер],10) as nc,
+																	                'ЛК' as lk
+																	   from stack.[Пароли привязка] pp, stack.[Договор] agrin
+																	   where       agrin.row_id = pp.[Привязка-Договор]
+																		       and pp.[Состояние] > 0 ) as lk on lk.nc = agr.[Номер]
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
 
 def Join_Pairs(list_of_dictionaries:list, key,value:str):
 	result = {}

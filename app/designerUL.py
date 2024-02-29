@@ -99,10 +99,37 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Organization_Type, key='agreement', value='org_type_pl', parameter_name=parameter['name'])
 
 		if parameter['type']=='agreement_budget':
-			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='kod_budget', parameter_name=parameter['name'])
-			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='name_budget', parameter_name='Название бюджета договора')
-			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='name_budget_head', parameter_name='Название бюджета верхнего уровня договора')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='kod_budget', parameter_name=parameter['name'] + ' - Код')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='name_budget', parameter_name=parameter['name'] + ' - Название')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='name_budget_head', parameter_name=parameter['name'] + ' - Название бюджета верхнего уровня')
 
+		if parameter['type']=='agreement_vd':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Vid, key='agreement', value='vd_kod', parameter_name=parameter['name'] + ' - Код')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Vid, key='agreement', value='vd_name', parameter_name=parameter['name'] + ' - Название')
+
+		if parameter['type']=='agreement_ot':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Otrasl, key='agreement', value='ot_kod', parameter_name=parameter['name'] + ' - Код')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Otrasl, key='agreement', value='ot_name', parameter_name=parameter['name'] + ' - Название')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Otrasl, key='agreement', value='ot_kod10112', parameter_name=parameter['name'] + ' - Код макета 10112')
+
+		if parameter['type']=='agreement_category':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Category, key='agreement', value='category_kod', parameter_name=parameter['name'] + ' - Код')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Category, key='agreement', value='category_name', parameter_name=parameter['name'] + ' - Название')
+
+		if parameter['type']=='agreement_organizaion_vid_gr':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Organization_Vid_gr, key='agreement', value='vid_org_gr', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_organizaion_vid_pl':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Organization_Vid_pl, key='agreement', value='vid_org_pl', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_organizaion_email_gr':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Organization_email, key='agreement', value='email_gr', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_organizaion_email_pl':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Organization_email, key='agreement', value='email_pl', parameter_name=parameter['name'])
+
+		if parameter['type']=='agreement_lk':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_LK, key='agreement', value='lk', parameter_name=parameter['name'])
 
 	print(source)
 	return download_excel(source, current_user_id)
