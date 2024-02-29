@@ -56,83 +56,86 @@
 
 
 
-            <div class="col-4 p-1">
+            <div class="col-2 p-1">
               <div class="dropdown dropend">
               <button type="button" class="btn btn-primary col-12 dropdown-toggle" id="button_parameters_of_agremeents_insert" id="AgreementPeriodsDropDownList" data-bs-toggle="dropdown" aria-expanded="false"><img width="24" height="24" src="/static/images/add.png" align="left">Договор</button>
               <ul class="dropdown-menu dropdown-menu-dark " aria-labelledby="button_parameters_of_agremeents_insert" id="button_data_insertDropMenu" data-agreementid="-==-">
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_names', 'name':'Название договора'}); ">Название договора</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_begin', 'name':'Дата начала договора'}); ">
+                                                                                                                      Дата начала договора</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_begin_sign', 'name':'Дата подписания договора'}); ">
+                                                                                                                      Дата подписания договора</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_end', 'name':'Дата окончания договора'}); ">
+                                                                                                                      Дата окончания договора</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_end_sign', 'name':'Дата расторжения договора'}); ">
+                                                                                                                      Дата расторжения договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_orul', 'name':'Ответственный Расчеты'}); ">
                                                                                                                                         Ответственный Расчеты</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_odrul', 'name':'Ответственный Договор'}); ">
                                                                                                                                         Ответственный Договор</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_manager', 'name':'Ответственный Менеджер'}); ">
                                                                                                                                         Ответственный Менеджер</a></li>
-                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_folder', 'name':'Отделение договора'}); ">
-                                                                                                                                        Отделение договора</a></li>
-                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_department', 'name':'Участок договора'}); ">
-                                                                                                                                        Участок договора</a></li>
-    
-                
-                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_begin', 'name':'Дата начала договора'}); ">
-                                                                                                                      Дата начала договора</a></li>
-                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_begin_sign', 'name':'Дата подписания договора'}); ">
-                                                                                                                      Дата подписания договора</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_folder', 'name':'Отделение'}); ">
+                                                                                                                                        Отделение</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_department', 'name':'Участок'}); ">
+                                                                                                                                        Участок</a></li>
+                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_budget', 'name':'Бюджет договора'}); ">
+                                                                                                                                        Бюджет</a></li>
 
-                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_end', 'name':'Дата окончания договора'}); ">
-                                                                                                                      Дата окончания договора</a></li>
-                <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_date_end_sign', 'name':'Дата расторжения договора'}); ">
-                                                                                                                      Дата расторжения договора</a></li>
+              </div>
+            </div>
 
-
-
-                <li><hr class="dropdown-divider"></li>
+            <div class="col-2 p-1">
+              <div class="dropdown dropend">
+              <button type="button" class="btn btn-primary col-12 dropdown-toggle" id="button_parameters_of_gr_insert" id="AgreementPeriodsDropDownList" data-bs-toggle="dropdown" aria-expanded="false"><img width="24" height="24" src="/static/images/add.png" align="left">Грузополучатель</button>
+              <ul class="dropdown-menu dropdown-menu-dark " aria-labelledby="button_parameters_of_gr_insert" id="button_data_insertDropMenu" data-agreementid="-==-">
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_address_gr', 'name':'Адрес договора из Грузополучателя'}); ">
-                                                                                                                    Адрес договора из Грузополучателя</a></li>
+                                                                                                                    Адрес договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_address_fact_gr', 'name':'Адрес фактический договора из Грузополучателя'}); ">
-                                                                                                                    Адрес фактический договора из Грузополучателя</a></li>
+                                                                                                                    Адрес фактический договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_phone_gr', 'name':'Телефоны Грузополучателя'}); ">
-                                                                                                                      Телефоны Грузополучателя</a></li>
+                                                                                                                      Телефоны</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_inn_gr', 'name':'ИНН Грузополучателя'}); ">
-                                                                                                                      ИНН Грузополучателя</a></li>
+                                                                                                                      ИНН</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_ogrn_gr', 'name':'ОГРН Грузополучателя'}); ">
-                                                                                                                      ОГРН Грузополучателя</a></li>
+                                                                                                                      ОГРН</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_organizaion_type_gr', 'name':'Тип Организации Грузополучателя'}); ">
-                                                                                                                      Тип Организации Грузополучателя</a></li>
+                                                                                                                      Тип Организации</a></li>
+              </ul>
+              </div>
+            </div>
   
 
-
-                <li><hr class="dropdown-divider"></li>
+            <div class="col-2 p-1">
+              <div class="dropdown dropend">
+              <button type="button" class="btn btn-primary col-12 dropdown-toggle" id="button_parameters_of_pl_insert" id="AgreementPeriodsDropDownList" data-bs-toggle="dropdown" aria-expanded="false"><img width="24" height="24" src="/static/images/add.png" align="left">Плательщик</button>
+              <ul class="dropdown-menu dropdown-menu-dark " aria-labelledby="button_parameters_of_pl_insert" id="button_data_insertDropMenu" data-agreementid="-==-">
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_address_pl', 'name':'Адрес договора из Плательщика'}); ">
-                                                                                                                      Адрес договора из Плательщика</a></li>
+                                                                                                                      Адрес договора</a></li>
                  <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_address_fact_pl', 'name':'Адрес фактический договора из Плательщика'}); ">
-                                                                                                                      Адрес фактический договора из Плательщика</a></li>
+                                                                                                                      Адрес фактический договора</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_phone_pl', 'name':'Телефоны Плательщика'}); ">
-                                                                                                                        Телефоны Плательщика</a></li>
+                                                                                                                        Телефоны</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_inn_pl', 'name':'ИНН Плательщика'}); ">
-                                                                                                                        ИНН Плательщика</a></li>
+                                                                                                                        ИНН</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_kpp_pl', 'name':'КПП Плательщика'}); ">
-                                                                                                                        КПП Плательщика</a></li>
+                                                                                                                        КПП</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_ogrn_pl', 'name':'ОГРН Плательщика'}); ">
-                                                                                                                        ОГРН Плательщика</a></li>
+                                                                                                                        ОГРН</a></li>
                 <li><a class="dropdown-item" href="#" onclick="Add_Parameter({'type':'agreement_organizaion_type_pl', 'name':'Тип Организации Плательщика'}); ">
-                                                                                                                         Тип Организации Плательщика</a></li>
-      
-        
-
-
-                
+                                                                                                                         Тип Организации</a></li>
               </ul>
               </div>
             </div>
 
 
 
-            <div class="col-4 p-1">
+            <div class="col-3 p-1">
               <button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">Точки учета</button>
             </div>
 
           
-            <div class="col-4 p-1">
+            <div class="col-3 p-1">
               <button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">Приборы учета</button>
             </div>
 
@@ -166,4 +169,3 @@
 
 
 {% endblock %}
-

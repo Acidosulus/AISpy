@@ -98,6 +98,12 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 		if parameter['type']=='agreement_organizaion_type_pl':
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Organization_Type, key='agreement', value='org_type_pl', parameter_name=parameter['name'])
 
+		if parameter['type']=='agreement_budget':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='kod_budget', parameter_name=parameter['name'])
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='name_budget', parameter_name='Название бюджета договора')
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Budget, key='agreement', value='name_budget_head', parameter_name='Название бюджета верхнего уровня договора')
+
+
 	print(source)
 	return download_excel(source, current_user_id)
 

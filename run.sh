@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-source env/bin/activate
+source ./env/bin/activate
 flask run --host=0.0.0.0 --debug
-deactivate
+source ./env/bin/deactivate

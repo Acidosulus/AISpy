@@ -915,7 +915,20 @@ def Get_Agreement_Organization_Type():
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
-
+def Get_Agreement_Budget():
+	query_result = connection_ul.execute(text(f"""--sql
+														select 	
+															agr.[Номер] as agreement,
+															class01.Код as kod_budget,
+															class01.Название as name_budget,
+															class02.Название as name_budget_head
+														from stack.[Договор] as agr
+															left join stack.[Классификаторы] as class01 on class01.ROW_ID = agr.[Бюджет-Договоры]
+															left join (select * from stack.[Классификаторы] where [Папки]=682) as class02 on class02.ROW_ID = class01.[Папки]
+														where class02.Название is not null
+														order by agreement;
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
 
 
 def Join_Pairs(list_of_dictionaries:list, key,value:str):
