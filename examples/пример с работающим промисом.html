@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пример с промисом</title>
+</head>
+<body>
+
+<button id="okButton">Ок</button>
+
+<script>
+// Глобальная переменная для промиса
+let globalPromise;
+console.log(`Промис объеявлен как переменная:`);
+console.log(globalPromise);
+
+// Процедура для создания промиса
+function get_data() {
+    globalPromise = new Promise((resolve, reject) => {
+        // При нажатии кнопки "Ок", разрешаем промис
+        document.getElementById("okButton").addEventListener("click", () => {
+            ok_data(resolve);
+        });
+    });
+}
+
+// Процедура, которая разрешает промис
+function ok_data(resolve) {
+    console.log("Промис разрешен!");
+    resolve(); // Разрешаем промис
+}
+
+// Вызываем процедуру для создания промиса
+get_data();
+
+// Дожидаемся разрешения промиса и выводим сообщение
+globalPromise.then(() => {
+    console.log("Промис разрешен и обработан!");
+});
+</script>
+
+</body>
+</html>

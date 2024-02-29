@@ -204,10 +204,6 @@ async function Add_Parameter(jsonParameter){
 
 }
 
-async function Add_Parameter_Return_Reconcilation_Act_Dialog_Success(parameter){
-  console.log('result:');
-  console.log(parameter);
-}
 
 async function Add_Parameter_Return_Reconcilation_Act(){
   returnedModalFormJSON = '';
