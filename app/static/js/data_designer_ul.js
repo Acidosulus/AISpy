@@ -205,12 +205,34 @@ async function Add_Parameter(jsonParameter){
 }
 
 
-async function Add_Parameter_Return_Reconcilation_Act(){
-  returnedModalFormJSON = '';
-  let dialog_parameter = {"title":"Период возврата акта сверки","backlink":"","parameters":[{"lable":"Месяц","name":"month","type":"listbox","size":12,"data":[{"id":1,"value":"Январь"},{"id":2,"value":"Февраль"},{"id":3,"value":"Март"},{"id":4,"value":"Апрель"},{"id":5,"value":"Май"},{"id":6,"value":"Июнь"},{"id":7,"value":"Июль"},{"id":8,"value":"Август"},{"id":9,"value":"Сентябрь"},{"id":10,"value":"Октябрь"},{"id":11,"value":"Ноябрь"},{"id":12,"value":"Декабрь"}]},{"lable":"Год","name":"year","type":"listbox","default":2024,"size":9,"data":[{"id":2018,"value":2018},{"id":2019,"value":2019},{"id":2020,"value":2020},{"id":2021,"value":2021},{"id":2022,"value":2022},{"id":2023,"value":2023},{"id":2024,"value":2024},{"id":2025,"value":2025},{"id":2026,"value":2026}]}],"success_jscode":"returnJSON","escape_jscode":"closeModal();"};
-  let form_answer = await FillOutModalForm(dialog_parameter);
-  console.log(form_answer);
-  
+function Add_Parameter_Return_Reconcilation_Act(){
+
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1;
+
+  let dialog_parameter = {"title":"Период возврата акта сверки",
+                          "backlink":"",
+                          "parameters":[{ "lable":"Месяц",
+                                          "name":"month",
+                                          "type":"listbox",
+                                          "default":currentMonth,
+                                          "size":12,
+                                          "data":[{"id":1,"value":"Январь"},{"id":2,"value":"Февраль"},{"id":3,"value":"Март"},{"id":4,"value":"Апрель"},{"id":5,"value":"Май"},{"id":6,"value":"Июнь"},{"id":7,"value":"Июль"},{"id":8,"value":"Август"},{"id":9,"value":"Сентябрь"},{"id":10,"value":"Октябрь"},{"id":11,"value":"Ноябрь"},{"id":12,"value":"Декабрь"}]},
+                                        { "lable":"Год",
+                                          "name":"year",
+                                          "type":"listbox",
+                                          "default":currentYear,
+                                          "size":9,
+                                          "data":[{"id":2018,"value":2018},{"id":2019,"value":2019},{"id":2020,"value":2020},{"id":2021,"value":2021},{"id":2022,"value":2022},{"id":2023,"value":2023},{"id":2024,"value":2024},{"id":2025,"value":2025},{"id":2026,"value":2026}]}],
+                          "success_jscode":"",
+                          "escape_jscode":"closeModal();"};
+  FillOutModalForm(dialog_parameter);
+
+    document.getElementById("button_modal_dialog_ok").addEventListener("click", () => {
+      console.log(Ok(JSON.stringify(dialog_parameter)));
+    });
+
 }
 
 

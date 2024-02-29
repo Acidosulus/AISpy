@@ -123,12 +123,7 @@ async function FillOutModalForm(source){
     const ok_button = document.getElementById('button_modal_dialog_ok');
     if (source.success_jscode.length>0){
       console.log(`jscode`);
-      if (source.success_jscode=='returnJSON'){
-        ok_button.onclick = function() { returnedModalFormJSON = Ok(JSON.stringify(source)); closeModal(); }
-      }
-      else{
         ok_button.onclick = function() { eval(source.success_jscode); };
-      }
     }
     
     const escape_button = document.getElementById('button_modal_dialog_escape');
