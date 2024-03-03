@@ -206,11 +206,9 @@ async function Add_Parameter(jsonParameter){
 
 
 function Add_Parameter_Return_Reconcilation_Act(){
-
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
-
   let dialog_parameter = {"title":"Период возврата акта сверки",
                           "backlink":"",
                           "parameters":[{ "lable":"Месяц",
@@ -228,7 +226,6 @@ function Add_Parameter_Return_Reconcilation_Act(){
                           "success_jscode":"",
                           "escape_jscode":"closeModal();"};
   FillOutModalForm(dialog_parameter);
-
     document.getElementById("button_modal_dialog_ok").addEventListener("click", () => {
       console.log(Ok(JSON.stringify(dialog_parameter)));
     });
