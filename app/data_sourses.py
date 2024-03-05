@@ -1053,6 +1053,7 @@ def Get_Agreement_Organization_email():
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+
 def Get_Agreement_LK():
 	query_result = connection_ul.execute(text(f"""--sql
 														select 	
@@ -1068,6 +1069,7 @@ def Get_Agreement_LK():
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+
 def Get_Agreement_Payments_Shedule():
 	query_result = connection_ul.execute(text(f"""--sql
 														select 	agr.[Номер] as agreement,
@@ -1082,6 +1084,22 @@ def Get_Agreement_Payments_Shedule():
 															;
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
+
+
+def Get_Agreement_Reconcilation_Acts(parameters):
+	query_result = connection_ul.execute(text(f"""--sql
+														SELECT      left(agr.Номер,10)  as aggrement, 
+																		STRING_AGG(left(vd.[Оригинальное имя],250), ', ') as documents
+																FROM    stack.[Внешние документы] vd,
+																		stack.Документ as doc
+																left join stack.[Договор] agr on agr.ROW_ID = doc.[Документы-Договор] 
+																WHERE   doc.[Тип документа] = 105 and 
+																		year(doc.[РасчМесяц]) = {parameters['year']} and  month(doc.[РасчМесяц])= {parameters['month']} and 
+																		vd.[Документ-Файл] = doc.ROW_ID 
+																group by left(agr.Номер,10);
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
 
 
 def Join_Pairs(list_of_dictionaries:list, key,value:str):

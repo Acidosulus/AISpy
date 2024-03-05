@@ -144,37 +144,29 @@ async function FillOutModalForm(source){
     console.log('Ok function:')
     source = JSON.parse(source);
     var result = [];
+    var foo = {};
     if (source.parameters!=null){
     for (let section of source.parameters){
       if (section.type==`edit`){
-          foo = {};
-          foo[section.name]=document.getElementById(section.name).value;
-          result.push(foo);
+          foo[`${section.name}`]=`${document.getElementById(section.name).value}`;
         }//if (section.type==`edit`)
         if (section.type==`date`){
-          foo = {};
-          foo[section.name]=document.getElementById(section.name).value;
-          result.push(foo);
+          foo[`${section.name}`]=`${document.getElementById(section.name).value}`;
         }//if (section.type==`edit`)
 
       if (section.type==`text`){
-          foo = {};
-          foo[section.name]=document.getElementById(section.name).value;
-          result.push(foo);
+          foo[`${section.name}`]=`${document.getElementById(section.name).value}`;
         }//if (section.type==`text`)
       if (section.type==`checkbox`){
-          foo = {};
-          foo[section.name]=document.getElementById(section.name).checked;
-          result.push(foo);
+          foo[`${section.name}`]=`${document.getElementById(section.name).checked}`;
         }//if (section.type==`checkbox`)
        if (section.type==`listbox`){
-          foo = {};
-          foo[section.name]=document.getElementById(section.name).value;
+          foo[`${section.name}`]=`${document.getElementById(section.name).value}`;
           result.push(foo);
         }//if (section.type==`listbox`)
       }//for (let section of source.parameters)
     }//if (source.parameters!=null)
-    return result;
+    return foo;
   }//function
 
 

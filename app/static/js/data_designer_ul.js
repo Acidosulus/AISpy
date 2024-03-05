@@ -204,6 +204,29 @@ async function Add_Parameter(jsonParameter){
 
 }
 
+function get_month_name(monthNumber){
+  const months = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь"
+  ];
+
+  if (monthNumber >= 1 && monthNumber <= 12) {
+      return months[monthNumber - 1];
+  } else {
+      return "Некорректный номер месяца";
+  }
+}
+
 
 function Add_Parameter_Return_Reconcilation_Act(){
   const currentDate = new Date();
@@ -227,7 +250,22 @@ function Add_Parameter_Return_Reconcilation_Act(){
                           "escape_jscode":"closeModal();"};
   FillOutModalForm(dialog_parameter);
     document.getElementById("button_modal_dialog_ok").addEventListener("click", () => {
-      console.log(Ok(JSON.stringify(dialog_parameter)));
+      let result = Ok(JSON.stringify(dialog_parameter));
+      console.log(result);
+      console.log(result.year);
+      console.log(result.month);
+      /*console.log(result[0].month);
+      console.log(result[1].year);*/
+      
+      $.ajax({
+        url: '/designer_ul_add_data',
+        method: 'post',
+        dataType: 'json',
+        data: JSON.stringify({'type':'agreement_return_of_reconcilation_act', 'name':`Возврат акта сверки за ${get_month_name(result.month)} ${result.year} г.`, 'year':result.year, 'month':result.month}),
+        complete: function(data){
+          GetSourceFromServerParameters();
+        }});
+    
     });
 
 }

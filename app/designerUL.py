@@ -15,8 +15,11 @@ printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
 
-def Append_Data(source:list, get_data_func, key,value,parameter_name:str ):
-	header, data = get_data_func()
+def Append_Data(source:list, get_data_func, key,value,parameter_name:str,parameters={}):
+	if len(parameters)>0:
+		header, data = get_data_func(parameters)
+	else:
+		header, data = get_data_func()
 	paired_data = data_sourses.Join_Pairs(data, key, value)
 	for row in source:
 		value = paired_data.get(row[key], '')
@@ -144,6 +147,10 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='procent10', key='agreement', parameter_name=parameter['name'] + '% 10е число')
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='day25', key='agreement', parameter_name=parameter['name'] + '25е число')
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='procent25', key='agreement', parameter_name=parameter['name'] + '% 25е число')
+
+		if parameter['type']=='agreement_return_of_reconcilation_act':
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Reconcilation_Acts, key='agreement', value='lk', parameter_name=parameter['name'], parameters={'year':parameter['year'], 'month':parameter['month']})
+
 
 	print(source)
 	return download_excel(source, current_user_id)
