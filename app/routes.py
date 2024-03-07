@@ -16,6 +16,7 @@ import json
 import ujson
 
 
+
 @app.route('/agreements/<object_id>')
 def agreements(object_id:int):
 	print(object_id)
@@ -524,7 +525,15 @@ def designer_ul_get_excel_result():
 		return ''
 	echo(style(text=user_object.parameters, fg='bright_yellow'))
 	echo(style(text=user_object.data, fg='bright_green'))
-	return send_file( designerUL.Data_Construct(current_user.id,
-											 	user_object.data,
-												user_object.parameters)
-					 )
+
+
+	current_datetime = datetime.datetime.now()
+	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
+
+	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
+
+	designerUL.celery_tasks[f'task_identify_string'] = designerUL.Data_Construct.delay(	current_user.id,
+							 															user_object.data,
+																						user_object.parameters)
+
+	return task_identify_string

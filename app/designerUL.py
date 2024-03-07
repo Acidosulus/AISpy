@@ -1,6 +1,6 @@
 from click import echo, style
 import sqlalchemy as sa
-from app import common, connection_ul, connection_fl, connection,data_sourses
+from app import common, connection_ul, connection_fl, connection,data_sourses,celery
 from sqlalchemy import text
 import datetime
 import decimal
@@ -8,6 +8,13 @@ import json
 import pandas
 import os
 from app import app
+
+from celery import Celery
+import time
+import asyncio
+
+
+celery_tasks = {}
 
 
 import pprint
@@ -26,7 +33,12 @@ def Append_Data(source:list, get_data_func, key,value,parameter_name:str,paramet
 		row[parameter_name] = value
 	return source
 
+@celery.task
 def Data_Construct(current_user_id, csource:str, cparameters:str):
+	current_datetime = datetime.datetime.now()
+	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
+	file_name = os.path.join(app.TMP_FOLDER, f'report_id_{current_user_id}_{safe_part_of_filename}_designer_UL.xlsx')
+	print(f'file_path: {file_name}')
 	source = json.loads(csource)
 
 	parameters = json.loads(cparameters)
@@ -153,13 +165,11 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 
 
 	print(source)
-	return download_excel(source, current_user_id)
+	return download_excel(source, file_name)
 
 
-def download_excel(source_data, current_user_id):
+def download_excel(source_data, file_name):
 	report_humanread_name = 'Конструктор отчетов ЮЛ'
-
-	file_name = os.path.join(app.TMP_FOLDER, f'report_id_{current_user_id}_designer_UL.xlsx')
 
 	df = pandas.DataFrame(source_data)
 
