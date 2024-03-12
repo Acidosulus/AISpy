@@ -1088,7 +1088,7 @@ def Get_Agreement_Payments_Shedule():
 
 def Get_Agreement_Reconcilation_Acts(parameters):
 	query_result = connection_ul.execute(text(f"""--sql
-														SELECT      left(agr.Номер,10)  as aggrement, 
+														SELECT      left(agr.Номер,10)  as agreement, 
 																		STRING_AGG(left(vd.[Оригинальное имя],250), ', ') as documents
 																FROM    stack.[Внешние документы] vd,
 																		stack.Документ as doc

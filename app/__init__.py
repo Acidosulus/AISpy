@@ -8,7 +8,7 @@ from flask_login import LoginManager, login_user
 #from flask_mail import Mail
 from config import Config, connection_url_ul, connection_url_fl
 from sqlalchemy import create_engine
-from flask_celery import Celery
+#from flask_celery import Celery
 
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=160)
@@ -20,9 +20,9 @@ app.config.from_object(Config)
 
 app.TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
 
-celery = Celery('tasks',
-				broker='amqp://guest:guest@localhost',
-				task_always_eager=True)
+#celery = Celery('tasks',
+#				broker='amqp://guest:guest@localhost',
+#				task_always_eager=True)
 
 
 db = SQLAlchemy(app)

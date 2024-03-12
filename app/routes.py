@@ -487,10 +487,10 @@ def insert_data_points_from_clipboard():
 	db.session.add(user_object)
 	db.session.commit()
 	return ''
-
+"""
 @app.route("/designer_ul_add_data", methods=['POST','GET'])
 def designer_ul_add_data():
-	print(f"""==============>>{json.loads(request.get_data())}""")
+	print(f"==============>>{json.loads(request.get_data())}")
 	response = json.loads(request.get_data())
 	echo(style(text=request.get_data(), fg='bright_yellow'))
 	echo(style(text=type(request.get_data()), fg='bright_green'))
@@ -514,6 +514,30 @@ def designer_ul_add_data():
 				db.session.add(user_object)
 	db.session.commit()
 	return ''
+"""
+
+@app.route("/designer_ul_add_data", methods=['POST','GET'])
+def designer_ul_add_data():
+	print('>>>>>>>>>>>>>>>>>>>>>>>')
+	print(f"{json.loads(request.get_data())}")
+	response = json.loads(request.get_data())
+	if 'type' in response:
+			user_object = designer_ul_get_data_id(current_user.id)
+			if user_object == None:
+				user_object = UserObject(	user_id = current_user.id,
+											name = 'data_designer_ul',
+											data = 	'',
+											parameters=f'[{response}]',
+											dt= datetime.date.today()	)
+				db.session.add(user_object)
+			else:
+				user_object = db.session.query(models.UserObject).filter(models.UserObject.user_id==current_user.id, models.UserObject.name=='data_designer_ul').first()
+				parameterst = json.loads(user_object.parameters)
+				parameterst.append(response)
+				user_object.parameters = json.dumps(parameterst, ensure_ascii=False)
+				db.session.add(user_object)
+	db.session.commit()
+	return ''
 
 
 @app.route("/designer_ul_get_excel_result", methods=['POST','GET'])
@@ -532,8 +556,9 @@ def designer_ul_get_excel_result():
 
 	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
 
-	designerUL.celery_tasks[f'task_identify_string'] = designerUL.Data_Construct.delay(	current_user.id,
+
+	file_path = designerUL.Data_Construct														(	current_user.id,
 							 															user_object.data,
 																						user_object.parameters)
 
-	return task_identify_string
+	return send_file(file_path)

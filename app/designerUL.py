@@ -1,6 +1,6 @@
 from click import echo, style
 import sqlalchemy as sa
-from app import common, connection_ul, connection_fl, connection,data_sourses,celery
+
 from sqlalchemy import text
 import datetime
 import decimal
@@ -9,10 +9,12 @@ import pandas
 import os
 from app import app
 
-from celery import Celery
+#from celery import Celery
 import time
 import asyncio
 
+import logging
+logging.basicConfig(level=logging.INFO) 
 
 celery_tasks = {}
 
@@ -20,6 +22,16 @@ celery_tasks = {}
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
+
+
+if __name__ == '__main__':
+	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
+	app.TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
+#	celery = Celery('tasks',
+#				broker='amqp://guest:guest@localhost',
+#				task_always_eager=True)
+else:
+	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
 
 
 def Append_Data(source:list, get_data_func, key,value,parameter_name:str,parameters={}):
@@ -33,8 +45,20 @@ def Append_Data(source:list, get_data_func, key,value,parameter_name:str,paramet
 		row[parameter_name] = value
 	return source
 
-@celery.task
+#@celery.task
 def Data_Construct(current_user_id, csource:str, cparameters:str):
+	# Создаем новый логгер для каждого пользователя
+	logger = logging.getLogger(f'{current_user_id}')
+	# Настраиваем файловый обработчик для логгера
+	file_handler = logging.FileHandler(f"{current_user_id}_data.log")
+	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+	file_handler.setFormatter(formatter)
+	logger.addHandler(file_handler)
+
+	# Логируем переданные параметры
+	logger.info(f"Source: {csource}")
+	logger.info(f"Parameters: {cparameters}")
+
 	current_datetime = datetime.datetime.now()
 	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
 	file_name = os.path.join(app.TMP_FOLDER, f'report_id_{current_user_id}_{safe_part_of_filename}_designer_UL.xlsx')
@@ -161,7 +185,7 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='procent25', key='agreement', parameter_name=parameter['name'] + '% 25е число')
 
 		if parameter['type']=='agreement_return_of_reconcilation_act':
-			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Reconcilation_Acts, key='agreement', value='lk', parameter_name=parameter['name'], parameters={'year':parameter['year'], 'month':parameter['month']})
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Reconcilation_Acts, key='agreement', value='documents', parameter_name=parameter['name'], parameters={'year':parameter['year'], 'month':parameter['month']})
 
 
 	print(source)
