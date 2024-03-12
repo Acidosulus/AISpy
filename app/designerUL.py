@@ -1,17 +1,3 @@
-from click import echo, style
-import sqlalchemy as sa
-
-from sqlalchemy import text
-import datetime
-import decimal
-import json
-import pandas
-import os
-from app import app
-
-#from celery import Celery
-import time
-import asyncio
 
 import logging
 logging.basicConfig(level=logging.INFO) 
@@ -25,14 +11,86 @@ prnt = printer.pprint
 
 
 if __name__ == '__main__':
-	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
+	print('Run as main script')
+	
+	import logging
+	from logging.handlers import RotatingFileHandler
+	import os
+	from flask import Flask
+	from flask_sqlalchemy import SQLAlchemy
+	#from flask_migrate import Migrate
+	from flask_login import LoginManager, login_user
+	#from flask_mail import Mail
+	#from .config import Config, connection_url_ul, connection_url_fl
+	from sqlalchemy import create_engine
+	import configparser  # импортируем библиотеку
+	config = configparser.ConfigParser()
+	config.read("settings.ini", encoding='UTF-8')  
+	from sqlalchemy.engine import URL
+	connection_url_fl = URL.create(
+		config['login_fl']['ENGINE'],
+		username=config['login_fl']['USERNAME'],
+		password=config['login_fl']['PASSWORD'],
+		host=config['login_fl']['SERVER'],
+		port=config['login_fl']['PORT'],
+		database=config['login_fl']['DATABASE'],
+		query={
+			"driver": config['login_fl']['DRIVER'],
+			"TrustServerCertificate": "yes",
+			"extra_params": "MARS_Connection=Yes"	},
+	)
+	connection_url_ul = URL.create(
+		config['login_ul']['ENGINE'],
+		username=config['login_ul']['USERNAME'],
+		password=config['login_ul']['PASSWORD'],
+		host=config['login_ul']['SERVER'],
+		port=config['login_ul']['PORT'],
+		database=config['login_ul']['DATABASE'],
+		query={
+			"driver": config['login_ul']['DRIVER'],
+			"TrustServerCertificate": "yes",
+			"extra_params": "MARS_Connection=Yes"	},
+)
+	app = Flask(__name__)
+	echo(style(text=connection_url_fl, bg='blue', fg='bright_green'))
+	echo(style(text=connection_url_ul, bg='blue', fg='bright_green'))
+	basedir = os.path.abspath(os.path.dirname(__file__))
+	class Config:
+		SECRET_KEY = config["engine"]["SECRET_KEY"] #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+		SQLALCHEMY_DATABASE_URI = f'{config["login"]["ENGINE"]}://{config["login"]["USERNAME"]}:{config["login"]["PASSWORD"]}@{config["login"]["SERVER"]}:{config["login"]["PORT"]}/{config["login"]["DATABASE"]}'
+		echo(style(text=SQLALCHEMY_DATABASE_URI, bg='blue', fg='bright_green'))
+		SQLALCHEMY_BINDS = {
+			'dbfl': connection_url_fl,
+			'dbul': connection_url_ul
+	}
+		TEMPLATES_AUTO_RELOAD = True
+
 	app.TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
+
+	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
+	TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
 #	celery = Celery('tasks',
 #				broker='amqp://guest:guest@localhost',
 #				task_always_eager=True)
 else:
-	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
 
+	from click import echo, style
+	import sqlalchemy as sa
+
+	from sqlalchemy import text
+	import datetime
+	import decimal
+	import json
+	import pandas
+	import os
+
+
+	#from celery import Celery
+	import time
+	import asyncio
+
+	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
+	from app import app
 
 def Append_Data(source:list, get_data_func, key,value,parameter_name:str,parameters={}):
 	if len(parameters)>0:
@@ -185,7 +243,7 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Payments_Shedule, value='procent25', key='agreement', parameter_name=parameter['name'] + '% 25е число')
 
 		if parameter['type']=='agreement_return_of_reconcilation_act':
-			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Reconcilation_Acts, key='agreement', value='documents', parameter_name=parameter['name'], parameters={'year':parameter['year'], 'month':parameter['month']})
+			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Reconcilation_Acts, value='documents', key='agreement', parameter_name=parameter['name'], parameters={'year':parameter['year'], 'month':parameter['month']})
 
 
 	print(source)
