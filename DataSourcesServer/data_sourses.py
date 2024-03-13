@@ -20,7 +20,7 @@ from starlette.requests import Request
 from starlette.responses import PlainTextResponse
 
 import os
-
+basedir = os.path.abspath(os.path.dirname(__file__))
 import configparser  # импортируем библиотеку
 import pprint
 from click import echo, style
@@ -28,45 +28,41 @@ from click import echo, style
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
-# module init for cases it work without flask server
-def init():
-	global basedir, config, connection_url_fl, connection_url_ul, connection_fl, connection_ul, engine_ul, engine_fl
-	basedir = os.path.abspath(os.path.dirname(__file__))
-	config = configparser.ConfigParser()
-	config.read("settings.ini", encoding='UTF-8')  
+config = configparser.ConfigParser()
+config.read("settings.ini", encoding='UTF-8')  
 
-	from sqlalchemy.engine import URL
+from sqlalchemy.engine import URL
 
-	connection_url_fl = URL.create(
-		config['login_fl']['ENGINE'],
-		username=config['login_fl']['USERNAME'],
-		password=config['login_fl']['PASSWORD'],
-		host=config['login_fl']['SERVER'],
-		port=config['login_fl']['PORT'],
-		database=config['login_fl']['DATABASE'],
-		query={
-			"driver": config['login_fl']['DRIVER'],
-			"TrustServerCertificate": "yes",
-			"extra_params": "MARS_Connection=Yes"	},
-	)
-	connection_url_ul = URL.create(
-		config['login_ul']['ENGINE'],
-		username=config['login_ul']['USERNAME'],
-		password=config['login_ul']['PASSWORD'],
-		host=config['login_ul']['SERVER'],
-		port=config['login_ul']['PORT'],
-		database=config['login_ul']['DATABASE'],
-		query={
-			"driver": config['login_ul']['DRIVER'],
-			"TrustServerCertificate": "yes",
-			"extra_params": "MARS_Connection=Yes"	},
-	)
+connection_url_fl = URL.create(
+	config['login_fl']['ENGINE'],
+	username=config['login_fl']['USERNAME'],
+	password=config['login_fl']['PASSWORD'],
+	host=config['login_fl']['SERVER'],
+	port=config['login_fl']['PORT'],
+	database=config['login_fl']['DATABASE'],
+	query={
+		"driver": config['login_fl']['DRIVER'],
+		"TrustServerCertificate": "yes",
+		"extra_params": "MARS_Connection=Yes"	},
+)
+connection_url_ul = URL.create(
+	config['login_ul']['ENGINE'],
+	username=config['login_ul']['USERNAME'],
+	password=config['login_ul']['PASSWORD'],
+	host=config['login_ul']['SERVER'],
+	port=config['login_ul']['PORT'],
+	database=config['login_ul']['DATABASE'],
+	query={
+		"driver": config['login_ul']['DRIVER'],
+		"TrustServerCertificate": "yes",
+		"extra_params": "MARS_Connection=Yes"	},
+)
 
-	from sqlalchemy import create_engine
-	engine_ul = create_engine(connection_url_ul)
-	engine_fl = create_engine(connection_url_fl)
-	connection_ul = engine_ul.connect()
-	connection_fl = engine_fl.connect()
+from sqlalchemy import create_engine
+engine_ul = create_engine(connection_url_ul)
+engine_fl = create_engine(connection_url_fl)
+connection_ul = engine_ul.connect()
+connection_fl = engine_fl.connect()
 
 
 

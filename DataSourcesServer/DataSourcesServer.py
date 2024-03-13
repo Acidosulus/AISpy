@@ -1,64 +1,58 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response, HTTPException
+from starlette.responses import PlainTextResponse
+
 from typing import List
-from app import connection  # Подключение к базе данных, подразумевается, что оно уже сделано
 from sqlalchemy import text
 from click import echo, style
 import sqlalchemy as sa
-from app import common, connection_ul, connection_fl, connection
 from sqlalchemy import text
 import datetime
 import decimal
+from starlette.requests import Request
+from starlette.responses import PlainTextResponse
 
+import os
+basedir = os.path.abspath(os.path.dirname(__file__))
+import configparser  # импортируем библиотеку
+import pprint
+from click import echo, style
+
+printer = pprint.PrettyPrinter(indent=12, width=180)
+prnt = printer.pprint
+
+import data_sourses
+
+from pydantic import BaseModel
+from datetime import date
 
 app = FastAPI()
 
 
-def get_queryresult_header_and_data(query_result):
-	result = []
-	
-	for v in query_result:
-		drow = {}
-		for count, value in enumerate(v._fields):
-			if isinstance(v[count], datetime.date):
-				drow[value] = v[count].isoformat()
-			else:
-				if isinstance(v[count], decimal.Decimal):
-					drow[value] = float(v[count])
-				else:
-					drow[value] = (v[count] if v[count]!=None else '')
-			#print(v[count], '    ->    ', type(v[count]), )
-		result.append(drow)
-	
-	headers = []
-	if len(result)>0:
-		headers = list(result[0].keys())
-	return headers, result	
+
+
+@app.post("/Agreement_Data/")
+async def Agreement_Data(row_id:int):
+    return f'"data":{data_sourses.Agreement_Data(row_id)}'
+
+@app.post("/Agreements_Search_Data/")
+async def Agreements_Search_Data(search_string:str):
+    return f'"data":{data_sourses.Agreements_Search_Data(search_string)}'
+
+
+class DateRange(BaseModel):
+    from_date: date
+    to_date: date
+
+@app.post("/Pays_from_date_to_date/")
+async def Pays_from_date_to_date(date_range: DateRange):
+	print( type(date_range)) 
+	print( f'"data":{data_sourses.Pays_from_date_to_date(date_range)}')
+	return ''
 
 
 
-def get_reports_hierarchy(start_id:int) -> list:
-	result, rez = [], []
-	counter = 0
-	while start_id is not None or start_id != -10:
-		query_result = connection.execute(text(f"""--sql
-														select name, parent, persistent_id as row_id  from page_items_list where persistent_id={start_id};
-  														----------------------------------------------------------------------------------------------------------------------------------------------------
-												;""")).fetchall()
-		head, data = get_queryresult_header_and_data(query_result)
-		try:
-			start_id = data[0]['parent']
-			result.append({'parent':data[0]['parent'], 'name':data[0]['name'], 'row_id':data[0]['row_id']})
-			counter += 1
-		except:
-			break
-	result = list(reversed(result))
-	for i, row in enumerate(result):
-		row['indent'] = '&nbsp;'*i*3
-		row['counter'] = i
-		rez.append(row)
-	return rez
 
-@app.get("/get_reports_hierarchy/")
-async def read_root(start_id: int):
-    return {"reports_hierarchy": get_reports_hierarchy(start_id)}
 
+@app.route("/", include_in_schema=False)
+async def default_handler(request: Request) -> Response:
+    return PlainTextResponse("Hello from default handler")
