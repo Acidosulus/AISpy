@@ -1,4 +1,17 @@
 from click import echo, style
+import sqlalchemy as sa
+import datetime
+from sqlalchemy import text
+import datetime
+import decimal
+import json
+import pandas
+import os
+
+
+#from celery import Celery
+import time
+import asyncio
 
 import logging
 logging.basicConfig(level=logging.INFO) 
@@ -9,7 +22,6 @@ celery_tasks = {}
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
-
 
 
 
@@ -40,7 +52,7 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 
 	current_datetime = datetime.datetime.now()
 	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
-	file_name = os.path.join(app.TMP_FOLDER, f'report_id_{current_user_id}_{safe_part_of_filename}_designer_UL.xlsx')
+	file_name = os.path.join(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp'), f'report_id_{current_user_id}_{safe_part_of_filename}_designer_UL.xlsx')
 	print(f'file_path: {file_name}')
 	source = json.loads(csource)
 
@@ -201,64 +213,14 @@ def download_excel(source_data, file_name):
 
 
 if __name__ == '__main__':
-	print('Run as main script')
-	
-	import logging
-	from logging.handlers import RotatingFileHandler
-	import os
-	from flask import Flask
-	from flask_sqlalchemy import SQLAlchemy
-	from flask_login import LoginManager, login_user
-	from sqlalchemy import create_engine
-	import configparser # импортируем библиотеку
-	config = configparser.ConfigParser()
-	config.read("..//settings.ini", encoding='UTF-8')  
-	from sqlalchemy.engine import URL
-	connection_url_fl = URL.create(
-		config['login_fl']['ENGINE'],
-		username=config['login_fl']['USERNAME'],
-		password=config['login_fl']['PASSWORD'],
-		host=config['login_fl']['SERVER'],
-		port=config['login_fl']['PORT'],
-		database=config['login_fl']['DATABASE'],
-		query={
-			"driver": config['login_fl']['DRIVER'],
-			"TrustServerCertificate": "yes",
-			"extra_params": "MARS_Connection=Yes"	},
-	)
-	connection_url_ul = URL.create(
-		config['login_ul']['ENGINE'],
-		username=config['login_ul']['USERNAME'],
-		password=config['login_ul']['PASSWORD'],
-		host=config['login_ul']['SERVER'],
-		port=config['login_ul']['PORT'],
-		database=config['login_ul']['DATABASE'],
-		query={
-			"driver": config['login_ul']['DRIVER'],
-			"TrustServerCertificate": "yes",
-			"extra_params": "MARS_Connection=Yes"	},
-)
-	app = Flask(__name__)
-	echo(style(text=connection_url_fl, bg='blue', fg='bright_green'))
-	echo(style(text=connection_url_ul, bg='blue', fg='bright_green'))
-	basedir = os.path.abspath(os.path.dirname(__file__))
-	class Config:
-		SECRET_KEY = config["engine"]["SECRET_KEY"] #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-		SQLALCHEMY_DATABASE_URI = f'{config["login"]["ENGINE"]}://{config["login"]["USERNAME"]}:{config["login"]["PASSWORD"]}@{config["login"]["SERVER"]}:{config["login"]["PORT"]}/{config["login"]["DATABASE"]}'
-		echo(style(text=SQLALCHEMY_DATABASE_URI, bg='blue', fg='bright_green'))
-		SQLALCHEMY_BINDS = {
-			'dbfl': connection_url_fl,
-			'dbul': connection_url_ul
-	}
-		TEMPLATES_AUTO_RELOAD = True
+	import data_sourses
+	data_sourses.init()
+	result = Data_Construct(current_user_id= 2,
+					csource="""[{"agreement": "1910210030", "point": "2003701002"}, {"agreement": "1910210030", "point": "2003701009"}, {"agreement": "1910210030", "point": "3756001001"}, {"agreement": "1910210030", "point": "6093001001"}, {"agreement": "1910210033", "point": "1003301002"}, {"agreement": "1910210033", "point": "1003301001"}, {"agreement": "1910210097", "point": "1009701001"}, {"agreement": "1910210127", "point": "1012701001"}, {"agreement": "1910210145", "point": "1014501003"}, {"agreement": "1910210145", "point": "1014501004"}, {"agreement": "1910210145", "point": "1014501001"}, {"agreement": "1910210145", "point": "1014501002"}, {"agreement": "1910210237", "point": "1023701001"}, {"agreement": "1910210257", "point": "1025701001"}, {"agreement": "1910210257", "point": "1025701002"}, {"agreement": "1910210280", "point": "1028001001"}, {"agreement": "1910210300", "point": "1030001001"}, {"agreement": "1910210317", "point": "1031701001"}, {"agreement": "1910210317", "point": "1031701002"}, {"agreement": "1910210330", "point": "1033001001"}, {"agreement": "1910210410", "point": "9999501065"}, {"agreement": "1910210417", "point": "1041701001"}, {"agreement": "1910210557", "point": "1055701001"}, {"agreement": "1910210557", "point": "1055701002"}, {"agreement": "1910210790", "point": "1079001001"}, {"agreement": "1910210790", "point": "1079001003"}, {"agreement": "1910210820", "point": "1082001001"}, {"agreement": "1910210857", "point": "1085701001"}, {"agreement": "1910210860", "point": "1086001001"}, {"agreement": "1910210890", "point": "1089001003"}, {"agreement": "1910210890", "point": "1089001001"}, {"agreement": "1910210905", "point": "9999501260"}, {"agreement": "1910210910", "point": "1091001005"}, {"agreement": "1910210910", "point": "1091001001"}, {"agreement": "1910210910", "point": "1091001003"}, {"agreement": "1910211027", "point": "1102701001"}, {"agreement": "1910211027", "point": "1102701002"}, {"agreement": "1910211040", "point": "1104001001"}, {"agreement": "1910211047", "point": "1104701001"}, {"agreement": "1910211067", "point": "1106701001"}, {"agreement": "1910211087", "point": "9563001001"}, {"agreement": "1910211087", "point": "1108701002"}, {"agreement": "1910211087", "point": "1108701001"}, {"agreement": "1910211147", "point": "1114701001"}, {"agreement": "1910211160", "point": "1116001002"}, {"agreement": "1910211200", "point": "1120701001"}, {"agreement": "1910211200", "point": "1120701002"}, {"agreement": "1910211200", "point": "1120701004"}, {"agreement": "1910211217", "point": "1121701001"}, {"agreement": "1910211227", "point": "1122701001"}, {"agreement": "1910211320", "point": "1132001003"}, {"agreement": "1910211370", "point": "1137001001"}, {"agreement": "1910211410", "point": "1141001001"}, {"agreement": "1910211470", "point": "1147001001"}, {"agreement": "1910211470", "point": "1147001003"}, {"agreement": "1910211480", "point": "1148001001"}, {"agreement": "1910211520", "point": "1152001002"}, {"agreement": "1910211520", "point": "1152001001"}, {"agreement": "1910211527", "point": "1152701001"}, {"agreement": "1910211540", "point": "1153701001"}, {"agreement": "1910211557", "point": "1155701001"}, {"agreement": "1910211557", "point": "1155701002"}, {"agreement": "1910211560", "point": "1156001001"}, {"agreement": "1910211620", "point": "1162001001"}, {"agreement": "1910211660", "point": "1166001003"}, {"agreement": "1910211660", "point": "1166001004"}, {"agreement": "1910211660", "point": "1166001001"}, {"agreement": "1910211660", "point": "1166001002"}, {"agreement": "1910211667", "point": "1166701001"}, {"agreement": "1910211690", "point": "1169001007"}, {"agreement": "1910211690", "point": "1169001001"}, {"agreement": "1910211690", "point": "1169001003"}, {"agreement": "1910211800", "point": "1180001001"}, {"agreement": "1910211807", "point": "1180701010"}, {"agreement": "1910211807", "point": "1180701004"}, {"agreement": "1910211807", "point": "1180701007"}, {"agreement": "1910211807", "point": "1180701009"}, {"agreement": "1910211807", "point": "1180701008"}, {"agreement": "1910211807", "point": "6054001003"}, {"agreement": "1910211807", "point": "6054001005"}, {"agreement": "1910211807", "point": "6054001006"}, {"agreement": "1910211807", "point": "6054001007"}, {"agreement": "1910211807", "point": "6054001008"}, {"agreement": "1910211807", "point": "9164001001"}, {"agreement": "1910211807", "point": "6054001009"}, {"agreement": "1910211807", "point": "6054001001"}, {"agreement": "1910211807", "point": "6054001002"}, {"agreement": "1910211855", "point": "1185501004"}, {"agreement": "1910211855", "point": "1185501006"}, {"agreement": "1910211937", "point": "1193701001"}, {"agreement": "1910212030", "point": "1203001001"}, {"agreement": "1910212107", "point": "1210701003"}, {"agreement": "1910212107", "point": "1210701001"}, {"agreement": "1910212107", "point": "1210701002"}, {"agreement": "1910212337", "point": "1233701001"}, {"agreement": "1910212367", "point": "1236701001"}, {"agreement": "1910212377", "point": "1237701001"}, {"agreement": "1910212430", "point": "1243001001"}, {"agreement": "1910212640", "point": "1264001001"}, {"agreement": "1910212690", "point": "1269001001"}, {"agreement": "1910212700", "point": "6630001001"}, {"agreement": "1910212700", "point": "1270001005"}, {"agreement": "1910212700", "point": "1270001001"}, {"agreement": "1910212700", "point": "1270001003"}, {"agreement": "1910212700", "point": "1270001006"}, {"agreement": "1910212700", "point": "9999501099"}, {"agreement": "1910212727", "point": "4974001002"}, {"agreement": "1910212727", "point": "1272001001"}, {"agreement": "1910212727", "point": "1272001002"}, {"agreement": "1910212860", "point": "1286001001"}, {"agreement": "1910225060", "point": "1295001001"}, {"agreement": "1910212967", "point": "1296001001"}, {"agreement": "1910212990", "point": "1299001001"}, {"agreement": "1910213190", "point": "1316001001"}, {"agreement": "1910213720", "point": "1372001001"}, {"agreement": "1910214380", "point": "9999501158"}, {"agreement": "1910214380", "point": "9999501156"}, {"agreement": "1910214380", "point": "9999501159"}, {"agreement": "1910214380", "point": "9999501157"}, {"agreement": "1910214380", "point": "9999501162"}, {"agreement": "1910214380", "point": "9999501160"}, {"agreement": "1910214380", "point": "9999501163"}, {"agreement": "1910214380", "point": "9999501161"}, {"agreement": "1910214380", "point": "9999501201"}, {"agreement": "1910214380", "point": "9999501331"}, {"agreement": "          ", "point": "1531001126"}, {"agreement": "1910214430", "point": "1443001001"}, {"agreement": "1910214777", "point": "1447001001"}, {"agreement": "1910214777", "point": "4210001002"}, {"agreement": "1910214980", "point": "1498001001"}, {"agreement": "1910214980", "point": "1498001002"}, {"agreement": "1910214980", "point": "1498001003"}, {"agreement": "1910215085", "point": "1508501029"}, {"agreement": "1910215085", "point": "1508501001"}, {"agreement": "1910215085", "point": "1508501002"}, {"agreement": "1910215085", "point": "1508501025"}, {"agreement": "1910215085", "point": "9999501055"}, {"agreement": "1910215085", "point": "9999501056"}, {"agreement": "1910215085", "point": "9999501054"}, {"agreement": "1910215085", "point": "1508501019"}, {"agreement": "1910215085", "point": "1508501033"}, {"agreement": "1910215085", "point": "1508501023"}, {"agreement": "1910215085", "point": "1508501024"}, {"agreement": "1910215085", "point": "1508501031"}, {"agreement": "1910215247", "point": "1524701004"}, {"agreement": "1910215247", "point": "1524701001"}, {"agreement": "1910215247", "point": "1524701002"}, {"agreement": "1910215247", "point": "1524701003"}, {"agreement": "1910215250", "point": "1525001020"}, {"agreement": "1910215250", "point": "1525001021"}, {"agreement": "1910215250", "point": "1525001023"}, {"agreement": "1910215250", "point": "1525001024"}, {"agreement": "1910215270", "point": "1527001002"}, {"agreement": "1910215270", "point": "1527001001"}, {"agreement": "1910215270", "point": "1527001022"}, {"agreement": "1910215270", "point": "1527001023"}, {"agreement": "1910215270", "point": "1527001024"}, {"agreement": "1910215290", "point": "4249001001"}, {"agreement": "1910215290", "point": "1529001001"}, {"agreement": "1910215420", "point": "1542001008"}, {"agreement": "1910215420", "point": "1542001009"}, {"agreement": "1910215420", "point": "1542001007"}, {"agreement": "1910215420", "point": "1542001006"}, {"agreement": "1910215570", "point": "1557001019"}, {"agreement": "1910215570", "point": "1557001022"}, {"agreement": "1910215570", "point": "1557001017"}, {"agreement": "1910215570", "point": "1557001018"}, {"agreement": "1910215570", "point": "1557001023"}, {"agreement": "1910215610", "point": "1561001001"}, {"agreement": "1910215700", "point": "1570001001"}]""",
+					cparameters="""[{"type": "agreement_names", "name": "Название договора"}, {"type": "agreement_folder", "name": "Отделение договора"}, {"type": "agreement_date_begin", "name": "Дата начала договора"}, {"type": "agreement_department", "name": "Участок договора"}, {"type": "agreement_organizaion_type_gr", "name": "Тип Организации Грузополучателя"}, {"type": "agreement_organizaion_type_pl", "name": "Тип Организации Плательщика"}, {"type": "agreement_budget", "name": "Бюджет договора"}, {"type": "agreement_vd", "name": "Вид договора"}, {"type": "agreement_ot", "name": "Отрасль договора"}, {"type": "agreement_category", "name": "Категория договора"}, {"type": "agreement_organizaion_vid_gr", "name": "Вид Организации Грузополучателя"}, {"type": "agreement_organizaion_vid_pl", "name": "Вид Организации Плательщика"}, {"type": "agreement_organizaion_email_gr", "name": "E-mail Грузополучателя"}, {"type": "agreement_organizaion_email_pl", "name": "E-mail Плательщика"}, {"type": "agreement_lk", "name": "Наличие у договора ЛК"}, {"type": "agreement_avans_schedule", "name": "График авансовых платежей"}, {"type": "agreement_id", "name": "Идентификатор договора"}, {"type": "agreement_fsk", "name": "Наличие точек с тарифами ФСК"}, {"type": "agreement_return_of_reconcilation_act", "name": "Возврат акт сверки за Март 2024 г.", "year": "2024", "month": "3"}, {"type": "agreement_return_of_reconcilation_act", "name": "Возврат акта сверки за Декабрь 2023 г.", "year": "2023", "month": "12"}]"""
+				 )
+	print(result)
 
-	app.TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
-
-	import common
-	import data_sourses #,celery
-	TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
-
-	Data_Construct(1, )
 
 #	celery = Celery('tasks',
 #				broker='amqp://guest:guest@localhost',
@@ -266,19 +228,6 @@ if __name__ == '__main__':
 else:
 
 	
-	import sqlalchemy as sa
-
-	from sqlalchemy import text
-	import datetime
-	import decimal
-	import json
-	import pandas
-	import os
-
-
-	#from celery import Celery
-	import time
-	import asyncio
 
 	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
 	from app import app

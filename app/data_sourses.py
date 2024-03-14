@@ -336,7 +336,7 @@ def Pays_from_date_to_date(parameters):
 			left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = agr.Сотрудник1
 			left join stack.[Сотрудники] as staff3 on staff3.ROW_ID = agr.Сотрудник3
 			where 	doc.[Тип документа] = 21 AND 
-					(doc.Дата between convert(datetime,'{parameters.from_date}',21) and convert(datetime,'{parameters.to_date"]}',21)) and 
+					(doc.Дата between convert(datetime,'{parameters['from']}',21) and convert(datetime,'{parameters['to']}',21)) and 
 					(agr.Номер is not null)
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)

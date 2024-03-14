@@ -557,8 +557,8 @@ def designer_ul_get_excel_result():
 	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
 
 
-	file_path = designerUL.Data_Construct														(	current_user.id,
-							 															user_object.data,
-																						user_object.parameters)
+	file_path = designerUL.Data_Construct	(	current_user.id,
+							 					user_object.data,
+												user_object.parameters)
 
 	return send_file(file_path)
