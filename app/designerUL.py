@@ -8,10 +8,10 @@ import json
 import pandas
 import os
 
-
-#from celery import Celery
 import time
 import asyncio
+
+
 
 import logging
 logging.basicConfig(level=logging.INFO) 
@@ -23,7 +23,9 @@ import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
+from celery import Celery
 
+celery = Celery('AISpy', broker='amqp://localhost')
 
 def Append_Data(source:list, get_data_func, key,value,parameter_name:str,parameters={}):
 	if len(parameters)>0:
@@ -36,7 +38,7 @@ def Append_Data(source:list, get_data_func, key,value,parameter_name:str,paramet
 		row[parameter_name] = value
 	return source
 
-#@celery.task
+@celery.task
 def Data_Construct(current_user_id, csource:str, cparameters:str):
 	# Создаем новый логгер для каждого пользователя
 	logger = logging.getLogger(f'{current_user_id}')
@@ -210,9 +212,10 @@ def download_excel(source_data, file_name):
 
 
 
-
+from celery import current_task
 
 if __name__ == '__main__':
+	print('designer starts as main file')
 	import data_sourses
 	data_sourses.init()
 	result = Data_Construct(current_user_id= 2,
@@ -226,8 +229,10 @@ if __name__ == '__main__':
 #				broker='amqp://guest:guest@localhost',
 #				task_always_eager=True)
 else:
-
-	
-
-	from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
-	from app import app
+	if hasattr(current_task, '__call__'):
+		print("Запущено с помощью Celery")
+	else:
+		print('designer starts as module')
+		from app import data_sourses
+	#from app import common, connection_ul, connection_fl, connection,data_sourses #,celery
+	#from app import app

@@ -1,7 +1,8 @@
 import datetime
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, data_sourses, pull, connection, data_sourses, designerUL
+from app import app, db, models,connection_fl, dialogs, common, pull, connection, designerUL
+
 from click import echo, style
 import pprint
 from sqlalchemy import text

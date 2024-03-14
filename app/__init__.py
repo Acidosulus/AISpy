@@ -70,4 +70,4 @@ with app.app_context():
 #	print('Registred reports:')
 #	print(pull)
 
-from app import routes,  models
+from app import routes,  models, data_sourses

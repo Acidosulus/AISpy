@@ -28,6 +28,11 @@ from click import echo, style
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
+if __name__ == '__main__':
+	pass
+else:
+	from app import connection_ul
+
 # module init for cases it work without flask server
 def init():
 	global basedir, config, connection_url_fl, connection_url_ul, connection_fl, connection_ul, engine_ul, engine_fl
