@@ -1,8 +1,9 @@
+
 import datetime
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, pull, connection, designerUL
-
+from app import app, db, models,connection_fl, dialogs, common, pull, connection, designerUL, data_sourses
+from app.designerUL import Data_Construct
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -557,9 +558,10 @@ def designer_ul_get_excel_result():
 
 	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
 
-
-	file_path = designerUL.Data_Construct	(	current_user.id,
+	print(type(current_user.id),type(user_object.data),type(user_object.parameters),)
+	file_path = Data_Construct.delay	(	current_user.id,
 							 					user_object.data,
 												user_object.parameters)
 
-	return send_file(file_path)
+	#return send_file(file_path)
+	return ''

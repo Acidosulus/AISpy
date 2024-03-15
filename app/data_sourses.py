@@ -1,3 +1,32 @@
+print(f'data_sourses imported to {__name__}')
+
+from click import echo, style
+import sqlalchemy as sa
+import datetime
+from sqlalchemy import text
+import datetime
+import decimal
+import json
+import pandas
+import os
+
+import time
+import asyncio
+
+
+
+
+celery_tasks = {}
+
+
+import pprint
+printer = pprint.PrettyPrinter(indent=12, width=180)
+prnt = printer.pprint
+
+
+
+
+
 from click import echo, style
 import sqlalchemy as sa
 from sqlalchemy import text
@@ -30,11 +59,12 @@ prnt = printer.pprint
 
 if __name__ == '__main__':
 	pass
-else:
-	from app import connection_ul
+# else:
+	# from app import connection_ul
 
 # module init for cases it work without flask server
 def init():
+	echo(style(text = 'Force init of data_sourses module', bg='red', fg='bright_yellow'))
 	global basedir, config, connection_url_fl, connection_url_ul, connection_fl, connection_ul, engine_ul, engine_fl
 	basedir = os.path.abspath(os.path.dirname(__file__))
 	config = configparser.ConfigParser()
@@ -1184,4 +1214,7 @@ def Join_Pairs(list_of_dictionaries:list, key,value:str):
 #print()
 #print(Join_Pairs(v, 'agreement', 'area'))
 #print("=============================")
+
+
+
 
