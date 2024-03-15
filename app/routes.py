@@ -559,9 +559,9 @@ def designer_ul_get_excel_result():
 	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
 
 	print(type(current_user.id),type(user_object.data),type(user_object.parameters),)
-	file_path = Data_Construct.delay	(	current_user.id,
+	result = Data_Construct.delay	(	current_user.id,
 							 					user_object.data,
 												user_object.parameters)
-
-	#return send_file(file_path)
-	return ''
+	result.wait()
+	return send_file(result.result)
+	

@@ -16,7 +16,7 @@ print(f'designerUL imported to {__name__}')
 
 
 from celery import Celery
-celery = Celery('data_sourses',broker='amqp://guest:guest@localhost//')
+celery = Celery('data_sourses',broker='amqp://guest:guest@localhost//', backend='rpc://')
 from celery import current_task
 
 
