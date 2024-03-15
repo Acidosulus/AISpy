@@ -64,6 +64,12 @@ if __name__ == '__main__':
 
 # module init for cases it work without flask server
 def init():
+	global connection
+	try:
+		from app import connection
+		print('import connection from app success')
+	except:
+		print('import connection from app failed')
 	echo(style(text = 'Force init of data_sourses module', bg='red', fg='bright_yellow'))
 	global basedir, config, connection_url_fl, connection_url_ul, connection_fl, connection_ul, engine_ul, engine_fl
 	basedir = os.path.abspath(os.path.dirname(__file__))
@@ -71,7 +77,6 @@ def init():
 	config.read("settings.ini", encoding='UTF-8')  
 
 	from sqlalchemy.engine import URL
-
 	connection_url_fl = URL.create(
 		config['login_fl']['ENGINE'],
 		username=config['login_fl']['USERNAME'],

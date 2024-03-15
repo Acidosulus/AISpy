@@ -17,6 +17,7 @@ import os
 import json
 import ujson
 
+data_sourses.init()
 
 
 @app.route('/agreements/<object_id>')
