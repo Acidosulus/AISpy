@@ -16,6 +16,10 @@ import xlsxwriter
 import os
 import json
 import ujson
+import uuid
+
+global celery_tasks
+celery_tasks = {}
 
 data_sourses.init()
 
@@ -274,30 +278,30 @@ def get_organization_data(row_id:int):
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
-    if request.method == "POST":
-        user = Users(username=request.form.get("username"),
-                     password=request.form.get("password"))
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for("login"))
-    return render_template("register.html")
+	if request.method == "POST":
+		user = Users(username=request.form.get("username"),
+					 password=request.form.get("password"))
+		db.session.add(user)
+		db.session.commit()
+		return redirect(url_for("login"))
+	return render_template("register.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        user = Users.query.filter_by(
-            username=request.form.get("username")).first()
-        if user.password == request.form.get("password"):
-            login_user(user)
-            return redirect(url_for("index"))
-    return render_template("login.html", title = "Вход в систему")
+	if request.method == "POST":
+		user = Users.query.filter_by(
+			username=request.form.get("username")).first()
+		if user.password == request.form.get("password"):
+			login_user(user)
+			return redirect(url_for("index"))
+	return render_template("login.html", title = "Вход в систему")
  
  
 @app.route("/logout")
 def logout():
-    logout_user()
-    return redirect(url_for("index"))
+	logout_user()
+	return redirect(url_for("index"))
 
 
 @app.route("/test_dialog", methods=['GET', 'POST'])
@@ -434,7 +438,7 @@ def insert_data_agreements_from_clipboard():
 	agreements = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
 	dict_list = []
 	for agreement in agreements:
-		dict_list.append({'agreement':agreement, 'point':'          '})
+		dict_list.append({'agreement':agreement, 'point':'		  '})
 	print('inserted data:', dict_list)
 
 	user_object = designer_ul_get_data_id(current_user.id)
@@ -470,7 +474,7 @@ def insert_data_points_from_clipboard():
 
 	dict_list = []
 	for point in points:
-		dict_list.append({'agreement':(pointsagrs[point.strip()] if point.strip() in pointsagrs else '          '), 'point':point.strip()})
+		dict_list.append({'agreement':(pointsagrs[point.strip()] if point.strip() in pointsagrs else '		  '), 'point':point.strip()})
 
 	print('inserted data:', dict_list)
 
@@ -550,8 +554,8 @@ def designer_ul_get_excel_result():
 	if user_object == None:
 		print(">>>>>>>>>>> designer data doesn't exists")
 		return ''
-	echo(style(text=user_object.parameters, fg='bright_yellow'))
-	echo(style(text=user_object.data, fg='bright_green'))
+	#echo(style(text=user_object.parameters, fg='bright_yellow'))
+	#echo(style(text=user_object.data, fg='bright_green'))
 
 
 	current_datetime = datetime.datetime.now()
@@ -559,10 +563,35 @@ def designer_ul_get_excel_result():
 
 	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
 
-	print(type(current_user.id),type(user_object.data),type(user_object.parameters),)
+	#print(type(current_user.id),type(user_object.data),type(user_object.parameters),)
+
 	result = Data_Construct.delay	(	current_user.id,
 							 					user_object.data,
 												user_object.parameters)
-	result.wait()
-	return send_file(result.result)
 	
+
+	task_guid = str(uuid.uuid4())
+	celery_tasks[task_guid+'_'+str(current_user.id)]  = result
+
+	print('celery_tasks: ', celery_tasks)
+
+	return task_guid
+	return send_file(result.result)
+
+@app.route('/Chech_Celery_Task_Status', methods=['POST'])
+def Chech_Celery_Task_Status():
+	arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
+	uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
+	print('celery_tasks: ', celery_tasks)
+	print(uid)
+	if uid in celery_tasks:
+		print(f"celery_tasks['uid'].ready(): {celery_tasks[uid].ready()}")
+		if celery_tasks[uid].ready():
+			print(f"celery_tasks['uid'].successful(): {celery_tasks[uid].successful()}")
+			if celery_tasks[uid].successful():
+				result_value = celery_tasks[uid].get()
+				print("Результат выполнения задачи:", result_value)
+				celery_tasks.pop(uid)
+				return result_value
+
+	return ''

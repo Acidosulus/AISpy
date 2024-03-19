@@ -325,28 +325,60 @@ async function AskText(){
   
 }
 
+function DownloadExcel( url, file_name){
+	$.ajax({
+		url: url,
+		method: 'post',
+		dataType: 'binary',
+		xhrFields: {
+			'responseType': 'blob'
+		},
+		success: function(response, status, xhr) {
+			var downloadUrl = URL.createObjectURL(response);
+			var a = document.createElement('a');
+			a.href = downloadUrl;
+			a.download = file_name;
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(downloadUrl);
+		  }
+		}
+	  );  
+	
+}
+
 
 function GetDesdignerULExcelResult(){
   $.ajax({
     url: '/designer_ul_get_excel_result',
     method: 'post',
-    dataType: 'binary',
-    xhrFields: {
-        'responseType': 'blob'
-    },
-    success: function(response, status, xhr) {
-        var downloadUrl = URL.createObjectURL(response);
-        var a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = 'designer_ul.xlsx';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(downloadUrl);
-      }
-    }
-  );  
+    dataType: 'html',
+    data: '',
+    success: function(data){
+      var ul_designer_guid = data
+      console.log(ul_designer_guid);
 
+	  timer = setInterval(function() {
+        Check_for_file_ready(ul_designer_guid, timer);
+      }, 2000);
+
+	}
+  })
 }
 
 
+function Check_for_file_ready(uid, timer) {
+	$.ajax({
+		url: '/Chech_Celery_Task_Status',
+		method: 'post',
+		dataType: 'html',
+		data: `{"uid":"${uid}"}`,
+		success: function(data){
+			if (data.length>0){
+				clearInterval(timer);
+		  		console.log(`result:${data}`);
+			}
+		}
+	})
+}
 
