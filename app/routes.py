@@ -1,9 +1,7 @@
-
 import datetime
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, pull, connection, designerUL, data_sourses
-from app.designerUL import Data_Construct
+from app import app, db, models,connection_fl, dialogs, common, pull, connection, data_sourses
 from click import echo, style
 import pprint
 from sqlalchemy import text
@@ -17,6 +15,11 @@ import os
 import json
 import ujson
 import uuid
+try:
+	from celery_workers import Data_Construct
+except:
+	pass
+
 
 global celery_tasks
 celery_tasks = {}
@@ -54,7 +57,6 @@ def index():
 	user = {'nickname':'UserName'}
 	title = 'AISpy' if current_user.is_authenticated else 'Вход в систему не выполнен'
 	print('=============---==============')
-	#prnt(data_sourses.Points_WithOut_Displays(2023,1))
 	return render_template("main_index.html", title = title, user = user)
 
 
@@ -578,8 +580,8 @@ def designer_ul_get_excel_result():
 	return task_guid
 	return send_file(result.result)
 
-@app.route('/Chech_Celery_Task_Status', methods=['POST'])
-def Chech_Celery_Task_Status():
+@app.route('/Check_Celery_Task_Status', methods=['POST'])
+def Check_Celery_Task_Status():
 	arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
 	uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
 	print('celery_tasks: ', celery_tasks)
@@ -595,3 +597,12 @@ def Chech_Celery_Task_Status():
 				return result_value
 
 	return ''
+
+
+@app.route('/download_report_from_file_store', methods=['POST'])
+def download_report_from_file_store():
+	arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
+	echo(style('download_report_from_file_store:', fg='green') + ' ' + style(arguments, fg='bright_green'))
+	file_name = json.loads(arguments[0])['file_name']
+	print(f'file_name:{file_name}')
+	return send_file(file_name)

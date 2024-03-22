@@ -330,6 +330,7 @@ function DownloadExcel( url, file_name){
 		url: url,
 		method: 'post',
 		dataType: 'binary',
+		data:JSON.stringify({file_name:`${file_name}`}),
 		xhrFields: {
 			'responseType': 'blob'
 		},
@@ -344,7 +345,6 @@ function DownloadExcel( url, file_name){
 		  }
 		}
 	  );  
-	
 }
 
 
@@ -361,7 +361,6 @@ function GetDesdignerULExcelResult(){
 	  timer = setInterval(function() {
         Check_for_file_ready(ul_designer_guid, timer);
       }, 2000);
-
 	}
   })
 }
@@ -369,7 +368,7 @@ function GetDesdignerULExcelResult(){
 
 function Check_for_file_ready(uid, timer) {
 	$.ajax({
-		url: '/Chech_Celery_Task_Status',
+		url: '/Check_Celery_Task_Status',
 		method: 'post',
 		dataType: 'html',
 		data: `{"uid":"${uid}"}`,
@@ -377,6 +376,7 @@ function Check_for_file_ready(uid, timer) {
 			if (data.length>0){
 				clearInterval(timer);
 		  		console.log(`result:${data}`);
+				DownloadExcel('/download_report_from_file_store',data);
 			}
 		}
 	})

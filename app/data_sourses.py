@@ -16,9 +16,6 @@ import asyncio
 
 
 
-celery_tasks = {}
-
-
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
