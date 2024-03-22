@@ -357,7 +357,6 @@ function GetDesdignerULExcelResult(){
     success: function(data){
       var ul_designer_guid = data
       console.log(ul_designer_guid);
-
 	  timer = setInterval(function() {
         Check_for_file_ready(ul_designer_guid, timer);
       }, 2000);
