@@ -328,9 +328,9 @@ async function AskText(){
 function DownloadExcel( url, file_name){
 	$.ajax({
 		url: url,
-		method: 'post',
+		method: 'GET',
 		dataType: 'binary',
-		data:JSON.stringify({file_name:`${file_name}`}),
+		data:{file_name:`${file_name}`},
 		xhrFields: {
 			'responseType': 'blob'
 		},

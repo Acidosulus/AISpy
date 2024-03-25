@@ -6,7 +6,8 @@ from celery import current_task
 
 @celery.task(name='app.designerUL.Data_Construct')
 def Data_Construct(current_user_id, csource:str, cparameters:str):
-	return app.designerUL.Data_Construct(current_user_id, csource, cparameters)
+	result = app.designerUL.Data_Construct(current_user_id, csource, cparameters)
+	return result
 
 
 

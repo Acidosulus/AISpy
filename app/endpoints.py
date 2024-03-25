@@ -1,11 +1,15 @@
 import datetime
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from app import app, db, models,connection_fl, dialogs, common, pull, connection, data_sourses
+from common import connection_fl, connection_url_ul
+import common
+import dialogs
+import data_sourses
+import models
 from click import echo, style
 import pprint
 from sqlalchemy import text
-from app.models import Users, UserObject
+from models import Users, UserObject, UserMessage
 from flask_login import login_user, logout_user, current_user, login_required
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
@@ -15,16 +19,21 @@ import os
 import json
 import ujson
 import uuid
-try:
-	from celery_workers import Data_Construct
-except:
-	pass
+from common import app
 
 
 global celery_tasks
 celery_tasks = {}
 
 data_sourses.init()
+
+from statements import Reports, Points_WithOut_Displays, Points_with_Constant_Consuming, Pays_from_date_to_date
+# with app.app_context():
+pull = Reports()
+pull.add(Points_WithOut_Displays())
+pull.add(Points_with_Constant_Consuming())
+pull.add(Pays_from_date_to_date())
+
 
 
 @app.route('/agreements/<object_id>')
@@ -58,7 +67,6 @@ def index():
 	title = 'AISpy' if current_user.is_authenticated else 'Вход в систему не выполнен'
 	print('=============---==============')
 	return render_template("main_index.html", title = title, user = user)
-
 
 @app.route('/parameters_dialog/')
 def parameters_dialog():
@@ -551,21 +559,14 @@ def designer_ul_add_data():
 
 @app.route("/designer_ul_get_excel_result", methods=['POST','GET'])
 def designer_ul_get_excel_result():
-	print('>>>>>>>>>>> designer_ul_get_excel_result >>>>>>>>>>>>')
 	user_object = designer_ul_get_data_id(current_user.id)
 	if user_object == None:
-		print(">>>>>>>>>>> designer data doesn't exists")
 		return ''
-	#echo(style(text=user_object.parameters, fg='bright_yellow'))
-	#echo(style(text=user_object.data, fg='bright_green'))
-
 
 	current_datetime = datetime.datetime.now()
 	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
 
 	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
-
-	#print(type(current_user.id),type(user_object.data),type(user_object.parameters),)
 
 	result = Data_Construct.delay	(	current_user.id,
 							 					user_object.data,
@@ -599,10 +600,19 @@ def Check_Celery_Task_Status():
 	return ''
 
 
-@app.route('/download_report_from_file_store', methods=['POST'])
+@app.route('/download_report_from_file_store', methods=['GET'])
 def download_report_from_file_store():
-	arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
+	arguments = f"""{request.args}""".split('\n')
 	echo(style('download_report_from_file_store:', fg='green') + ' ' + style(arguments, fg='bright_green'))
-	file_name = json.loads(arguments[0])['file_name']
+	file_name = request.args.get('file_name')
 	print(f'file_name:{file_name}')
+	# models.Add_Message_for_User(current_user.id,'Данные конструктора отчёта готовы',f'/download_report_from_file_store?file_name={file_name}', 'excel','')
 	return send_file(file_name)
+
+
+
+@app.route('/message_log',methods=['POST'])
+def get_message_log():
+	query_result = connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
+	messages = common.RowsToDictList(query_result)
+	return messages

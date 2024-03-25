@@ -1,11 +1,11 @@
 from datetime import datetime, timezone
 from hashlib import md5
 from time import time
-from sqlalchemy import ForeignKey, Column, String, Table, Integer, DateTime
+from sqlalchemy import ForeignKey, Column, String, Table, Integer, DateTime, TIMESTAMP
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 ##import jwt
-from app import db, login_manager
+from common import app, db, login_manager
 
 
 ROLE_USER = 0
@@ -67,3 +67,27 @@ class UserObject (db.Model):
 	data				=	db.Column(db.String)
 	data_01				=	db.Column(db.String)
 
+
+
+
+class UserMessage(db.Model):
+    __tablename__ = 'user_messages'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False)
+    dt = Column(TIMESTAMP, nullable=True, server_default='now()')
+    text = Column(String, nullable=False)
+    link = Column(String, nullable=False)
+    icon = Column(String, nullable=True)
+    style = Column(String, nullable=True)
+
+
+def Add_Message_for_User(user_id, text, link, icon, style):
+	if user_id<=0:
+		return
+	message = UserMessage(	user_id = user_id,
+					   		text = text,
+							link = link,
+							icon = icon,
+							style = style)
+	db.session.add(message)
+	db.session.commit()

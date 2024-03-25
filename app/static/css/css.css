@@ -51,3 +51,25 @@
     color: #777;
     margin: 0.4rem 0 0.2rem;
   }
+
+
+
+  
+  /* Стили для блока сообщений */
+  #messageLog {
+	  width: 100%;
+	  max-height: 300px; /* Ограничение высоты для прокрутки, если сообщений много */
+	  overflow-y: auto; /* Включаем вертикальную прокрутку при необходимости */
+	  border: 1px solid #ccc;
+	  padding: 10px;
+	  margin-top: 20px;
+  }
+
+  /* Стили для отдельного сообщения */
+  .message {
+	  margin-bottom: 5px;
+	  padding: 5px;
+	  background-color: #f0f0f0;
+	  border-radius: 5px;
+  }
+

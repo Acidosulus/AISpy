@@ -18,7 +18,6 @@ print(f'designerUL imported to {__name__}')
 
 
 
-
 def Append_Data(source:list, get_data_func, key,value,parameter_name:str,parameters={}):
 	if len(parameters)>0:
 		header, data = get_data_func(parameters)

@@ -312,3 +312,52 @@ var Get_Agreements_Search_Result_request_int_progress = 0
   else $(`#div_for_substitustion_of_search_results`).empty();
   }
 }    
+
+
+
+function AddMessageIntoLog(message){
+	var messageLog = document.getElementById('messageLog');
+	if (!document.querySelector(`#message_id_${message.id}`)){
+		let str = ``;
+		str += `<div id="message_id_${message.id}">`;
+		str += (message.link==null? '': `<a href="${message.link}">`);
+		let icon = (message.icon==null,null,(message.icon.includes(`/`)? message.icon: eval(`icons.${message.icon}`)));
+		str += (message.icon==null? '' : `<img src="${icon}" width="32" height="32">`);
+		str += (message.text==null? '' : `<span${(message.style==null,'',`style="${message.style}"`)}>&nbsp;&nbsp;&nbsp;${message.text}</span>`)
+		str += (message.link==null? '': `</a>`);
+		str += '</div>';
+		messageLog.insertAdjacentHTML(`afterbegin`,str)
+	}
+}
+
+
+
+// Функция для обновления журнала сообщений
+function updateMessageLog() {
+	if (!document.getElementById('messageLog')){ 
+		return
+	}
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', '/message_log', true);
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState === XMLHttpRequest.DONE) {
+			if (xhr.status === 200) {
+				var data = JSON.parse(xhr.responseText);
+				data.forEach(function(message) {
+					AddMessageIntoLog(message);
+				});
+			} else{
+				clearInterval(messages_timer);
+				AddMessageIntoLog({id:-1, link:null, icon:`error`, text:`Ошибка получения данных сервера - обновление журнала приостановлено`})
+			}
+		}
+	};
+	xhr.send();
+}
+
+// Периодически запускаем функцию обновления журнала каждые две секунды
+var messages_timer = setInterval(updateMessageLog, 2000);
+
+var icons={	error:`/static/images/error_icon.png`,
+			excel:`/static/images/excel_icon.png`,
+			info:`/static/images/info_icon.png`};

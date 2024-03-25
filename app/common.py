@@ -74,3 +74,105 @@ class Agreements_Search(Navbar_Button):
 		self.title = title
 		self.src = src
 		self.onclick = onclick
+
+
+from flask import Flask
+from sqlalchemy import create_engine
+import sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
+import os
+from flask_login import LoginManager, login_user
+import logging
+from logging.handlers import RotatingFileHandler
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+import configparser  # импортируем библиотеку
+import pprint
+from click import echo, style
+
+printer = pprint.PrettyPrinter(indent=12, width=180)
+prnt = printer.pprint
+
+config = configparser.ConfigParser()
+config.read("settings.ini", encoding='UTF-8')  
+
+from sqlalchemy.engine import URL
+
+connection_url_fl = URL.create(
+	config['login_fl']['ENGINE'],
+	username=config['login_fl']['USERNAME'],
+	password=config['login_fl']['PASSWORD'],
+	host=config['login_fl']['SERVER'],
+	port=config['login_fl']['PORT'],
+	database=config['login_fl']['DATABASE'],
+	query={
+		"driver": config['login_fl']['DRIVER'],
+		"TrustServerCertificate": "yes",
+		"extra_params": "MARS_Connection=Yes"	},
+)
+connection_url_ul = URL.create(
+	config['login_ul']['ENGINE'],
+	username=config['login_ul']['USERNAME'],
+	password=config['login_ul']['PASSWORD'],
+	host=config['login_ul']['SERVER'],
+	port=config['login_ul']['PORT'],
+	database=config['login_ul']['DATABASE'],
+	query={
+		"driver": config['login_ul']['DRIVER'],
+		"TrustServerCertificate": "yes",
+		"extra_params": "MARS_Connection=Yes"	},
+)
+
+# echo(style(text=connection_url_fl, bg='blue', fg='bright_green'))
+# echo(style(text=connection_url_ul, bg='blue', fg='bright_green'))
+
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# class Config:
+SECRET_KEY = config["engine"]["SECRET_KEY"] #os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+SQLALCHEMY_DATABASE_URI = f'{config["login"]["ENGINE"]}://{config["login"]["USERNAME"]}:{config["login"]["PASSWORD"]}@{config["login"]["SERVER"]}:{config["login"]["PORT"]}/{config["login"]["DATABASE"]}'
+# 	echo(style(text=SQLALCHEMY_DATABASE_URI, bg='blue', fg='bright_green'))
+# 	SQLALCHEMY_BINDS = {
+# 		'dbfl': connection_url_fl,
+# 		'dbul': connection_url_ul
+# 	}
+# 	TEMPLATES_AUTO_RELOAD = True
+	
+app = Flask(__name__)
+# app.config.from_object(Config)
+app.TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
+app.config['SQLALCHEMY_DATABASE_URI']=SQLALCHEMY_DATABASE_URI
+app.config['SECRET_KEY']=SECRET_KEY
+db = SQLAlchemy(app)
+
+
+engine_ul = create_engine(connection_url_ul)
+engine_fl = create_engine(connection_url_fl)
+connection_ul = engine_ul.connect()
+connection_fl = engine_fl.connect()
+with app.app_context():
+	connection = db.engine.connect()
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+if not os.path.exists('logs'):
+    os.mkdir('logs')
+file_handler = RotatingFileHandler('logs/AISpy.log', maxBytes=10240,
+                                    backupCount=10)
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+file_handler.setLevel( logging.INFO)
+
+
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info('AISpy startup')
+
+
+#celery = Celery('tasks',
+#				broker='amqp://guest:guest@localhost',
+#				task_always_eager=True)

@@ -1,7 +1,12 @@
 import datetime
 from flask import render_template, flash, redirect, url_for, request, send_file
 from collections.abc import Iterable
-from app import app, db, models,connection_fl, dialogs, db, data_sourses, common, connection
+from common import db, connection_fl, db,  connection
+import models
+import dialogs
+import data_sourses
+import common
+
 from click import echo, style
 import json
 import pandas
@@ -13,6 +18,11 @@ import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
+
+
+
+
+
 def last_day_of_month(any_day):
     # The day 28 exists in every month. 4 days later, it's always next month
     next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
@@ -20,7 +30,9 @@ def last_day_of_month(any_day):
     return next_month - datetime.timedelta(days=next_month.day)
 
 
-@app.teardown_appcontext
+import app
+
+# @app.teardown_appcontext
 def get_human_readable_report_name(report_name):
 	report_humanread_name = connection.execute(db.select(models.PageItemsList.name).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
 	try:
@@ -29,7 +41,7 @@ def get_human_readable_report_name(report_name):
 		report_humanread_name = ''
 	return report_humanread_name
 
-@app.teardown_appcontext
+# @app.teardown_appcontext
 def get_report_note(report_name):
 	report_note = connection.execute(db.select(models.PageItemsList.note).where(models.PageItemsList.path==f'/Report/{report_name}')).fetchone()
 	try:
@@ -37,8 +49,6 @@ def get_report_note(report_name):
 	except:
 		report_note = ''
 	return report_note
-
-
 
 
 # superclass for any report
@@ -277,4 +287,5 @@ class Reports:
 		for key, value in self.reports.items():
 			result += f"{key}:{value.dialog}\n"
 		return result
+
 
