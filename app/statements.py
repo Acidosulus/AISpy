@@ -18,7 +18,7 @@ import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
 prnt = printer.pprint
 
-
+TMP_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'tmp')
 
 
 
@@ -158,7 +158,7 @@ class Report:
 		data = json.loads(row['data'])
 		parameters = json.loads(row['parameters'])
 		df = pandas.DataFrame(data)
-		file_name = os.path.join(app.TMP_FOLDER, f'report_id_{user_object_id}.xlsx')
+		file_name = os.path.join(TMP_FOLDER, f'report_id_{user_object_id}.xlsx')
 		writer = pandas.ExcelWriter(file_name, engine='xlsxwriter')
 		df.to_excel(writer, index=False, float_format="%.2f", startrow=4, freeze_panes=(5,0), sheet_name='report')
 		writer.sheets['report'].autofilter('A5:WW5')

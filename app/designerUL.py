@@ -1,7 +1,6 @@
-if __name__=='designerUL':
+try:
 	import data_sourses
-	data_sourses.init()
-else:
+except:
 	from app import data_sourses
 import os
 import datetime
@@ -13,6 +12,12 @@ logging.basicConfig(level=logging.INFO)
 
 
 print(f'designerUL imported to {__name__}')
+
+
+
+from celery import Celery
+celery = Celery('data_sourses',broker='amqp://guest:guest@localhost//', backend='rpc://')
+from celery import current_task
 
 
 
@@ -29,6 +34,7 @@ def Append_Data(source:list, get_data_func, key,value,parameter_name:str,paramet
 		row[parameter_name] = value
 	return source
 
+@celery.task(name='Data_Construct')
 def Data_Construct(current_user_id, csource:str, cparameters:str):
 	# Создаем новый логгер для каждого пользователя
 	logger = logging.getLogger(f'{current_user_id}')

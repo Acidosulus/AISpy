@@ -1,5 +1,8 @@
 print(f'data_sourses imported to {__name__}')
-
+try:
+	from app.common import connection_ul, connection
+except:
+	from common import connection_ul, connection
 from click import echo, style
 import sqlalchemy as sa
 import datetime
