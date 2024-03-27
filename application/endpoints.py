@@ -24,8 +24,41 @@ from common import app
 from designerUL import Data_Construct
 from celery.result import AsyncResult
 
+from main import applicaton_mode
+echo(style('applicaton_mode:', bg='blue', fg='bright_yellow')+style(applicaton_mode, bg='blue', fg='bright_green'))
+
+
 global celery_tasks
 celery_tasks = {}
+
+
+import threading
+def check_condition():
+	arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
+	uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
+	
+	print('celery_tasks: ', celery_tasks)
+	
+	print(uid)
+	if uid in celery_tasks:
+		print(f"celery_tasks['uid'].ready(): {celery_tasks[uid].ready()}")
+		if celery_tasks[uid].ready():
+			print(f"celery_tasks['uid'].successful(): {celery_tasks[uid].successful()}")
+			if celery_tasks[uid].successful():
+				result_value = celery_tasks[uid].get()
+				print("Результат выполнения задачи:", result_value)
+				celery_tasks.pop(uid)
+				return result_value
+
+
+
+
+
+
+
+	threading.Timer(3, check_condition).start()
+# check_condition()
+
 
 data_sourses.init()
 
