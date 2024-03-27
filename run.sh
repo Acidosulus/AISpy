@@ -6,6 +6,7 @@ export FLASK_RUN_DEBUG=0
 export FLASK_RUN_RELOAD=1
 flask run --host=0.0.0.0
 
-#celery -A designerUL worker --loglevel=info -E
+#celery -A main.celery worker --loglevel=info -E
+
 
 #source ./env/bin/deactivate

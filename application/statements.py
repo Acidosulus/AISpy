@@ -30,7 +30,6 @@ def last_day_of_month(any_day):
     return next_month - datetime.timedelta(days=next_month.day)
 
 
-import app
 
 # @app.teardown_appcontext
 def get_human_readable_report_name(report_name):

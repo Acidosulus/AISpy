@@ -1,7 +1,4 @@
-try:
-	import data_sourses
-except:
-	from app import data_sourses
+import data_sourses
 import os
 import datetime
 import decimal

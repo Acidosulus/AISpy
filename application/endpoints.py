@@ -1,8 +1,9 @@
 import datetime
 from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
-from common import connection_fl, connection_url_ul, connection, db
+
 import common
+from common import connection_fl, connection_url_ul, connection, db
 import dialogs
 import data_sourses
 import models
@@ -21,6 +22,7 @@ import ujson
 import uuid
 from common import app
 from designerUL import Data_Construct
+from celery.result import AsyncResult
 
 global celery_tasks
 celery_tasks = {}
@@ -566,20 +568,37 @@ def designer_ul_get_excel_result():
 	current_datetime = datetime.datetime.now()
 	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
 
-	task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
+	#task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
 
-	result = Data_Construct.delay	(	current_user.id,
-							 					user_object.data,
-												user_object.parameters)
+	task = Data_Construct.apply_async([current_user.id, user_object.data, user_object.parameters])
+	task.on_success = common.task_resolve_adapter
 	
-
+	echo(style(type(task), fg="bright_blue"))
+	echo(style(dir(task), fg="bright_green"))
+		   
 	task_guid = str(uuid.uuid4())
-	celery_tasks[task_guid+'_'+str(current_user.id)]  = result
-
+	celery_tasks[task_guid+'_'+str(current_user.id)]  = task
+	# task.then(common.task_resolve_adapter, task)
 	print('celery_tasks: ', celery_tasks)
-
+	
 	return task_guid
 	return send_file(result.result)
+
+
+def task_resolve_adapter(task):
+	echo(style(f"task_resolve_adapter", fg="bright_red"))
+	if task.successful():
+		# Если задача выполнена успешно, получаем результат
+		task_result = task.get()
+		echo(style(f"Результат выполнения задачи с идентификатором {task.id}: {task_result}", fg="bright_red"))
+	elif task.failed():
+		# Если задача завершилась с ошибкой, можно обработать ошибку
+		echo(style(f"Задача с идентификатором {task.id} завершилась с ошибкой: {task.result}", fg="bright_red"))
+	else:
+		# Если задача еще выполняется или в очереди, вы можете обработать этот случай
+		echo(style(f"Задача с идентификатором {task.id} еще выполняется или находится в очереди", fg="bright_red"))
+
+
 
 @app.route('/Check_Celery_Task_Status', methods=['POST'])
 def Check_Celery_Task_Status():
