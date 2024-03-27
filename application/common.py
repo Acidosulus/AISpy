@@ -1,6 +1,27 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
+from celery import Task
+import uuid
 
+
+class Celery_Task():
+	def __init__(self, task:Task, user_id:int):
+		self.task = task
+		self.id = uuid.uuid4()
+		self.user_id = user_id
+
+	def __str__(self):
+		return {'task':self.task, 'id':self.id, 'user_id':self.user_id}
+
+class Celery_Tasks_Pull():
+	pull={}
+
+	def __init__(self):
+		pass
+
+	def add_task(self, task:Task, user_id:int):
+		celery_task = Celery_Task(task, user_id)
+		self.pull[celery_task.id] = celery_task
 
 # return one row query result as dict
 def RowToDict(row):
@@ -176,6 +197,7 @@ app.logger.info('AISpy startup')
 #celery = Celery('tasks',
 #				broker='amqp://guest:guest@localhost',
 #				task_always_eager=True)
+
 
 
 

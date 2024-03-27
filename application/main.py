@@ -13,5 +13,6 @@ if __name__ == '__main__' and sys.argv[1]=='flask':
 
 if sys.argv[1]!='flask':
 	print({"message":"celery init"})
+	import designerUL
 	from celery import Celery
 	celery = Celery('AISpy',broker='amqp://guest:guest@localhost//', backend='rpc://')

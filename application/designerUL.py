@@ -31,7 +31,7 @@ def Append_Data(source:list, get_data_func, key,value,parameter_name:str,paramet
 
 
 
-@celery.task(name='Data_Construct')
+@celery.task(name='designerUL.Data_Construct')
 def Data_Construct(current_user_id, csource:str, cparameters:str):
 	# Создаем новый логгер для каждого пользователя
 	logger = logging.getLogger(f'{current_user_id}')

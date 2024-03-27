@@ -27,6 +27,9 @@ from celery.result import AsyncResult
 from main import applicaton_mode
 echo(style('applicaton_mode:', bg='blue', fg='bright_yellow')+style(applicaton_mode, bg='blue', fg='bright_green'))
 
+from common import Celery_Tasks_Pull
+task_pull = Celery_Tasks_Pull()
+
 
 global celery_tasks
 celery_tasks = {}
@@ -34,30 +37,36 @@ celery_tasks = {}
 
 import threading
 def check_condition():
-	arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
-	uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
-	
-	print('celery_tasks: ', celery_tasks)
-	
-	print(uid)
-	if uid in celery_tasks:
-		print(f"celery_tasks['uid'].ready(): {celery_tasks[uid].ready()}")
-		if celery_tasks[uid].ready():
-			print(f"celery_tasks['uid'].successful(): {celery_tasks[uid].successful()}")
-			if celery_tasks[uid].successful():
-				result_value = celery_tasks[uid].get()
-				print("Результат выполнения задачи:", result_value)
-				celery_tasks.pop(uid)
-				return result_value
-
-
-
-
-
-
+	if applicaton_mode != 'flask':
+		return
+	for id in list(task_pull.pull.keys()):
+		prnt(task_pull.pull[id])
 
 	threading.Timer(3, check_condition).start()
-# check_condition()
+	# arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
+	# uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
+	
+	# print('celery_tasks: ', celery_tasks)
+	
+	# print(uid)
+	# if uid in celery_tasks:
+	# 	print(f"celery_tasks['uid'].ready(): {celery_tasks[uid].ready()}")
+	# 	if celery_tasks[uid].ready():
+	# 		print(f"celery_tasks['uid'].successful(): {celery_tasks[uid].successful()}")
+	# 		if celery_tasks[uid].successful():
+	# 			result_value = celery_tasks[uid].get()
+	# 			print("Результат выполнения задачи:", result_value)
+	# 			celery_tasks.pop(uid)
+	# 			return result_value
+
+
+
+
+
+
+
+	
+check_condition()
 
 
 data_sourses.init()
@@ -604,14 +613,12 @@ def designer_ul_get_excel_result():
 	#task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
 
 	task = Data_Construct.apply_async([current_user.id, user_object.data, user_object.parameters])
-	task.on_success = common.task_resolve_adapter
-	
-	echo(style(type(task), fg="bright_blue"))
-	echo(style(dir(task), fg="bright_green"))
-		   
+	# task.on_success = common.task_resolve_adapter
+	task_pull.add_task(task, current_user.id)
+
+   
 	task_guid = str(uuid.uuid4())
 	celery_tasks[task_guid+'_'+str(current_user.id)]  = task
-	# task.then(common.task_resolve_adapter, task)
 	print('celery_tasks: ', celery_tasks)
 	
 	return task_guid
