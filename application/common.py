@@ -5,10 +5,11 @@ import uuid
 
 
 class Celery_Task():
-	def __init__(self, task:Task, user_id:int):
+	def __init__(self, task:Task, user_id:int, type:str):
 		self.task = task
 		self.id = str(uuid.uuid4())
 		self.user_id = user_id
+		self.type = '' #file_download - task return path for file. The file must by downloaded from browser. Link on file must be put into browser event log
 
 	def Information(self):
 		return {'task':self.task, 'id':self.id, 'user_id':self.user_id}

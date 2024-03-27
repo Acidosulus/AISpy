@@ -610,22 +610,10 @@ def designer_ul_get_excel_result():
 	if user_object == None:
 		return ''
 
-	current_datetime = datetime.datetime.now()
-	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
-
-	#task_identify_string = f'{current_user.id}-{safe_part_of_filename}-'
-
 	task = Data_Construct.apply_async([current_user.id, user_object.data, user_object.parameters])
-	# task.on_success = common.task_resolve_adapter
-	ctask = task_pull.add_task(task, current_user.id)
+	ctask = task_pull.add_task(task, current_user.id, 'file_download')
 
-   
-	# task_guid = str(uuid.uuid4())
-	# celery_tasks[task_guid+'_'+str(current_user.id)]  = task
-	# print('celery_tasks: ', celery_tasks)
-	
 	return ctask.id
-	return send_file(result.result)
 
 
 def task_resolve_adapter(task):
@@ -655,17 +643,6 @@ def Check_Celery_Task_Status():
 		if task.task.ready():
 			if task.task.successful():
 				return task.task.get()
-
-	# if uid in celery_tasks:
-	# 	print(f"celery_tasks['uid'].ready(): {celery_tasks[uid].ready()}")
-	# 	if celery_tasks[uid].ready():
-	# 		print(f"celery_tasks['uid'].successful(): {celery_tasks[uid].successful()}")
-	# 		if celery_tasks[uid].successful():
-	# 			result_value = celery_tasks[uid].get()
-	# 			print("Результат выполнения задачи:", result_value)
-	# 			celery_tasks.pop(uid)
-	# 			return result_value
-
 	return ''
 
 
