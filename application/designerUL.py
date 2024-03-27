@@ -42,8 +42,8 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 	logger.addHandler(file_handler)
 
 	# Логируем переданные параметры
-	logger.info(f"Source: {csource}")
-	logger.info(f"Parameters: {cparameters}")
+	# logger.info(f"Source: {csource}")
+	# logger.info(f"Parameters: {cparameters}")
 
 	current_datetime = datetime.datetime.now()
 	safe_part_of_filename = current_datetime.strftime("%Y-%m-%d_%H-%M-%S")
@@ -174,7 +174,7 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Reconcilation_Acts, value='documents', key='agreement', parameter_name=parameter['name'], parameters={'year':parameter['year'], 'month':parameter['month']})
 
 
-	print(source)
+	# print(source)
 	return download_excel(source, file_name)
 
 
