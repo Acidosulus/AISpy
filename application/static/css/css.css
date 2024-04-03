@@ -63,6 +63,10 @@
 	  border: 1px solid #ccc;
 	  padding: 10px;
 	  margin-top: 20px;
+	  position: fixed;
+	  bottom: 0;
+	  right: 0;
+	  z-index: -100;
   }
 
   /* Стили для отдельного сообщения */

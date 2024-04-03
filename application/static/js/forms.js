@@ -320,7 +320,7 @@ function AddMessageIntoLog(message){
 	if (!document.querySelector(`#message_id_${message.id}`)){
 		let str = ``;
 		str += `<div id="message_id_${message.id}">`;
-		str += (message.link==null? '': `<a href="${message.link}">`);
+		str += (message.link==null? '': `<a href='${message.link}'>`);
 		let icon = (message.icon==null,null,(message.icon.includes(`/`)? message.icon: eval(`icons.${message.icon}`)));
 		str += (message.icon==null? '' : `<img src="${icon}" width="32" height="32">`);
 		str += (message.text==null? '' : `<span${(message.style==null,'',`style="${message.style}"`)}>&nbsp;&nbsp;&nbsp;${message.text}</span>`)
@@ -355,9 +355,10 @@ function updateMessageLog() {
 	xhr.send();
 }
 
-// Периодически запускаем функцию обновления журнала каждые две секунды
-var messages_timer = setInterval(updateMessageLog, 2000);
-
 var icons={	error:`/static/images/error_icon.png`,
 			excel:`/static/images/excel_icon.png`,
 			info:`/static/images/info_icon.png`};
+
+
+var messages_timer = setInterval(updateMessageLog, 2000);
+updateMessageLog()

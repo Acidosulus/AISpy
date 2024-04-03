@@ -39,12 +39,21 @@ import threading
 def check_condition():
 	if applicaton_mode != 'flask':
 		return
-	if len(task_pull.pull)>0:
-		print("===================")
 	for id in list(task_pull.pull.keys()):
-		prnt(task_pull.pull[id].Information())
-	if len(task_pull.pull)>0:
-		print("===================")
+		if task_pull.pull[id].active:
+			prnt(task_pull.pull[id].Information())
+			if task_pull.pull[id].task.ready() and task_pull.pull[id].active:
+				lnk = f'/download_report_from_file_store?file_name="{task_pull.pull[id].task.get().replace("/","%2F")}"'
+				print("===============",lnk,"====================")
+				connection.execute(models.UserMessage.__table__.insert().values(user_id=task_pull.pull[id].user_id,
+																				text='Конструктор отчетов',
+																				link=lnk,
+																				icon='excel',
+																				style=''))
+				connection.commit()
+				task_pull.pull[id].active = False
+				# connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
+				# messages = common.RowsToDictList(query_result)
 	threading.Timer(3, check_condition).start()
 	# arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
 	# uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
@@ -648,11 +657,8 @@ def Check_Celery_Task_Status():
 
 @app.route('/download_report_from_file_store', methods=['GET'])
 def download_report_from_file_store():
-	arguments = f"""{request.args}""".split('\n')
-	echo(style('download_report_from_file_store:', fg='green') + ' ' + style(arguments, fg='bright_green'))
-	file_name = request.args.get('file_name')
-	print(f'file_name:{file_name}')
-	# models.Add_Message_for_User(current_user.id,'Данные конструктора отчёта готовы',f'/download_report_from_file_store?file_name={file_name}', 'excel','')
+	file_name = request.args.get('file_name').replace('"','')
+	prnt({'file_name':file_name})
 	return send_file(file_name)
 
 
