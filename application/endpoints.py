@@ -43,14 +43,15 @@ def check_condition():
 		if task_pull.pull[id].active:
 			prnt(task_pull.pull[id].Information())
 			if task_pull.pull[id].task.ready() and task_pull.pull[id].active:
-				lnk = f'/download_report_from_file_store?file_name="{task_pull.pull[id].task.get().replace("/","%2F")}"'
+				lnk = f'/download_report_from_file_store?file_name={task_pull.pull[id].task.get().replace("/","%2F")}'
 				print("===============",lnk,"====================")
-				connection.execute(models.UserMessage.__table__.insert().values(user_id=task_pull.pull[id].user_id,
-																				text='Конструктор отчетов',
-																				link=lnk,
-																				icon='excel',
-																				style=''))
-				connection.commit()
+				models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
+				# connection.execute(models.UserMessage.__table__.insert().values(user_id=task_pull.pull[id].user_id,
+				# 																text='Конструктор отчетов',
+				# 																link=lnk,
+				# 																icon='excel',
+				# 																style=''))
+				# connection.commit()
 				task_pull.pull[id].active = False
 				# connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
 				# messages = common.RowsToDictList(query_result)
@@ -623,20 +624,6 @@ def designer_ul_get_excel_result():
 	ctask = task_pull.add_task(task, current_user.id, 'file_download')
 
 	return ctask.id
-
-
-def task_resolve_adapter(task):
-	echo(style(f"task_resolve_adapter", fg="bright_red"))
-	if task.successful():
-		# Если задача выполнена успешно, получаем результат
-		task_result = task.get()
-		echo(style(f"Результат выполнения задачи с идентификатором {task.id}: {task_result}", fg="bright_red"))
-	elif task.failed():
-		# Если задача завершилась с ошибкой, можно обработать ошибку
-		echo(style(f"Задача с идентификатором {task.id} завершилась с ошибкой: {task.result}", fg="bright_red"))
-	else:
-		# Если задача еще выполняется или в очереди, вы можете обработать этот случай
-		echo(style(f"Задача с идентификатором {task.id} еще выполняется или находится в очереди", fg="bright_red"))
 
 
 

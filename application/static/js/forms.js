@@ -320,10 +320,11 @@ function AddMessageIntoLog(message){
 	if (!document.querySelector(`#message_id_${message.id}`)){
 		let str = ``;
 		str += `<div id="message_id_${message.id}">`;
+		str += `<span class="message_log_datetime">${message.dt.slice(6,25)}</span> `;
 		str += (message.link==null? '': `<a href='${message.link}'>`);
 		let icon = (message.icon==null,null,(message.icon.includes(`/`)? message.icon: eval(`icons.${message.icon}`)));
 		str += (message.icon==null? '' : `<img src="${icon}" width="32" height="32">`);
-		str += (message.text==null? '' : `<span${(message.style==null,'',`style="${message.style}"`)}>&nbsp;&nbsp;&nbsp;${message.text}</span>`)
+		str += (message.text==null? '' : `<span ${(message.style==null,'',`class="${message.style}"`)}>&nbsp;&nbsp;&nbsp;${message.text}</span>`)
 		str += (message.link==null? '': `</a>`);
 		str += '</div>';
 		messageLog.insertAdjacentHTML(`afterbegin`,str)
@@ -357,7 +358,8 @@ function updateMessageLog() {
 
 var icons={	error:`/static/images/error_icon.png`,
 			excel:`/static/images/excel_icon.png`,
-			info:`/static/images/info_icon.png`};
+			info:`/static/images/info_icon.png`,
+			table:`/static/images/table_icon.png`};
 
 
 var messages_timer = setInterval(updateMessageLog, 2000);

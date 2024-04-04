@@ -139,6 +139,16 @@ class Report:
 		data_object_id = data_object.id
 		db.session.commit()
 		df = pandas.DataFrame(data)
+		models.Add_Message_for_User(	user_id=current_user_id,
+							  			text=f"{self.report_humanread_name} {self.get_parameters_human_readable_string(parameters)}",
+										link=f"/download_excel/{data_object_id}",
+										icon='excel',
+										style='message_log_report_name_excel')
+		models.Add_Message_for_User(	user_id=current_user_id,
+							  			text=f"{self.report_humanread_name} {self.get_parameters_human_readable_string(parameters)}",
+										link=f"/Report_From_History/{self.report_name}/{data_object_id}",
+										icon='table',
+										style='message_log_report_name_table')
 
 		return render_template("report.html", 
 						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
