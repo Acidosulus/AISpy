@@ -13,24 +13,73 @@
 <div class="mform hidden" id="mdiv">
 </div>
 
-    <div class="container">
+	<div class="container">
+    
       {% if current_user.is_authenticated %}
-      <h1><a href="/page_with_items/-10"><img width="30" height="30" src="/static/images/printer.png"> Отчёты</a></h1>
-      <h1><a href="/reports_builder_ul"><img width="30" height="30" src="/static/images/report_wizard.png"> Конструктор отчётов</a></h1>
-      <h1><a href="/agreements/-10"><img width="30" height="30" src="/static/images/agreements.png"> Договора</a></h1>
-      <h1><a href="/addresses/-10"><img width="30" height="30" src="/static/images/addresses_pull.png"> Адресный фонд</a></h1>
+	  <div class="row mt-3">
+		<button class="btn btn-info col-3" id="designer_ul_run_button" type="button"
+			style="text-align: left;"
+			onclick="window.location.href='/page_with_items/-10';">
+			<img width="30" height="30" src="/static/images/printer.png" style="margin-right: 5px;">
+			Отчёты
+		</button>
+      </div>
+	  <!-- <h1><a href="/reports_builder_ul"><img width="30" height="30" src="/static/images/report_wizard.png"> Конструктор отчётов</a></h1> -->
+	  
+	 
+    <div class="row mt-3">
+		<button class="btn btn-info col-3" id="designer_ul_run_button" type="button"
+			onclick="RunInScreenForm(`ul_designer_form`, `GetSourceFromServer();GetSourceFromServerParameters();`,`/reports_builder_ul`);"
+			style="text-align: left;"
+			>
+			<img width="30" height="30" src="/static/images/report_wizard.png" style="margin-right: 5px;">
+			Конструктор отчетов ЮЛ
+		</button>
+	</div>
+
+	
+
+      <!-- <h1><a href="/agreements/-10"><img width="30" height="30" src="/static/images/agreements.png"> Договора</a></h1> -->
+
+	  <div class="row mt-3">
+		<button class="btn btn-info col-3" id="designer_ul_run_button" type="button"
+			onclick="window.location.href='/agreements/-10';"
+			style="text-align: left;"
+			>
+			<img width="30" height="30" src="/static/images/agreements.png" style="margin-right: 5px;">
+			Договора
+		</button>
+	</div>
+
+
+
+	<div class="row mt-3">
+		<button class="btn btn-info col-3" id="designer_ul_run_button" type="button"
+			onclick="window.location.href='/addresses/-10';"
+			style="text-align: left;"
+			>
+			<img width="30" height="30" src="/static/images/addresses_pull.png" style="margin-right: 5px;">
+			Адресный фонд
+		</button>
+	</div>
+
+      <!-- <h1><a href="/addresses/-10"><img width="30" height="30" src="/static/images/addresses_pull.png"> Адресный фонд</a></h1> -->
+
+
       <hr>
       <hr>
       <hr>
       <hr>
       <hr>
       <!--FillOutModalForm({"title":"Реестр платежей","backlink":"","parameters":[{"lable":"Номера договоров","name":"agreements","type":"text","default":"","size":24,"data":[]}],"success_jscode":""})-->
+	  <!--
       <input class="btn btn-primary" id="test_button" type="button" value="test 1" onclick='console.log(AskText());' />
       <a href="/organization_form/48178"><input class="btn btn-primary" id="test_button" type="button" value="test 2" /></a>
-      <a onclick="RunInScreenForm(`organization_form`, `FillOutOrganizationForm()`, `/organization_form/48178`);"><input class="btn btn-primary" id="test_button" type="button" value="test Organization" /></a>
+      <a onclick="RunInScreenForm(`organization_form`, `FillOutOrganizationForm()`, `/organization_form/48178`);"><input class="btn btn-primary" id="test_button" type="button" value="test Organization"/></a>
       <a onclick="RunInScreenForm(`agreement_form`, `FillOutOrganizationForm(); Fill_Agreement_Periods_DropDownList();`, `/agreement_form/117246`);"><input class="btn btn-primary" id="test_button" type="button" value="test Agreement" /></a>
-
+	  
       <a onclick="RunInScreenForm(`agreements_search`, `FillOutOrganizationForm(); $('#form_text_input_for_agreements_search').focus();`, `/agreement_search_form`);"><input class="btn btn-primary" id="test_button" type="button" value="test search" /></a>
+	  -->
       <!--<p><a href="/parameters_dialog/">Проверка диалога с произвольными параметрами</a></p>-->
       <hr>
       <hr>
@@ -43,15 +92,52 @@
       <hr>
       <hr>
       <hr>
-      <a href="/logout"><img width="40" height="30" src="/static/images/exit.png"> Выход из системы</a>
+      <!-- <a href="/logout"><img width="40" height="30" src="/static/images/exit.png"> Выход из системы</a> -->
+
+
+	  	<div class="row mt-3">
+			<button class="btn btn-info col-3" id="designer_ul_run_button" type="button"
+				onclick="window.location.href='/logout';"
+				style="text-align: left;"
+				>
+				<img width="40" height="30" src="/static/images/exit.png" style="margin-right: 5px;">
+				Выход из системы
+			</button>
+		</div>
+
       {% else %}
       <h1>Вход в систему не выполнен</h1>
       <hr>
       <nav>
         <ul>
-          <li><a href="/login"><img width="40" height="30" src="/static/images/enter.png"> Войти</a></li>
-          <br>
-          <li><a href="/register"><img width="40" height="30" src="/static/images/registration.png"> Зарегистрироваться</a></li>
+          <li>
+			
+			<!-- <a href="/login"><img width="40" height="30" src="/static/images/enter.png"> Войти</a> -->
+
+			<div class="row mt-3">
+				<button class="btn btn-info col-3" id="designer_ul_run_button" type="button"
+					onclick="window.location.href='/login';"
+					style="text-align: left;"
+					>
+					<img width="40" height="30" src="/static/images/enter.png" style="margin-right: 5px;">
+					Войти
+				</button>
+			</div>
+	
+		
+		</li>
+          
+          <!-- <li><a href="/register"><img width="40" height="30" src="/static/images/registration.png"> Зарегистрироваться</a></li> -->
+
+		  <div class="row mt-3">
+			<button class="btn btn-info col-3" id="designer_ul_run_button" type="button"
+				onclick="window.location.href='/register';"
+				style="text-align: left;"
+				>
+				<img width="40" height="30" src="/static/images/registration.png" style="margin-right: 5px;">
+				Зарегистрироваться
+			</button>
+		</div>
         </ul>
       </nav>
       {% endif %}
@@ -59,6 +145,9 @@
       <hr>
       <hr>
     </div>
+
+
+	</div>
 {% endblock %}
 
 

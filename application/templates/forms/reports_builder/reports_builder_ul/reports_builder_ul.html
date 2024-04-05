@@ -3,7 +3,7 @@
   {% include "_head.html"%}
 {% endblock %}
 
-{% include "_navigation_panel.html"%}
+<!-- {% include "_navigation_panel.html"%} -->
 
 {% block content %}
 
@@ -168,7 +168,9 @@
 
           
             <div class="col-2 p-1">
-              <button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">Приборы учета</button>
+              	<button type="button" class="btn btn-primary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/add.png" align="left">
+					Приборы учета
+				</button>
             </div>
 
           </div>
@@ -176,17 +178,23 @@
           <div class="row p-1">
 
             <div class="col-4 p-1">
-              <button type="button" class="btn btn-success col-12" id="button_data_clear" onclick="GetDesdignerULExcelResult();"><img width="24" height="24" src="/static/images/excel.png" align="left">Вывести в Excel</button>
+              	<button type="button" class="btn btn-success col-12" id="button_data_clear" onclick="GetDesdignerULExcelResult();CloseToplevelDynamicForm();"><img width="24" height="24" src="/static/images/excel.png" align="left">
+					Вывести в Excel
+				</button>
             </div>
 
 
             <div class="col-4 p-1">
-              <button type="button" class="btn btn-secondary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/repeat.png" align="left">Повторить</button>
+              	<button type="button" class="btn btn-secondary col-12" id="button_data_clear" onclick="ClearSourceDataonServer();ClearSourceData();"><img width="24" height="24" src="/static/images/repeat.png" align="left">
+					Повторить
+				</button>
             </div>
 
 
             <div class="col-4 p-1">
-              <button type="button" class="btn btn-warning col-12" id="button_data_clear" onclick="ClearSourceDataonServerParameters();ClearSourceDataParameters();GetSourceFromServerParameters();"><img width="24" height="24" src="/static/images/clear.png" align="left">Очистить</button>
+              <button type="button" class="btn btn-warning col-12" id="button_data_clear" onclick="ClearSourceDataonServerParameters();ClearSourceDataParameters();GetSourceFromServerParameters();"><img width="24" height="24" src="/static/images/clear.png" align="left">
+				Очистить
+			  </button>
             </div>
 
           </div>

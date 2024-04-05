@@ -348,7 +348,7 @@ function DownloadExcel( url, file_name){
 }
 
 
-function GetDesdignerULExcelResult(){
+async function GetDesdignerULExcelResult(){
   $.ajax({
     url: '/designer_ul_get_excel_result',
     method: 'post',
@@ -357,9 +357,9 @@ function GetDesdignerULExcelResult(){
     success: function(data){
       var ul_designer_guid = data
       console.log(ul_designer_guid);
-	  timer = setInterval(function() {
-        Check_for_file_ready(ul_designer_guid, timer);
-      }, 2000);
+	//   timer = setInterval(function() {
+    //     Check_for_file_ready(ul_designer_guid, timer);
+    //   }, 2000);
 	}
   })
 }

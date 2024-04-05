@@ -319,7 +319,8 @@ function AddMessageIntoLog(message){
 	var messageLog = document.getElementById('messageLog');
 	if (!document.querySelector(`#message_id_${message.id}`)){
 		let str = ``;
-		str += `<div id="message_id_${message.id}">`;
+		let message_id = `message_id_${message.id}`;
+		str += `<div id="${message_id}">`;
 		str += `<span class="message_log_datetime">${message.dt.slice(6,25)}</span> `;
 		str += (message.link==null? '': `<a href='${message.link}'>`);
 		let icon = (message.icon==null,null,(message.icon.includes(`/`)? message.icon: eval(`icons.${message.icon}`)));
@@ -328,6 +329,12 @@ function AddMessageIntoLog(message){
 		str += (message.link==null? '': `</a>`);
 		str += '</div>';
 		messageLog.insertAdjacentHTML(`afterbegin`,str)
+
+		document.querySelector(`#${message_id}`).style.animation = 'blink 1s infinite';
+		setTimeout(() => {
+			document.querySelector(`#${message_id}`).style.animation = '';
+		}, 5000); // Stop blinking after 5 seconds
+  
 	}
 }
 

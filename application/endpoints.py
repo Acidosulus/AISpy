@@ -36,7 +36,7 @@ celery_tasks = {}
 
 
 import threading
-def check_condition():
+def check_celery_tasks():
 	if applicaton_mode != 'flask':
 		return
 	for id in list(task_pull.pull.keys()):
@@ -45,7 +45,7 @@ def check_condition():
 			if task_pull.pull[id].task.ready() and task_pull.pull[id].active:
 				lnk = f'/download_report_from_file_store?file_name={task_pull.pull[id].task.get().replace("/","%2F")}'
 				print("===============",lnk,"====================")
-				models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
+				with app.app_context(): models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
 				# connection.execute(models.UserMessage.__table__.insert().values(user_id=task_pull.pull[id].user_id,
 				# 																text='Конструктор отчетов',
 				# 																link=lnk,
@@ -55,7 +55,7 @@ def check_condition():
 				task_pull.pull[id].active = False
 				# connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
 				# messages = common.RowsToDictList(query_result)
-	threading.Timer(3, check_condition).start()
+	threading.Timer(3, check_celery_tasks).start()
 	# arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
 	# uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
 	
@@ -71,15 +71,8 @@ def check_condition():
 	# 			print("Результат выполнения задачи:", result_value)
 	# 			celery_tasks.pop(uid)
 	# 			return result_value
-
-
-
-
-
-
-
 	
-check_condition()
+check_celery_tasks()
 
 
 data_sourses.init()

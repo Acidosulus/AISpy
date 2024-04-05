@@ -85,7 +85,7 @@ def Add_Message_for_User(user_id, text, link, icon, style):
 	if user_id<=0:
 		return
 	message = UserMessage(	user_id = user_id,
-					   		text = text,
+							text = text,
 							link = link,
 							icon = icon,
 							style = style)

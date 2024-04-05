@@ -204,17 +204,3 @@ app.logger.info('AISpy startup')
 
 
 
-def task_resolve_adapter(task):
-	echo(style(f"task_resolve_adapter", fg="bright_red"))
-	if task.successful():
-		# Если задача выполнена успешно, получаем результат
-		task_result = task.get()
-		echo(style(f"Результат выполнения задачи с идентификатором {task.id}: {task_result}", fg="bright_red"))
-	elif task.failed():
-		# Если задача завершилась с ошибкой, можно обработать ошибку
-		echo(style(f"Задача с идентификатором {task.id} завершилась с ошибкой: {task.result}", fg="bright_red"))
-	else:
-		# Если задача еще выполняется или в очереди, вы можете обработать этот случай
-		echo(style(f"Задача с идентификатором {task.id} еще выполняется или находится в очереди", fg="bright_red"))
-
-
