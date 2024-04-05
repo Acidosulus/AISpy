@@ -327,7 +327,6 @@ function AddMessageIntoLog(message){
 		str += (message.text==null? '' : `<span ${(message.style==null,'',`class="${message.style}"`)}>&nbsp;&nbsp;&nbsp;${message.text}</span>`)
 		str += (message.link==null? '': `</a>`);
 		str += '</div>';
-		console.log(messageLog.dataset.firstinit);
 		if (messageLog.dataset.firstinit!=='true'){
 			showPopupMessage(str);
 		}
@@ -430,11 +429,20 @@ function ToggleMessageLogFullscreen(){
 
 function showPopupMessage(text) {
     // Создаем элемент для всплывающего блока
+	let maxtop = 0;
+	for (let element of document.querySelectorAll(`.popup`)){
+		let top = Number(element.style.top.replace('px',''));
+		if (maxtop<top){
+			maxtop = top;
+		}
+	}
     const popup = document.createElement('div');
+	popup.classList.add('popup');
     popup.innerHTML = text;
     popup.style.position = 'fixed';
-    popup.style.top = '20px';
+    popup.style.top = `${maxtop+80}px`;
     popup.style.right = '20px';
+	popup.style.maxWidth = '80%';
 	popup.style.width = 'auto';
     popup.style.padding = '10px';
     popup.style.background = 'rgba(0, 0, 0, 0.7)';
