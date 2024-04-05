@@ -1,4 +1,4 @@
-<div id="messageLog" data-state="up">
+<div id="messageLog" data-state="up" style="background-image: url('/static/images/empty_black.png'); background-repeat: repeat;">
 	
 </div>
 
@@ -7,3 +7,9 @@
 		id="message_log_toggle_button"
 		data-state="up"
 		onclick="ToggleMessageLogUpDown();">
+
+<img 	src="/static/images/fullscreen.png"
+		style="position:fixed; height: 40px; width: 40px; right: 20px; bottom: 60px; z-index: -100;"
+		id="message_log_toggle_fullscreen_button"
+		data-state="normal"
+		onclick="ToggleMessageLogFullscreen();">

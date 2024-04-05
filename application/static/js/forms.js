@@ -334,8 +334,7 @@ function AddMessageIntoLog(message){
 		setTimeout(() => {
 			document.querySelector(`#${message_id}`).style.animation = '';
 		}, 5000); // Stop blinking after 5 seconds
-  
-	}
+ 	}
 }
 
 
@@ -372,8 +371,9 @@ var icons={	error:`/static/images/error_icon.png`,
 var messages_timer = setInterval(updateMessageLog, 2000);
 updateMessageLog()
 
-function ToggleMessageLogUpDown(){
+function ToggleMessageLogUpDown(change){
 	let button = document.querySelector('#message_log_toggle_button');
+	let button_fullscreen = document.querySelector('#message_log_toggle_fullscreen_button');
 	let log = document.querySelector('#messageLog');
 	if (button.dataset.state=='up'){
 		button.dataset.state='down';
@@ -381,6 +381,7 @@ function ToggleMessageLogUpDown(){
 		log.style.maxHeight = '0px';
 		log.style.height = '0px';
 		log.dataset.state= 'down';
+		button_fullscreen.style.display = 'none';
 	}
 	else
 	{
@@ -389,5 +390,37 @@ function ToggleMessageLogUpDown(){
 		log.style.maxHeight = '200px';
 		log.style.height = '200px';
 		log.dataset.state= 'up';
+		button_fullscreen.style.display = 'block';
 	}
 }
+
+
+
+function ToggleMessageLogFullscreen(){
+	let button = document.querySelector('#message_log_toggle_fullscreen_button');
+	let button_updown = document.querySelector('#message_log_toggle_button');
+	let log = document.querySelector('#messageLog');
+	if (button.dataset.state=='normal'){
+		button.dataset.state='fullscreen';
+		button.src='/static/images/unfullscreen.png';
+		log.style.maxHeight = '100%';
+		log.style.height = '100%';
+		log.dataset.state= 'fullscreen';
+		log.style.zIndex = 999999999999;
+		button.style.zIndex = log.style.zIndex + 1;
+		button_updown.style.display='none';
+	}
+	else
+	{
+		button.dataset.state='normal';
+		button.src='/static/images/fullscreen.png';
+		log.style.maxHeight = (button_updown.dataset.state=='up'?'200px':'0px');
+		log.style.height = (button_updown.dataset.state=='up'?'200px':'0px');
+		log.dataset.state= (button_updown.dataset.state=='up'?'up':'down');
+		button_updown.style.display='block';
+		button.style.zIndex = log.style.zIndex - 1;
+		log.style.zIndex = -101;
+	}
+}
+
+
