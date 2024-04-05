@@ -1,4 +1,4 @@
-var forms_zindex=1;
+var forms_zindex=50;
 
 // arrays of modal form IDs
 var forms = [];
@@ -339,7 +339,7 @@ function AddMessageIntoLog(message){
 }
 
 
-
+``
 // Функция для обновления журнала сообщений
 function updateMessageLog() {
 	if (!document.getElementById('messageLog')){ 
@@ -371,3 +371,23 @@ var icons={	error:`/static/images/error_icon.png`,
 
 var messages_timer = setInterval(updateMessageLog, 2000);
 updateMessageLog()
+
+function ToggleMessageLogUpDown(){
+	let button = document.querySelector('#message_log_toggle_button');
+	let log = document.querySelector('#messageLog');
+	if (button.dataset.state=='up'){
+		button.dataset.state='down';
+		button.src='/static/images/arrows_up.png';
+		log.style.maxHeight = '0px';
+		log.style.height = '0px';
+		log.dataset.state= 'down';
+	}
+	else
+	{
+		button.dataset.state='up';
+		button.src='/static/images/arrows_down.png';
+		log.style.maxHeight = '200px';
+		log.style.height = '200px';
+		log.dataset.state= 'up';
+	}
+}
