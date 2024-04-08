@@ -171,9 +171,10 @@ app.config['SQLALCHEMY_DATABASE_URI']=SQLALCHEMY_DATABASE_URI
 app.config['SECRET_KEY']=SECRET_KEY
 db = SQLAlchemy(app)
 
-
 engine_ul = create_engine(connection_url_ul)
 engine_fl = create_engine(connection_url_fl)
+from sqlalchemy.orm import Session
+session_ul = Session(engine_ul)
 connection_ul = engine_ul.connect()
 connection_fl = engine_fl.connect()
 with app.app_context():

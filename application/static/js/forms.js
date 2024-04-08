@@ -138,7 +138,7 @@ async function FillOutModalForm(source){
 }
 
 
-  //  function read intered parameters an sent them on the server
+  //  function read from parameters an sent them on the server
   function Ok(source){
     console.log('Ok function:')
     source = JSON.parse(source);
@@ -222,10 +222,105 @@ function Fill_Agreement_Periods_DropDownList(){
     }
   }
 
+  
 }
 
+
+function RunInScreenForm({
+	form_name = "",
+	execute_after_load = "",
+	request_link = "",
+	execute_on_ok = "",
+	ok_id = "",
+	ok_title = "",
+	execute_on_cancel = "",
+	execute_on_close = "",
+  }) {
+	let outerRootElement = document.getElementsByTagName(`body`)[0];
+	form_name = form_name + `_${getRandomInt(999999999999999)}`;
+	forms_zindex++;
+	// console.log(forms_zindex);
+	outerRootElement.insertAdjacentHTML(
+	  `beforeEnd`,
+	  `<div id="${form_name}" style=" max-height: 90vh; overflow-y:auto; background-image: url('/static/images/background.gif');" class="dynamic-form col-12 border-5 ${
+		border_colors[forms_zindex % 9]
+	  }" data-zindex="${forms_zindex}" data-executeonclose="${execute_on_close}"></div>`
+	);
+  
+	forms.push(form_name);
+	document
+	  .getElementById(forms[forms.length - 1])
+	  .setAttribute(`z-index`, forms_zindex);
+  
+	let xhr = new XMLHttpRequest();
+	xhr.open(`GET`, request_link);
+	xhr.send();
+	xhr.onload = function () {
+	  document
+		.getElementById(`${forms[forms.length - 1]}`)
+		.insertAdjacentHTML(`afterBegin`, xhr.responseText);
+	  if (!(execute_on_cancel.length == 0 && execute_on_ok.length == 0)) {
+		document.getElementById(`${forms[forms.length - 1]}`).insertAdjacentHTML(
+		  `beforeEnd`,
+		  `<hr><br>
+			  <div class="row">
+				<div class="col-6">` +
+			(execute_on_ok.length > 0
+			  ? `<button type="button" class="btn btn-primary btn-lg btn-block button_save col" id="${
+				  (ok_id.length > 0, ok_id, "button_modal_dialog_ok")
+				}">
+					&nbsp&nbsp&nbsp&nbsp${
+					  (ok_title.length > 0, ok_title, "Ok")
+					}&nbsp&nbsp&nbsp&nbsp
+				  </button>`
+			  : ``) +
+			`</div>
+  
+				<div class="col-6">
+				  <button id="${
+					forms[forms.length - 1]
+				  }_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block button_save col" onclick="${execute_on_cancel}">
+					Отмена
+				  </button>
+				</div>
+			  </div>
+				`
+		);
+	  }
+	  document
+		.getElementById(`${forms[forms.length - 1]}`)
+		.insertAdjacentHTML(`beforeend`, `<hr id="id_anchor_end">`);
+  
+	  //document.getElementById(`${forms[forms.length-1]}`).style.height = document.getElementById(`${forms[forms.length-1]}`).querySelector('#id_anchor_end').getBoundingClientRect().top
+  
+	  // document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().height = document.getElementById(`${forms[forms.length-1]}`).querySelector('#id_anchor_end').getBoundingClientRect().top + 50 + 24;
+	  // let new_form_height = document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top +
+	  //                       document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 50;
+	  //document.getElementById(`${forms[forms.length-1]}`).style.height=`${document.getElementById(`${forms[forms.length-1]}`).querySelector('#id_anchor_end').getBoundingClientRect().top + 50 + 24}px`;
+  
+	  eval(execute_after_load);
+	  ResizeModalForms();
+	};
+  }
+  
+  function ResizeModalForms() {
+	// document.getElementById(`${forms[forms.length-1]}`).style.height = 0.95 * document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().height;
+	// document.getElementById(`${forms[forms.length-1]}`).style.width = 0.95 * document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().width ;
+	// console.log( document.getElementById(`${forms[forms.length-1]}`).querySelector('#id_anchor_end').getBoundingClientRect() );
+	// console.log(`height: ${document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().height}`);
+	// // console.log(`top _dialog_escape_button: ${document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top}`);
+	// // console.log(`height _dialog_escape_button: ${document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height}`);
+	// // document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().height = document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top
+	//                                                                       //  + document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 24;
+	// //let new_form_height = document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().top + document.getElementById(`${forms[forms.length-1]}_dialog_escape_button`).getBoundingClientRect().height + 50;
+	// // document.getElementById(`${forms[forms.length-1]}`).style.height=`${new_form_height}px`;
+	// console.log(`width: ${document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().width}`);
+	// let new_form_width = document.getElementById(`${forms[forms.length-1]}`).getBoundingClientRect().width*0.9;
+	// document.getElementById(`${forms[forms.length-1]}`).style.width=`${new_form_width}px`;
+  }
+
 // run in screen form, fill and show
-  function RunInScreenForm (form_name, execute_after_load, request_link) {
+  function _RunInScreenForm (form_name, execute_after_load, request_link) {
     let outerRootElement = document.getElementsByTagName(`body`)[0];
     form_name = form_name + `_${getRandomInt(999999999999999)}`
     forms_zindex++;
@@ -247,13 +342,13 @@ function Fill_Agreement_Periods_DropDownList(){
         `beforeEnd`,
         `<hr><br>
           <div class="row">
-            <div class="col-11">
+            <div class="col-6">
             <!--  <button type="submit" class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">
                 &nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp
                </button>-->
             </div>
-            <div class="col-1">
-              <button id="${forms[forms.length-1]}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick="CloseToplevelDynamicForm();">
+            <div class="col-6">
+              <button id="${forms[forms.length-1]}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-10" onclick="CloseToplevelDynamicForm();">
                 Отмена
               </button>
             </div>`);

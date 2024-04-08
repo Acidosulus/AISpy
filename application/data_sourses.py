@@ -1,5 +1,5 @@
 print(f'data_sourses imported to {__name__}')
-from common import connection_ul, connection
+from common import connection_ul, connection, session_ul
 from click import echo, style
 import sqlalchemy as sa
 import datetime
@@ -179,7 +179,7 @@ def get_agreements_hierarchy(start_id:int) -> list:
 	result, rez = [], []
 	counter = 0
 	while start_id is not None and start_id>0:
-		query_result = connection_ul.execute(text(f"""--sql
+		query_result = session_ul.execute(text(f"""--sql
 										   				select [Папки] as parent, [Примечание] as name, row_id as row_id, [Номер] from stack.[Договор] where row_id = {start_id}
   														----------------------------------------------------------------------------------------------------------------------------------------------------
 												;""")).fetchall()
@@ -219,7 +219,7 @@ def Data_For_Addresses_List(parent_id:int) -> list:
 
 
 def Data_For_Agreements_List(parent_id:int) -> list:
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 select * 
 	from (
 					select 
@@ -253,7 +253,7 @@ select *
 def Points_WithOut_Displays(parameters:dict):
 	year = parameters['year']
 	month = parameters['month']
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 DECLARE @dateendofmonth datetime = EOMONTH('{year}-{month}-01')
 select
     statuses.status as [Состояние ПУ],
@@ -311,7 +311,7 @@ select
 def Points_with_Constant_Consuming(parameters:dict):
 	year = parameters['year']
 	month = parameters['month']
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 	declare 	@datn date = '{year}-{month}-01' ,	@datk date = EOMONTH('{year}-{month}-01')
                      Select distinct * from (
                                        select 	left(dog.Номер,10) as [Номер договора],
@@ -355,7 +355,7 @@ def Points_with_Constant_Consuming(parameters:dict):
 	return get_queryresult_header_and_data(query_result)
 
 def Pays_from_date_to_date(parameters):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 		select 	left(agr.Номер,10) as [Договор],
 				left(org.Название,250) as [Название договора],
 				left(staff1.ФИО,50) as [Расчеты],
@@ -380,7 +380,7 @@ def Pays_from_date_to_date(parameters):
 
 
 def Agreement_Data(row_id:int):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 																	select
 																			agr.row_id as agreement_id,
 										   									agr.[Номер] as number,
@@ -449,7 +449,7 @@ def Agreement_Data(row_id:int):
 	return get_queryresult_header_and_data(query_result)
 
 def Agreements_Search_Data(substring:str):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 											select * 
 												from (
 														select 
@@ -481,7 +481,7 @@ def Agreements_Search_Data(substring:str):
 
 
 def Agreement_Types_Data():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 																	select 	row_id,
 										   									[Название] as name
 										   								from stack.[Классификаторы]
@@ -491,7 +491,7 @@ def Agreement_Types_Data():
 
 
 def Agreement_Parameters_Data(agreement_id:int):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select	kinds.[Наименование] as name,
 															options.[Значение] as value,
 															options.[Примечание] as text,
@@ -509,7 +509,7 @@ def Agreement_Parameters_Data(agreement_id:int):
 
 
 def Agreement_Payments_Schedule(agreement_id:int):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select  convert(date, [Месяц], 1 ) as date_begin,
 															convert(date, [МесяцПо],1) as date_end,
 															[День платежа] as day ,
@@ -522,7 +522,7 @@ def Agreement_Payments_Schedule(agreement_id:int):
 
 
 def Budgets():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	row_id,
 															[Папки] as folder,
 															[Код] as code,
@@ -576,7 +576,7 @@ def Ref_Organizaion_Debtor_Category():
 
 
 def Organization_Data(row_id:int):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 																	select
 										   								org.[Название] as short_name,
 										   								org.[Наименование] as name,
@@ -622,7 +622,7 @@ def Organization_Data(row_id:int):
 
 
 def Points_Data(agreement_row_id:int):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select	ls.row_id,
 																ls.[Номер] as number,
 										   						ls.[Примечание] as name,
@@ -686,7 +686,7 @@ def Points_Data(agreement_row_id:int):
 
 
 def Calc_Data(agreement_row_id:int, period:str):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	dr.[Договор] as agr_id,
 															dr.[Лицевой] as point_id,
 															ls.[Номер] as point_number,
@@ -712,7 +712,7 @@ def Calc_Data(agreement_row_id:int, period:str):
 
 
 def All_Agreement_Numbers():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 											select 	agr.[Номер] as agreement,
 										   			'          ' as point
 												from stack.[Договор] as agr
@@ -723,7 +723,7 @@ def All_Agreement_Numbers():
 
 
 def Opened_Agreement_Numbers():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 											select 	agr.[Номер] as agreement,
 										   			'          ' as point
 												from stack.[Договор] as agr
@@ -737,7 +737,7 @@ def Opened_Agreement_Numbers():
 
 
 def Point_Numbers_of_Opened_Agreements():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															convert(varchar, ls.[Номер]) as point
@@ -751,7 +751,7 @@ def Point_Numbers_of_Opened_Agreements():
 
 
 def All_Point_Numbers():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															convert(varchar, ls.[Номер]) as point
@@ -764,7 +764,7 @@ def All_Point_Numbers():
 
 
 def Get_Agreement_Names():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[Название] as name
@@ -776,7 +776,7 @@ def Get_Agreement_Names():
 
 
 def Get_Agreement_FSK():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	agr.[Номер] as agreement,
 																fsk.nc as agreement_fsk
 															from stack.[Договор] as agr
@@ -801,7 +801,7 @@ def Get_Agreement_FSK():
 
 
 def Get_Agreement_Id():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															agr.row_id as agreement_row_id
@@ -812,7 +812,7 @@ def Get_Agreement_Id():
 
 
 def Get_Agreement_Address_gr():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[Адрес] as address_gr
@@ -823,7 +823,7 @@ def Get_Agreement_Address_gr():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Address_Fact_gr():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[ФактАдрес] as address_fact_gr
@@ -834,7 +834,7 @@ def Get_Agreement_Address_Fact_gr():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Address_pl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[Адрес] as address_pl
@@ -845,7 +845,7 @@ def Get_Agreement_Address_pl():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Address_Fact_pl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[ФактАдрес] as address_fact_pl
@@ -857,7 +857,7 @@ def Get_Agreement_Address_Fact_pl():
 
 
 def Get_Agreement_Date_Begin():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															convert(date, agr.[Начало договора],1) as date_begin
@@ -867,7 +867,7 @@ def Get_Agreement_Date_Begin():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Date_Begin_Sign():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															convert(date, agr.[Дата подписания],1) as date_begin_sign
@@ -877,7 +877,7 @@ def Get_Agreement_Date_Begin_Sign():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Date_End():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															convert(date, agr.[Окончание],1) as date_end
@@ -887,7 +887,7 @@ def Get_Agreement_Date_End():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Date_End_Sign():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															convert(date, agr.[Дата расторжения],1) as date_end_sign
@@ -899,7 +899,7 @@ def Get_Agreement_Date_End_Sign():
 
 
 def Get_Agreement_Phone_gr():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[Телефон] as phone_gr
@@ -910,7 +910,7 @@ def Get_Agreement_Phone_gr():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Phone_pl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[Телефон] as phone_pl
@@ -922,7 +922,7 @@ def Get_Agreement_Phone_pl():
 
 
 def Get_Agreement_INN_pl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[ИНН] as inn_pl
@@ -934,7 +934,7 @@ def Get_Agreement_INN_pl():
 
 
 def Get_Agreement_KPP_pl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[КПП] as kpp_pl
@@ -945,7 +945,7 @@ def Get_Agreement_KPP_pl():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_ORGN_pl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[ОГРН] as ogrn_pl
@@ -957,7 +957,7 @@ def Get_Agreement_ORGN_pl():
 
 
 def Get_Agreement_INN_gr():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[ИНН] as inn_gr
@@ -969,7 +969,7 @@ def Get_Agreement_INN_gr():
 
 
 def Get_Agreement_KPP_gr():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[КПП] as kpp_gr
@@ -981,7 +981,7 @@ def Get_Agreement_KPP_gr():
 
 
 def Get_Agreement_ORGN_gr():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															org.[ОГРН] as ogrn_gr
@@ -994,7 +994,7 @@ def Get_Agreement_ORGN_gr():
 
 
 def Get_Agreement_FIO():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select		
 																				left(stack.[Договор].Номер,10) as agreement,
 																				staff1.ФИО as fio1,
@@ -1011,7 +1011,7 @@ def Get_Agreement_FIO():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Folders():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select  stack.[Договор].[Номер] as agreement, folders.[Примечание] as folder, folders.area
 															from stack.[Договор]
 															left join (select sp.row_id, sp.Папки, sp.Примечание, COALESCE (pp.[Примечание], sp.[Примечание]) as area
@@ -1029,7 +1029,7 @@ def Get_Agreement_Folders():
 
 
 def Get_Agreement_Organization_Type():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 													select 	
 															agr.[Номер] as agreement,
 															case 	when orggr.[Отрасль] = 0 then 'ЮЛ'
@@ -1050,7 +1050,7 @@ def Get_Agreement_Organization_Type():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Budget():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 															class01.Код as kod_budget,
@@ -1065,7 +1065,7 @@ def Get_Agreement_Budget():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Vid():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 															class01.[Код] as vd_kod,
@@ -1077,7 +1077,7 @@ def Get_Agreement_Vid():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Otrasl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 															class01.[Код] as ot_kod,
@@ -1090,7 +1090,7 @@ def Get_Agreement_Otrasl():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Category():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 															categories.[Код] as category_kod,
@@ -1102,7 +1102,7 @@ def Get_Agreement_Category():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Organization_Vid_gr():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 																	vid_org_gr =   CASE 
@@ -1120,7 +1120,7 @@ def Get_Agreement_Organization_Vid_gr():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Organization_Vid_pl():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 																	vid_org_pl =   CASE 
@@ -1138,7 +1138,7 @@ def Get_Agreement_Organization_Vid_pl():
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Organization_email():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 															orggr.email as email_gr,
@@ -1152,7 +1152,7 @@ def Get_Agreement_Organization_email():
 
 
 def Get_Agreement_LK():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	
 															agr.[Номер] as agreement,
 															lk.lk
@@ -1168,7 +1168,7 @@ def Get_Agreement_LK():
 
 
 def Get_Agreement_Payments_Shedule():
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														select 	agr.[Номер] as agreement,
 																day1 		= (select top 1 [День платежа] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=1 and (GETDATE() between [Месяц] and [МесяцПо])),
 																procent1 	= (select top 1 [процентДоговорнойВеличины] from stack.[График оплаты договора] where [График-договор]=agr.row_id and [День платежа]=1 and (GETDATE() between [Месяц] and [МесяцПо])),
@@ -1184,7 +1184,7 @@ def Get_Agreement_Payments_Shedule():
 
 
 def Get_Agreement_Reconcilation_Acts(parameters):
-	query_result = connection_ul.execute(text(f"""--sql
+	query_result = session_ul.execute(text(f"""--sql
 														SELECT      left(agr.Номер,10)  as agreement, 
 																		STRING_AGG(left(vd.[Оригинальное имя],250), ', ') as documents
 																FROM    stack.[Внешние документы] vd,
