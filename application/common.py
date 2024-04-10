@@ -2,7 +2,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from celery import Task
 import uuid
-
+import logging
+from logging.handlers import RotatingFileHandler
 
 class Celery_Task():
 	def __init__(self, task:Task, user_id:int, type:str):
@@ -106,8 +107,6 @@ import sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import LoginManager, login_user
-import logging
-from logging.handlers import RotatingFileHandler
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 import configparser  # импортируем библиотеку
