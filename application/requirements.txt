@@ -1,0 +1,14 @@
+click
+celery
+flask<3
+sqlalchemy
+pandas
+numpy
+celery
+xlsxwriter
+pyodbc
+psycopg2-binary
+flask_sqlalchemy
+flask_login
+fastapi
+ujson

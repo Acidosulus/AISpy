@@ -1,7 +1,6 @@
 import sys
 from click import echo, style
 
-
 applicaton_mode = (('flask' if __name__ == '__main__' and sys.argv[1]=='flask' else ('celery' if sys.argv[1]!='flask' else 'flask')))
 
 print(f"sys.argv[1]={sys.argv[1]}")

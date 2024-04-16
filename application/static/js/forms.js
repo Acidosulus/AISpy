@@ -415,7 +415,7 @@ function AddMessageIntoLog(message){
 		let str = ``;
 		let message_id = `message_id_${message.id}`;
 		str += `<div id="${message_id}">`;
-		str += `<span class="message_log_datetime">${message.dt.slice(6,25)}</span> `;
+		str += `<span class="message_log_datetime">${message.dt.slice(5,26)}</span> `;
 		str += (message.link==null? '': `<a href='${message.link}'>`);
 		let icon = (message.icon==null,null,(message.icon.includes(`/`)? message.icon: eval(`icons.${message.icon}`)));
 		str += (message.icon==null? '' : `<img src="${icon}" width="32" height="32">`);

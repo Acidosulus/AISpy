@@ -609,12 +609,14 @@ def designer_ul_add_data():
 
 @app.route("/designer_ul_get_excel_result", methods=['POST','GET'])
 def designer_ul_get_excel_result():
+	echo(style(text='designer_ul_get_excel_result', fg='bright_red'))
 	user_object = designer_ul_get_data_id(current_user.id)
 	if user_object == None:
 		return ''
 
 	task = Data_Construct.apply_async([current_user.id, user_object.data, user_object.parameters])
 	ctask = task_pull.add_task(task, current_user.id, 'file_download')
+	print(f'{datetime.datetime.now()} task added: {ctask.Information()}')
 
 	return ctask.id
 
