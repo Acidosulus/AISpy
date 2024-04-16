@@ -414,8 +414,8 @@ function AddMessageIntoLog(message){
 	if (!document.querySelector(`#message_id_${message.id}`)){
 		let str = ``;
 		let message_id = `message_id_${message.id}`;
-		str += `<div id="${message_id}">`;
-		str += `<span class="message_log_datetime">${message.dt.slice(5,26)}</span> `;
+		str += `<div id="${message_id}" class="`+(messageLog.dataset.firstinit!=='true'?'new_message':``)+`">`;
+		str += `<span class="message_log_datetimem">${message.dt.slice(5,26)}</span> `;
 		str += (message.link==null? '': `<a href='${message.link}'>`);
 		let icon = (message.icon==null,null,(message.icon.includes(`/`)? message.icon: eval(`icons.${message.icon}`)));
 		str += (message.icon==null? '' : `<img src="${icon}" width="32" height="32">`);
@@ -426,12 +426,8 @@ function AddMessageIntoLog(message){
 			showPopupMessage(str);
 		}
 		messageLog.insertAdjacentHTML(`afterbegin`,str);
-		document.querySelector(`#${message_id}`).style.animation = 'blink 1s infinite';
-		setTimeout(() => {
-			document.querySelector(`#${message_id}`).style.animation = '';
-		}, 5000); // Stop blinking after 5 seconds
+		setTimeout(() => { 			document.querySelector(`#${message_id}`).classList.remove('new_message');		}, 5000);
  	}
-	 
 }
 
 
@@ -442,7 +438,7 @@ function updateMessageLog() {
 		return
 	}
 	var xhr = new XMLHttpRequest();
-	xhr.open('POST', '/message_log', true);
+	xhr.open('POST', '/message_log', false);
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			if (xhr.status === 200) {
