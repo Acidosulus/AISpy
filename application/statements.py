@@ -124,9 +124,49 @@ class Report:
 								list_sub_title = 'история формирования отчёта',
 								navigation_buttons = [common.Button_Home(), common.Button_Back()])
 	
-	
+
+	# return answer excel report file download
+	def download_excel(self, user_object_id):
+		row = common.RowToDict( db.session.query(models.UserObject).filter(models.UserObject.id==user_object_id).first() )
+		report_humanread_name = get_human_readable_report_name(row["name"]) 
+		data = json.loads(row['data'])
+		parameters = json.loads(row['parameters'])
+		df = pandas.DataFrame(data)
+		file_name = os.path.join(TMP_FOLDER, f'report_id_{user_object_id}.xlsx')
+		writer = pandas.ExcelWriter(file_name, engine='xlsxwriter')
+		df.to_excel(writer, index=False, float_format="%.2f", startrow=4, freeze_panes=(5,0), sheet_name='report')
+		writer.sheets['report'].autofilter('A5:WW5')
+		writer.sheets['report'].write(0,0,report_humanread_name + self.get_parameters_human_readable_string(parameters))
+		for column in df:
+			writer.sheets['report'].set_column(
+												df.columns.get_loc(column),
+												df.columns.get_loc(column),
+												max(df[column].astype(str).map(len).max(), len(column))
+											)
+		writer.close()
+		return send_file(file_name)
+	# return data source for report, must be realeased for every reportse separately
+	def get_data_source(self, parameters, current_user_id:int):
+		pass
+
+	# return human readable parameters string for report title, must be realeased for every reportse separately
+	def get_parameters_human_readable_string(self, parameters):
+		return f"""{parameters}"""
+
+	def __str__(self):
+		return 'Report Superclass'
+
+
 	# return answer for view report into browser
 	def run_report(self, parameters, current_user_id):
+		Create_Report(	parameters							=	parameters,
+						current_user_id 					=	current_user_id,
+						get_data_source_procedure			=	self.get_data_source,
+						report_name							=	self.report_name,
+						report_humanread_name				=	self.report_humanread_name,
+						parameters_human_readable_string	=	self.get_parameters_human_readable_string(parameters)
+						)
+		return redirect(url_for('index'))
 		#create new data set for new report
 		header, data = self.get_data_source(parameters, current_user_id)
 		data_object = models.UserObject(user_id=current_user_id,
@@ -160,38 +200,46 @@ class Report:
 													common.Button_List(href=f"/report_history/{self.report_name}"),
 													common.Button_Excel(href=f"/download_excel/{data_object_id}")])
 	
-	# return answer excel report file download
-	def download_excel(self, user_object_id):
-		row = common.RowToDict( db.session.query(models.UserObject).filter(models.UserObject.id==user_object_id).first() )
-		report_humanread_name = get_human_readable_report_name(row["name"]) 
-		data = json.loads(row['data'])
-		parameters = json.loads(row['parameters'])
-		df = pandas.DataFrame(data)
-		file_name = os.path.join(TMP_FOLDER, f'report_id_{user_object_id}.xlsx')
-		writer = pandas.ExcelWriter(file_name, engine='xlsxwriter')
-		df.to_excel(writer, index=False, float_format="%.2f", startrow=4, freeze_panes=(5,0), sheet_name='report')
-		writer.sheets['report'].autofilter('A5:WW5')
-		writer.sheets['report'].write(0,0,report_humanread_name + self.get_parameters_human_readable_string(parameters))
-		for column in df:
-			writer.sheets['report'].set_column(
-												df.columns.get_loc(column),
-												df.columns.get_loc(column),
-												max(df[column].astype(str).map(len).max(), len(column))
-											)
-		writer.close()
-		return send_file(file_name)
-	# return data source for report, must be realeased for every reportse separately
-	def get_data_source(self, parameters, current_user_id:int):
-		pass
 
-	# return human readable parameters string for report title, must be realeased for every reportse separately
-	def get_parameters_human_readable_string(self, parameters):
-		return f"""{parameters}"""
-
-	def __str__(self):
-		return 'Report Superclass'
 	
+def Create_Report(	parameters,
+				  	current_user_id,
+					get_data_source_procedure,
+					report_name,
+					report_humanread_name,
+					parameters_human_readable_string):
+		#create new data set for new report
+		header, data = get_data_source_procedure(parameters, current_user_id)
+		data_object = models.UserObject(user_id=current_user_id,
+										dt=datetime.date.today(),
+										name=report_name,
+										parameters=json.dumps(parameters, ensure_ascii=False),
+										data=json.dumps(data, ensure_ascii=False))
+		db.session.add(data_object)
+		db.session.flush()
+		data_object_id = data_object.id
+		db.session.commit()
+		df = pandas.DataFrame(data)
+		models.Add_Message_for_User(	user_id=current_user_id,
+							  			text=f"{report_humanread_name} {parameters_human_readable_string}",
+										link=f"/download_excel/{data_object_id}",
+										icon='excel',
+										style='message_log_report_name_excel')
+		models.Add_Message_for_User(	user_id=current_user_id,
+							  			text=f"{report_humanread_name} {parameters_human_readable_string}",
+										link=f"/Report_From_History/{report_name}/{data_object_id}",
+										icon='table',
+										style='message_log_report_name_table')
 
+		return render_template("report.html", 
+						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
+							report_title=f"{report_humanread_name} {parameters_human_readable_string}",
+							data_object_id=data_object_id,
+							report_name = report_name,
+							navigation_buttons = [	common.Button_Home(),
+							 						common.Button_Back(),
+													common.Button_List(href=f"/report_history/{report_name}"),
+													common.Button_Excel(href=f"/download_excel/{data_object_id}")])
 
 
 class Points_WithOut_Displays(Report):
