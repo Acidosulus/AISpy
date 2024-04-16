@@ -14,7 +14,7 @@ class Celery_Task():
 		self.active = True
 
 	def Information(self):
-		return {'task:':self.task, 'id:':self.id, 'user_id:':self.user_id, 'ready:':self.task.ready(), 'result:':self.task.get()}
+		return {'task:':self.task, 'id:':self.id, 'user_id:':self.user_id, 'ready:':self.task.ready()} # 'result:':self.task.get()
 
 class Celery_Tasks_Pull():
 	pull={}

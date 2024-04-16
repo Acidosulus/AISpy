@@ -45,7 +45,10 @@ def check_celery_tasks():
 			if task_pull.pull[id].task.ready() and task_pull.pull[id].active:
 				lnk = f'/download_report_from_file_store?file_name={task_pull.pull[id].task.get().replace("/","%2F")}'
 				print("===============",lnk,"====================")
-				with app.app_context(): models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
+				with app.app_context():
+					print('add message about task ending')
+					models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
+					print('message added successfully')
 				# connection.execute(models.UserMessage.__table__.insert().values(user_id=task_pull.pull[id].user_id,
 				# 																text='Конструктор отчетов',
 				# 																link=lnk,
@@ -611,12 +614,14 @@ def designer_ul_add_data():
 def designer_ul_get_excel_result():
 	echo(style(text='designer_ul_get_excel_result', fg='bright_red'))
 	user_object = designer_ul_get_data_id(current_user.id)
+	prnt(user_object)
 	if user_object == None:
+		echo(text='break',bg='red')
 		return ''
 
 	task = Data_Construct.apply_async([current_user.id, user_object.data, user_object.parameters])
 	ctask = task_pull.add_task(task, current_user.id, 'file_download')
-	print(f'{datetime.datetime.now()} task added: {ctask.Information()}')
+	echo(style(text=f'{datetime.datetime.now()} task added: {ctask.Information()}', fg='bright_red'))
 
 	return ctask.id
 
