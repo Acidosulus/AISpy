@@ -5,6 +5,13 @@ import uuid
 import logging
 from logging.handlers import RotatingFileHandler
 
+
+from celery import Celery
+celery = Celery('data_sourses',broker='amqp://guest:guest@localhost/', backend='rpc://')
+from celery import current_task
+
+
+
 class Celery_Task():
 	def __init__(self, task:Task, user_id:int, type:str):
 		self.task = task
