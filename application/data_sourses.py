@@ -121,7 +121,7 @@ def get_queryresult_header_and_data(query_result):
 					drow[value] = float(v[count])
 				else:
 					drow[value] = (v[count] if v[count]!=None else '')
-			#print(v[count], '    ->    ', type(v[count]), )
+			#print(v[count], '	->	', type(v[count]), )
 		result.append(drow)
 	
 	headers = []
@@ -256,26 +256,26 @@ def Points_WithOut_Displays(parameters:dict):
 	query_result = session_ul.execute(text(f"""--sql
 DECLARE @dateendofmonth datetime = EOMONTH('{year}-{month}-01')
 select
-    statuses.status as [Состояние ПУ],
-    lo.[ЗаводскойНомер] as [ЗаводскойНомер],
-    nk.[Наименование] as [Тип ПУ],
-    ls.[Номер] as [Номер ТУ],
-    ls.[АдресЛС] as [Адрес ТУ],
-    ls.[Примечание] as [Название ТУ],
-    agr.[Номер] as [Номер договора],
-    agr.[Тема] as [Доп. номер договора],
-    org.[Название],
-    staff1.[ФИО],
+	statuses.status as [Состояние ПУ],
+	lo.[ЗаводскойНомер] as [ЗаводскойНомер],
+	nk.[Наименование] as [Тип ПУ],
+	ls.[Номер] as [Номер ТУ],
+	ls.[АдресЛС] as [Адрес ТУ],
+	ls.[Примечание] as [Название ТУ],
+	agr.[Номер] as [Номер договора],
+	agr.[Тема] as [Доп. номер договора],
+	org.[Название],
+	staff1.[ФИО],
 	statuses.status as [Статус ПУ],
 	folders.folder as [Участок], folders.area as [Отделение]
   from   stack.[Список объектов] as lo
   inner join (select pus.*,
-      case
-              when pus.[Состояние]=0 then 'Не используется'
-              when pus.[Состояние]=1 then 'Работает'
-              when pus.[Состояние]=2 then 'По среднему'
-              when pus.[Состояние]=3 then 'Отключен ввод'
-              else ''
+	  case
+			  when pus.[Состояние]=0 then 'Не используется'
+			  when pus.[Состояние]=1 then 'Работает'
+			  when pus.[Состояние]=2 then 'По среднему'
+			  when pus.[Состояние]=3 then 'Отключен ввод'
+			  else ''
    end as status
   from stack.[Состояние счетчика] as  pus where (getdate() between pus.[ДатНач] and pus.[ДатКнц])) as statuses on statuses.[Объект-Состояние]=lo.row_id
   inner join (select * from stack.[Номенклатура]) as nk on nk.row_id = lo.[Номенклатура-Объекты]
@@ -313,39 +313,37 @@ def Points_with_Constant_Consuming(parameters:dict):
 	month = parameters['month']
 	query_result = session_ul.execute(text(f"""--sql
 	declare 	@datn date = '{year}-{month}-01' ,	@datk date = EOMONTH('{year}-{month}-01')
-                     Select distinct * from (
-                                       select 	left(dog.Номер,10) as [Номер договора],
+					 Select distinct * from (
+									   select 	left(dog.Номер,10) as [Номер договора],
 									   			left(org.Название,250) as [Название договора],
-                                              	ls.Номер as [ТУ], 
+											  	ls.Номер as [ТУ], 
 												left(ls.[Примечание],250) as [Название ТУ],
 												'"'+left(nom.Наименование,250) as [ПУ],
 											  	left(so.ЗаводскойНомер,50) as [Заводской номер],
 											  	ps.Показание as [Показание],
-                                              	--ld.Лицевой,
 												left(d.Отделение,50) as [Отделение],
 												left(d.Участок,50) as [Участок],
-												--so.row_id,
 												so.Тарифность as [Тарифность],
 											  	left(staff1.ФИО, 70) as [ФИО отвественного],
 												networkowner.name as [Сетевая организация]
-                                       from stack.contracts(-1) d
-                                       join stack.Договор dog on dog.ROW_ID=d.Договор
-                                                 and dog.[Начало договора]<=@datk
-                                                 and dog.[Окончание]>=@datn
+									   from stack.contracts(-1) d
+									   join stack.Договор dog on dog.ROW_ID=d.Договор
+												 and dog.[Начало договора]<=@datk
+												 and dog.[Окончание]>=@datn
 									   left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = dog.Сотрудник1
-                                       join stack.Организации org on org.ROW_ID = dog.Плательщик
-                                       join stack.[Лицевые договора] ld on ld.Договор = d.Договор
-                                       		  and (ld.ДатНач<=@datk or ld.ДатНач is null)
-                                                     and (ld.ДатКнц>=@datn or ld.ДатКнц is null)
-                                       join stack.[Лицевые счета] ls on ls.ROW_ID = ld.Лицевой
-                                       join stack.[Список объектов] so on so.[Объекты-Счет] = ld.Лицевой
-                                                 and (so.ДатНач<=@datk or so.ДатНач is null)
-                                                 and (so.ДатКнц>=@datn or so.ДатКнц is null)
+									   join stack.Организации org on org.ROW_ID = dog.Плательщик
+									   join stack.[Лицевые договора] ld on ld.Договор = d.Договор
+									   		  and (ld.ДатНач<=@datk or ld.ДатНач is null)
+													 and (ld.ДатКнц>=@datn or ld.ДатКнц is null)
+									   join stack.[Лицевые счета] ls on ls.ROW_ID = ld.Лицевой
+									   join stack.[Список объектов] so on so.[Объекты-Счет] = ld.Лицевой
+												 and (so.ДатНач<=@datk or so.ДатНач is null)
+												 and (so.ДатКнц>=@datn or so.ДатКнц is null)
 												 and so.ЗаводскойНомер = 'прасход'
-                                       join stack.Номенклатура nom on nom.ROW_ID = so.[Номенклатура-Объекты] and nom.Идентификатор=0
-                                       left join stack.[Показания счетчиков] ps on ps.[Объект-Показания] = so.ROW_ID
-                                                 and ps.тип=1
-                                                 and ps.[Расчетный месяц] between @datn and @datk
+									   join stack.Номенклатура nom on nom.ROW_ID = so.[Номенклатура-Объекты] and nom.Идентификатор=0
+									   left join stack.[Показания счетчиков] ps on ps.[Объект-Показания] = so.ROW_ID
+												 and ps.тип=1
+												 and ps.[Расчетный месяц] between @datn and @datk
 										left join (select left(ls.Номер,10) as num_point, left(org.Название,250) as name
 														from stack.[Лицевые счета] ls
 															left join stack.[Поставщики]  ps on ps.[Счет-Список поставщиков] = ls.ROW_ID  and (@datk between ps.ДатНач and ps.ДатКнц) and ps.[Услуги-Список поставщиков] = 14
@@ -376,6 +374,8 @@ def Pays_from_date_to_date(parameters):
 					(doc.Дата between convert(datetime,'{parameters['from']}',21) and convert(datetime,'{parameters['to']}',21)) and 
 					(agr.Номер is not null)
 			;""")).fetchall()
+	# with open('Pays_from_date_to_date.txt', 'w') as file:
+	# 	file.write(pprint.pformat(get_queryresult_header_and_data(query_result)))
 	return get_queryresult_header_and_data(query_result)
 
 
@@ -634,7 +634,7 @@ def Points_Data(agreement_row_id:int):
 																categories.category_name,
 																la.[Название] as anal_name
 															from stack.[Лицевые счета] as ls
-															left join ( select    stack.[Лицевые счета].row_id,
+															left join ( select	stack.[Лицевые счета].row_id,
 																			replace(left(service.[Услуга],3),':','') AS service
 																		from  stack.[Лицевые счета]
 																		LEFT JOIN (SELECT stack.[Список услуг].[Счет-Услуги],stack.[Типы услуг].[Название] AS [Услуга]
@@ -714,7 +714,7 @@ def Calc_Data(agreement_row_id:int, period:str):
 def All_Agreement_Numbers():
 	query_result = session_ul.execute(text(f"""--sql
 											select 	agr.[Номер] as agreement,
-										   			'          ' as point
+										   			'		  ' as point
 												from stack.[Договор] as agr
 												where len(agr.[Номер])=10
 												order by agreement
@@ -725,7 +725,7 @@ def All_Agreement_Numbers():
 def Opened_Agreement_Numbers():
 	query_result = session_ul.execute(text(f"""--sql
 											select 	agr.[Номер] as agreement,
-										   			'          ' as point
+										   			'		  ' as point
 												from stack.[Договор] as agr
 												where 		len(agr.[Номер])=10 and
 															(Окончание is null or (getdate()<=Окончание)) and 
@@ -781,7 +781,7 @@ def Get_Agreement_FSK():
 																fsk.nc as agreement_fsk
 															from stack.[Договор] as agr
 															left join (select distinct left(agr.[Номер],10) as nc
-																			from    stack.[Лицевые счета] ls,
+																			from	stack.[Лицевые счета] ls,
 																					stack.[Лицевые договора] ld,
 																					stack.[Договор] agr
 																			where   ls.ROW_ID  in (
@@ -1106,14 +1106,14 @@ def Get_Agreement_Organization_Vid_gr():
 														select 	
 															agr.[Номер] as agreement,
 																	vid_org_gr =   CASE 
-											                                        when org.[Бюджет] = 1 then 'Бюджет'
-											                                        when org.[Бюджет] = 2 then 'Малый бизнес'
-											                                        when org.[Бюджет] = 3 then 'Средний бизнес'
-											                                        when org.[Бюджет] = 4 then 'Крупный бизнес'
-											                                        when org.[Бюджет] = 5 then 'Микропредприятия'
-											                                        else ''
-											                                    END
-											            from stack.[Договор] as agr
+																					when org.[Бюджет] = 1 then 'Бюджет'
+																					when org.[Бюджет] = 2 then 'Малый бизнес'
+																					when org.[Бюджет] = 3 then 'Средний бизнес'
+																					when org.[Бюджет] = 4 then 'Крупный бизнес'
+																					when org.[Бюджет] = 5 then 'Микропредприятия'
+																					else ''
+																				END
+														from stack.[Договор] as agr
 														left join stack.[Организации] as org on org.ROW_ID = agr.[Грузополучатель]
 														order by agreement;
 										   """)).fetchall()
@@ -1124,14 +1124,14 @@ def Get_Agreement_Organization_Vid_pl():
 														select 	
 															agr.[Номер] as agreement,
 																	vid_org_pl =   CASE 
-											                                        when org.[Бюджет] = 1 then 'Бюджет'
-											                                        when org.[Бюджет] = 2 then 'Малый бизнес'
-											                                        when org.[Бюджет] = 3 then 'Средний бизнес'
-											                                        when org.[Бюджет] = 4 then 'Крупный бизнес'
-											                                        when org.[Бюджет] = 5 then 'Микропредприятия'
-											                                        else ''
-											                                    END
-											            from stack.[Договор] as agr
+																					when org.[Бюджет] = 1 then 'Бюджет'
+																					when org.[Бюджет] = 2 then 'Малый бизнес'
+																					when org.[Бюджет] = 3 then 'Средний бизнес'
+																					when org.[Бюджет] = 4 then 'Крупный бизнес'
+																					when org.[Бюджет] = 5 then 'Микропредприятия'
+																					else ''
+																				END
+														from stack.[Договор] as agr
 														left join stack.[Организации] as org on org.ROW_ID = agr.[Плательщик]
 														order by agreement;
 										   """)).fetchall()
@@ -1143,7 +1143,7 @@ def Get_Agreement_Organization_email():
 															agr.[Номер] as agreement,
 															orggr.email as email_gr,
 															orgpl.email as email_pl
-											            from stack.[Договор] as agr
+														from stack.[Договор] as agr
 														left join stack.[Организации] as orggr on orggr.ROW_ID = agr.[Грузополучатель]
 														left join stack.[Организации] as orgpl on orgpl.ROW_ID = agr.[Плательщик]
 														order by agreement;
@@ -1156,12 +1156,12 @@ def Get_Agreement_LK():
 														select 	
 															agr.[Номер] as agreement,
 															lk.lk
-											            from stack.[Договор] as agr
-											            left join ( select distinct left(agrin.[Номер],10) as nc,
-																	                'ЛК' as lk
+														from stack.[Договор] as agr
+														left join ( select distinct left(agrin.[Номер],10) as nc,
+																					'ЛК' as lk
 																	   from stack.[Пароли привязка] pp, stack.[Договор] agrin
-																	   where       agrin.row_id = pp.[Привязка-Договор]
-																		       and pp.[Состояние] > 0 ) as lk on lk.nc = agr.[Номер]
+																	   where	   agrin.row_id = pp.[Привязка-Договор]
+																			   and pp.[Состояние] > 0 ) as lk on lk.nc = agr.[Номер]
 														order by agreement;
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
@@ -1185,9 +1185,9 @@ def Get_Agreement_Payments_Shedule():
 
 def Get_Agreement_Reconcilation_Acts(parameters):
 	query_result = session_ul.execute(text(f"""--sql
-														SELECT      left(agr.Номер,10)  as agreement, 
+														SELECT	  left(agr.Номер,10)  as agreement, 
 																		STRING_AGG(left(vd.[Оригинальное имя],250), ', ') as documents
-																FROM    stack.[Внешние документы] vd,
+																FROM	stack.[Внешние документы] vd,
 																		stack.Документ as doc
 																left join stack.[Договор] agr on agr.ROW_ID = doc.[Документы-Договор] 
 																WHERE   doc.[Тип документа] = 105 and 

@@ -9,6 +9,10 @@ from logging.handlers import RotatingFileHandler
 from celery import Celery
 celery = Celery('data_sourses',broker='amqp://guest:guest@localhost/', backend='rpc://')
 from celery import current_task
+# from kombu import serialization
+# import pickle
+# serialization.register('pickle', pickle.dumps, pickle.loads, content_type='application/x-python-serialize')
+# celery.conf.update(CELERY_ACCEPT_CONTENT=['pickle'])
 
 
 

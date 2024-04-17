@@ -19,6 +19,16 @@ if __name__ == '__main__' and sys.argv[1]=='flask':
 if sys.argv[1]!='flask':
 	print({"message":"celery init"})
 	import designerUL
+	import statements
 	from celery import Celery
 	celery = Celery('AISpy',broker='amqp://guest:guest@localhost/', backend='rpc://')
+	from common import app
+	app.config['SERVER_NAME'] = 'mock.com'
+	app.config['APPLICATION_ROOT'] = '/'
+	app.config['PREFERRED_URL_SCHEME'] = 'http'
+
+	# from kombu import serialization
+	# import pickle
+	# serialization.register('pickle', pickle.dumps, pickle.loads, content_type='application/x-python-serialize')
+	# celery.conf.update(CELERY_ACCEPT_CONTENT=['pickle'])
 	

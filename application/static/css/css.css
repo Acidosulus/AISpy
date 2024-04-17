@@ -74,6 +74,7 @@
 	  margin-bottom: 5px;
 	  padding: 5px;
 	  border-radius: 5px;
+    font-size: medium;
   }
 
 
@@ -81,31 +82,31 @@
 
   .message_log_datetime{
 	color: rgb(15, 118, 158);
-	font-size: x-small;
+	font-size: medium;
 }
 
 .message_log_report_name{
 	color: rgb(5, 100, 60);
-	font-size: x-small;
+	font-size: medium;
 	font-weight: bolder;
 }
 
 .message_log_report_name_excel{
 	color: rgb(101, 190, 153);
-	font-size: x-small;
+	font-size: medium;
 	font-weight: bolder;
 }
 
 .message_log_report_name_table{
 	color: rgb(36, 112, 175);
-	font-size: x-small;
+	font-size: medium;
 	font-weight: bolder;
 }
 
 
 .message_log_designer_ul_name{
 	color: rgb(139, 110, 29);
-	font-size: x-small;
+	font-size: medium;
 	font-weight: bolder;
 }
 
@@ -125,6 +126,6 @@
 }
 .new_message
  {
-  border: 5px dashed;
+  border: 2px dashed;
   animation: rowborderAnimation 1s infinite;
 }

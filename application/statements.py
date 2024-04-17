@@ -6,13 +6,15 @@ import models
 import dialogs
 import data_sourses
 import common
-
+from celery.result import AsyncResult
 from click import echo, style
 import json
 import pandas
 import xlsxwriter
 import os
 from sqlalchemy import func
+from common import celery
+from common import app
 
 import pprint
 printer = pprint.PrettyPrinter(indent=12, width=180)
@@ -54,6 +56,7 @@ def get_report_note(report_name):
 class Report:
 	def __init__(self):
 		self.report_name = ''
+		self.get_data_source_procedure_name = ''
 		self.report_humanread_name = get_human_readable_report_name(self.report_name)
 		self.note = get_report_note(self.report_name)
 
@@ -159,13 +162,14 @@ class Report:
 
 	# return answer for view report into browser
 	def run_report(self, parameters, current_user_id):
-		Create_Report(	parameters							=	parameters,
-						current_user_id 					=	current_user_id,
-						get_data_source_procedure			=	self.get_data_source,
-						report_name							=	self.report_name,
-						report_humanread_name				=	self.report_humanread_name,
-						parameters_human_readable_string	=	self.get_parameters_human_readable_string(parameters)
-						)
+		Create_Report.apply_async(  [	parameters,
+										current_user_id,
+										self.__class__.__name__,
+										self.report_name,
+										self.report_humanread_name,
+										self.get_parameters_human_readable_string(parameters)
+									]
+									)
 		return redirect(url_for('index'))
 		#create new data set for new report
 		header, data = self.get_data_source(parameters, current_user_id)
@@ -201,45 +205,36 @@ class Report:
 													common.Button_Excel(href=f"/download_excel/{data_object_id}")])
 	
 
-	
+@celery.task()
 def Create_Report(	parameters,
 				  	current_user_id,
-					get_data_source_procedure,
+					report_class_object_name,
 					report_name,
 					report_humanread_name,
 					parameters_human_readable_string):
-		#create new data set for new report
-		header, data = get_data_source_procedure(parameters, current_user_id)
-		data_object = models.UserObject(user_id=current_user_id,
-										dt=datetime.date.today(),
-										name=report_name,
-										parameters=json.dumps(parameters, ensure_ascii=False),
-										data=json.dumps(data, ensure_ascii=False))
-		db.session.add(data_object)
-		db.session.flush()
-		data_object_id = data_object.id
-		db.session.commit()
-		df = pandas.DataFrame(data)
-		models.Add_Message_for_User(	user_id=current_user_id,
-							  			text=f"{report_humanread_name} {parameters_human_readable_string}",
-										link=f"/download_excel/{data_object_id}",
-										icon='excel',
-										style='message_log_report_name_excel')
-		models.Add_Message_for_User(	user_id=current_user_id,
-							  			text=f"{report_humanread_name} {parameters_human_readable_string}",
-										link=f"/Report_From_History/{report_name}/{data_object_id}",
-										icon='table',
-										style='message_log_report_name_table')
-
-		return render_template("report.html", 
-						 	data=df.to_html(classes='table table-success table-striped table-hover table-bordered border-primary align-middle' ), 
-							report_title=f"{report_humanread_name} {parameters_human_readable_string}",
-							data_object_id=data_object_id,
-							report_name = report_name,
-							navigation_buttons = [	common.Button_Home(),
-							 						common.Button_Back(),
-													common.Button_List(href=f"/report_history/{report_name}"),
-													common.Button_Excel(href=f"/download_excel/{data_object_id}")])
+		with app.app_context():
+			obj = eval(f'{report_class_object_name}()')
+			header, data = obj.get_data_source(parameters, current_user_id)
+			data_object = models.UserObject(user_id=current_user_id,
+											dt=datetime.date.today(),
+											name=report_name,
+											parameters=json.dumps(parameters, ensure_ascii=False),
+											data=json.dumps(data, ensure_ascii=False))
+			db.session.add(data_object)
+			db.session.flush()
+			data_object_id = data_object.id
+			db.session.commit()
+			df = pandas.DataFrame(data)
+			models.Add_Message_for_User(	user_id=current_user_id,
+											text=f"{report_humanread_name} {parameters_human_readable_string}",
+											link=f"/download_excel/{data_object_id}",
+											icon='excel',
+											style='message_log_report_name_excel')
+			models.Add_Message_for_User(	user_id=current_user_id,
+											text=f"{report_humanread_name} {parameters_human_readable_string}",
+											link=f"/Report_From_History/{report_name}/{data_object_id}",
+											icon='table',
+											style='message_log_report_name_table')
 
 
 class Points_WithOut_Displays(Report):
@@ -249,6 +244,7 @@ class Points_WithOut_Displays(Report):
 		self.dialog = dialogs.DialogParameters(title = get_human_readable_report_name(self.report_name), backlink=f'/RunReport/{self.report_name}')
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
+		self.get_data_source_procedure_name = 'data_sourses.Points_WithOut_Displays'
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 	
 	def get_parameters_human_readable_string(self, parameters):
@@ -276,6 +272,7 @@ class Points_with_Constant_Consuming(Report):
 		self.dialog = dialogs.DialogParameters(title=get_human_readable_report_name(self.report_name), backlink=f'/RunReport/{self.report_name}')
 		self.dialog.add_months('Месяц','month')
 		self.dialog.add_years('Год','year')
+		self.get_data_source_procedure_name = 'data_sourses.Points_with_Constant_Consuming'
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 
 	def get_parameters_human_readable_string(self, parameters):
@@ -304,6 +301,7 @@ class Pays_from_date_to_date(Report):
 		self.dialog.add_date('С', 'from', datetime.date.today().replace(day=1).isoformat())
 		self.dialog.add_date('По', 'to', last_day_of_month(datetime.date.today()).isoformat())
 		self.dialog.success_code=''
+		self.get_data_source_procedure_name = 'data_sourses.Pays_from_date_to_date'
 		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 
 	def get_parameters_human_readable_string(self, parameters):
