@@ -36,7 +36,7 @@ celery_tasks = {}
 
 
 import threading
-def check_celery_tasks():
+async def check_celery_tasks():
 	if applicaton_mode != 'flask':
 		return
 	for id in list(task_pull.pull.keys()):
@@ -49,33 +49,9 @@ def check_celery_tasks():
 					print('add message about task ending')
 					models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
 					print('message added successfully')
-				# connection.execute(models.UserMessage.__table__.insert().values(user_id=task_pull.pull[id].user_id,
-				# 																text='Конструктор отчетов',
-				# 																link=lnk,
-				# 																icon='excel',
-				# 																style=''))
-				# connection.commit()
 				task_pull.pull[id].active = False
-				# connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
-				# messages = common.RowsToDictList(query_result)
-	threading.Timer(3, check_celery_tasks).start()
-	# arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
-	# uid = json.loads(arguments[0])['uid']+'_'+str(current_user.id)
-	
-	# print('celery_tasks: ', celery_tasks)
-	
-	# print(uid)
-	# if uid in celery_tasks:
-	# 	print(f"celery_tasks['uid'].ready(): {celery_tasks[uid].ready()}")
-	# 	if celery_tasks[uid].ready():
-	# 		print(f"celery_tasks['uid'].successful(): {celery_tasks[uid].successful()}")
-	# 		if celery_tasks[uid].successful():
-	# 			result_value = celery_tasks[uid].get()
-	# 			print("Результат выполнения задачи:", result_value)
-	# 			celery_tasks.pop(uid)
-	# 			return result_value
-	
-check_celery_tasks()
+	threading.Timer(3, await check_celery_tasks).start()
+
 
 
 data_sourses.init()

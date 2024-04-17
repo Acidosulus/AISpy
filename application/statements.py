@@ -302,7 +302,6 @@ class Pays_from_date_to_date(Report):
 		self.dialog.add_date('По', 'to', last_day_of_month(datetime.date.today()).isoformat())
 		self.dialog.success_code=''
 		self.get_data_source_procedure_name = 'data_sourses.Pays_from_date_to_date'
-		#self.dialog.add_checkbox('Открыть последний отчет от этих параметров','last',0)
 
 	def get_parameters_human_readable_string(self, parameters):
 		return f"""с {parameters['from']} ПО {parameters['to']}"""
