@@ -262,11 +262,11 @@ function RunInScreenForm({
 	  if (!(execute_on_cancel.length == 0 && execute_on_ok.length == 0)) {
 		document.getElementById(`${forms[forms.length - 1]}`).insertAdjacentHTML(
 		  `beforeEnd`,
-		  `<hr><br>
+		  `<hr>
 			  <div class="row">
 				<div class="col-6">` +
 			(execute_on_ok.length > 0
-			  ? `<button type="button" class="btn btn-primary btn-lg btn-block button_save col" id="${
+			  ? `<button type="button" class="btn btn-primary btn-lg btn-block button_save col-10" id="${
 				  (ok_id.length > 0, ok_id, "button_modal_dialog_ok")
 				}">
 					&nbsp&nbsp&nbsp&nbsp${
@@ -279,7 +279,7 @@ function RunInScreenForm({
 				<div class="col-6">
 				  <button id="${
 					forms[forms.length - 1]
-				  }_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block button_save col" onclick="${execute_on_cancel}">
+				  }_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block button_save col-10" onclick="${execute_on_cancel}">
 					Отмена
 				  </button>
 				</div>
@@ -352,7 +352,7 @@ function RunInScreenForm({
                </button>-->
             </div>
             <div class="col-6">
-              <button id="${forms[forms.length-1]}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-10" onclick="CloseToplevelDynamicForm();">
+              <button id="${forms[forms.length-1]}_dialog_escape_button" type="button" class="btn btn-secondary btn-lg btn-block col-6" onclick="CloseToplevelDynamicForm();">
                 Отмена
               </button>
             </div>`);
@@ -565,3 +565,10 @@ function showPopupMessage(text) {
     }, 10000); // Через 10 секунд блок исчезнет
 }
 
+
+
+
+
+
+
+EventsBindener.assignOnClickToMatchingElement();

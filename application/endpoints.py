@@ -631,3 +631,11 @@ def get_message_log():
 	query_result = connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
 	messages = common.RowsToDictList(query_result)
 	return messages
+
+@app.route('/show_text/<object_id>',methods=['GET'])
+def show_text(object_id:int):
+	query = connection.execute(db.select(	models.UserObject	).\
+									where(	models.UserObject.user_id==current_user.id,
+			 						models.UserObject.id==object_id		)).first()
+	result = common.RowToDict(query)
+	return render_template("show_text.html", text = result['data'])

@@ -40,28 +40,46 @@ class Celery_Tasks_Pull():
 
 # return one row query result as dict
 def RowToDict(row):
-	result = {}
-	for column in row.__table__.columns:
-		result[column.name] = str(getattr(row, column.name))
-	return result
+	# result = {}
+	# for column in row.__table__.columns:
+	# 	result[column.name] = str(getattr(row, column.name))
+	return row._asdict()
 
 # returl query result as dict list
-def RowsToDictList(rows):
+def RowsToDictList(results):
+	# так хорошо, нужно лишь решить проблему с NoneTypes
+	list_of_dicts = []
+	for result in results:
+		dict_entry = {}
+		for column in result.__table__.columns:
+			dict_entry[column.name] = getattr(result, column.name)
+		list_of_dicts.append(dict_entry)
+
+	print(list_of_dicts)
+	return list_of_dicts
+
+	print(rows)
+	print()
+	prnt(rows)
 	if rows is None:
 		return [{}]
-	try:
-		result = []
-		for row in rows:
-			dic = {}
-			if isinstance(row, Iterable):
-				for element in row:
-					dic = {**dic, **RowToDict(element)}
-				result.append(dic)
-			else:
-				result.append(RowToDict(row))
-		return result
-	except AttributeError:
-		return [dict(r._mapping) for r in rows]
+	result = []
+	for row in rows:
+		dic = {}
+		print('=================================================================================================')
+		if isinstance(row, Iterable):
+			for element in row:
+				print(RowToDict(element))
+				dic = {**dic, **RowToDict(element)}
+			result.append(dic)
+		else:
+			print(element)
+			prnt(element)
+			print(RowToDict(element))
+			result.append(RowToDict(row))
+		print('=================================================================================================')
+	return result
+
 
 @dataclass
 class Navbar_Button:
@@ -195,11 +213,11 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 if not os.path.exists('logs'):
-    os.mkdir('logs')
+	os.mkdir('logs')
 file_handler = RotatingFileHandler('logs/AISpy.log', maxBytes=10240,
-                                    backupCount=10)
+									backupCount=10)
 file_handler.setFormatter(logging.Formatter(
-    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+	'%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
 file_handler.setLevel( logging.INFO)
 
 

@@ -1,0 +1,26 @@
+{% block content %}
+
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+<div class="container-fluid mt-5">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center">Текст</h1>
+          <label for="textInput" class="form-label"></label>
+          <textarea 
+		  	rows="16"
+			class="form-control"
+			id="textInput"
+			placeholder="..."
+			style="	font-size: x-large;
+		  			font-weight: bolder;"
+			>{{ text }}
+			</textarea>
+      </div>
+    </div>
+  </div>
+
+
+  {% endblock %}
