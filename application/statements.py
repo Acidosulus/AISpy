@@ -293,6 +293,33 @@ class Points_with_Constant_Consuming(Report):
 		return str(self.dialog)
 
 
+class Points_Heads_And_Submissives(Report):
+	def __init__(self):
+		self.report_name = 'Points_Heads_And_Submissives'
+		self.report_humanread_name = get_human_readable_report_name(self.report_name)
+		self.dialog = dialogs.DialogParameters(title=get_human_readable_report_name(self.report_name), backlink=f'/RunReport/{self.report_name}')
+		self.dialog.add_months('Месяц','month')
+		self.dialog.add_years('Год','year')
+
+	def get_parameters_human_readable_string(self, parameters):
+		return f"""Год {parameters['year']} Месяц {parameters['month']}"""
+
+	def get_data_source(self, parameters, current_user_id:int):
+		return data_sourses.Get_Data_For_Report_Heads_and_Submissives(parameters)
+
+	def get_report_history_information(self, parameters:dict) -> list :
+		result = []
+		result.append(f'Идентификатор результата: {parameters["id"]}')
+		result.append(f'Год: {parameters["year"]}')
+		result.append(f'Месяц: {parameters["month"]}')
+		result.append(f'Время формирования: {parameters["dt"]:%Y-%m-%d %H:%M}')
+		return result
+
+	def __str__(self):
+		return str(self.dialog)
+
+
+
 class Pays_from_date_to_date(Report):
 	def __init__(self):
 		self.report_name = 'Report_pays_from_date_to_date'

@@ -45,3 +45,22 @@ def foo2(length:int) -> list:
     return (i for i in (range(length+1) if length>=0 else range(length,0+1)) if i % 2 == 0)
 
 print(*foo2(-10))
+
+print('========================')
+
+def outer_function(x):
+    def inner_function(y):
+        return x + y
+    return inner_function
+
+closure = outer_function(5)
+print(closure(3))  # Выведет 8
+
+
+print('========================')
+def mul(a):
+        def helper(b):
+            return a * b
+        return helper
+
+print(mul(5)(2))

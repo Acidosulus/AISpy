@@ -56,12 +56,12 @@ async def check_celery_tasks():
 
 data_sourses.init()
 
-from statements import Reports, Points_WithOut_Displays, Points_with_Constant_Consuming, Pays_from_date_to_date
-# with app.app_context():
+from statements import Reports, Points_WithOut_Displays, Points_with_Constant_Consuming, Pays_from_date_to_date, Points_Heads_And_Submissives
 pull = Reports()
 pull.add(Points_WithOut_Displays())
 pull.add(Points_with_Constant_Consuming())
 pull.add(Pays_from_date_to_date())
+pull.add(Points_Heads_And_Submissives())
 
 
 

@@ -1202,8 +1202,23 @@ def Get_Agreement_Reconcilation_Acts(parameters):
 def Get_Data_For_Report_Heads_and_Submissives(parameters):
 	cdate = f"{parameters['year']}-{parameters['month']}-1"
 	query_result = session_ul.execute(text(f"""--sql
-											SELECT 	parts.agreement_number as nc_head, parts.Номер as point_number_head, parts.Примечание as point_name_head, parts.АдресЛС as point_adres_head, head_consuming.kvt as head_consuming, head_folders.folder as  head_district, head_folders.area as head_department, head_stuff.fio1,
-													points.agreement_number as nc_sub, points.Номер as point_number_sub, points.Примечание as point_name_sub, points.АдресЛС as point_adres_sub, sub_consuming.kvt as sub_consuming, sub_folders.folder as  sub_district, sub_folders.area as sub_department, sub_stuff.fio1
+											SELECT 	parts.agreement_number as [Гол.Договор],
+													parts.Номер as [Гол.ТУ],
+													parts.Примечание as [Гол.Название ТУ],
+													parts.АдресЛС as [Гол.Адрес ТУ],
+													head_consuming.kvt as [Гол.Потребление за],
+													head_folders.folder as  [Гол.Район],
+													head_folders.area as [Гол.Отделение],
+													head_stuff.fio1 as [Гол.ФИО],
+													--
+													points.agreement_number as [Суб.Договор],
+													points.Номер as [Суб.ТУ],
+													points.Примечание as [Суб.Название ТУ],
+													points.АдресЛС as [Суб.Адрес ТУ],
+													sub_consuming.kvt as [Суб.Потребление за],
+													sub_folders.folder as  [Суб.Район],
+													sub_folders.area as [Суб.Отделение],
+													sub_stuff.fio1 as [Суб.ФИО] 
 											FROM 	stack.[Связи лицевого] shema
 											inner join (select 		stack.[Договор].Номер as agreement_number,
 																	stack.[Организации].Название, stack.[Организации].ИНН, stack.[Организации].КПП, stack.[Организации].Адрес,
