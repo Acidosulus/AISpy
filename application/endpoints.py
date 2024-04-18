@@ -6,10 +6,10 @@ import common
 from common import connection_fl, connection_url_ul, connection, db
 import dialogs
 import data_sourses
-import models
 from click import echo, style
 import pprint
 from sqlalchemy import text
+import models
 from models import Users, UserObject, UserMessage
 from flask_login import login_user, logout_user, current_user, login_required
 printer = pprint.PrettyPrinter(indent=12, width=180)
@@ -47,7 +47,7 @@ async def check_celery_tasks():
 				print("===============",lnk,"====================")
 				with app.app_context():
 					print('add message about task ending')
-					models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
+					# models.Add_Message_for_User(user_id=task_pull.pull[id].user_id, text='Конструктор отчетов', link=lnk, icon='excel', style='message_log_designer_ul_name')
 					print('message added successfully')
 				task_pull.pull[id].active = False
 	threading.Timer(3, await check_celery_tasks).start()

@@ -6,6 +6,8 @@ import pandas
 import json
 from click import echo, style
 import logging
+from common import app
+import models
 logging.basicConfig(level=logging.INFO) 
 
 print(f'designerUL imported to {__name__}')
@@ -169,9 +171,16 @@ def Data_Construct(current_user_id, csource:str, cparameters:str):
 		if parameter['type']=='agreement_return_of_reconcilation_act':
 			Append_Data(source=source, get_data_func=data_sourses.Get_Agreement_Reconcilation_Acts, value='documents', key='agreement', parameter_name=parameter['name'], parameters={'year':parameter['year'], 'month':parameter['month']})
 
+	file_name =  download_excel(source, file_name)
 
-	# print(source)
-	return download_excel(source, file_name)
+	with app.app_context():
+		models.Add_Message_for_User(	user_id=current_user_id,
+							  			text='Конструктор отчетов',
+										link=f'/download_report_from_file_store?file_name={file_name.replace("/","%2F")}',
+										icon='excel',
+										style='message_log_designer_ul_name'	)
+	
+	return file_name
 
 
 def download_excel(source_data, file_name):
