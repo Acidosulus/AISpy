@@ -19,6 +19,7 @@ obj.vr()
 
 print('========================')
 
+
 class EC():
     def vr(self):
         return 1
@@ -26,3 +27,21 @@ class EC():
 foo = eval('EC()')
 print(type(foo))
 print(foo.vr())
+
+
+print('========================')
+
+def foo(length:int) -> list:
+    result = []
+    for i in (range(length+1) if length>=0 else range(length,0+1)):
+        if i % 2 == 0:
+            result.append(i)
+    return result
+
+print(*foo(-10))
+
+
+def foo2(length:int) -> list:
+    return (i for i in (range(length+1) if length>=0 else range(length,0+1)) if i % 2 == 0)
+
+print(*foo2(-10))

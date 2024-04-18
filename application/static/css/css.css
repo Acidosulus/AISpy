@@ -1,7 +1,7 @@
 
   .dynamic-form {
     width: 95%;
-    height: 95%;
+    /* height: 95%; */
     position: fixed;
     left: 2.5%;
     background-color: white;
@@ -10,6 +10,7 @@
     top:max(50px, 10%);
     overflow-y: auto;
     max-height: 90%;
+    background-image: url('/static/images/background.gif');
   }
 
 
