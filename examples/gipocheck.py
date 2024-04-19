@@ -64,3 +64,12 @@ def mul(a):
         return helper
 
 print(mul(5)(2))
+
+print('========================')
+
+my_dict = {'a': 1, 'b': 2, 'c': 3}
+
+for key in my_dict.keys():
+    print(my_dict[key])
+
+

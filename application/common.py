@@ -43,41 +43,50 @@ def RowToDict(row):
 	# result = {}
 	# for column in row.__table__.columns:
 	# 	result[column.name] = str(getattr(row, column.name))
-	return row._asdict()
+	result ={}
+	if hasattr(row, '_asdict'):
+		result = row._asdict()
+	else:
+		if hasattr(row, '__table__'):
+			for column in row.__table__.columns:
+				result[column.name] = str(getattr(row, column.name))
+		else:
+			print('************Atribute error in RowToDict**************')
+			print(type(row))
+			print(dir(row))
+			print(row)
+			print('**************************')
+	for key in result.keys():
+		if result[key]==None:
+			result[key]=''
+	return result
 
 # returl query result as dict list
 def RowsToDictList(results):
 	# так хорошо, нужно лишь решить проблему с NoneTypes
-	list_of_dicts = []
-	for result in results:
-		dict_entry = {}
-		for column in result.__table__.columns:
-			dict_entry[column.name] = getattr(result, column.name)
-		list_of_dicts.append(dict_entry)
+	# list_of_dicts = []
+	# for result in results:
+	# 	dict_entry = {}
+	# 	for column in result.__table__.columns:
+	# 		value = getattr(result, column.name)
+	# 		if value == None:
+	# 			value = ''
+	# 		dict_entry[column.name] = value
+	# 	list_of_dicts.append(dict_entry)
+	# print(list_of_dicts)
+	# return list_of_dicts
 
-	print(list_of_dicts)
-	return list_of_dicts
-
-	print(rows)
-	print()
-	prnt(rows)
-	if rows is None:
+	if results is None:
 		return [{}]
 	result = []
-	for row in rows:
+	for row in results:
 		dic = {}
-		print('=================================================================================================')
 		if isinstance(row, Iterable):
 			for element in row:
-				print(RowToDict(element))
 				dic = {**dic, **RowToDict(element)}
 			result.append(dic)
 		else:
-			print(element)
-			prnt(element)
-			print(RowToDict(element))
 			result.append(RowToDict(row))
-		print('=================================================================================================')
 	return result
 
 
@@ -206,6 +215,7 @@ session_ul = Session(engine_ul)
 connection_ul = engine_ul.connect()
 connection_fl = engine_fl.connect()
 with app.app_context():
+	session = Session(db.engine)
 	connection = db.engine.connect()
 
 login_manager = LoginManager()

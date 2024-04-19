@@ -3,7 +3,7 @@ from urllib.parse import urlsplit
 from flask import render_template, render_template_string, flash, redirect, url_for, request, send_file
 
 import common
-from common import connection_fl, connection_url_ul, connection, db
+from common import connection_fl, connection_url_ul, connection, db, session
 import dialogs
 import data_sourses
 from click import echo, style
@@ -628,14 +628,22 @@ def download_report_from_file_store():
 
 @app.route('/message_log',methods=['POST'])
 def get_message_log():
-	query_result = connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
+	# query_result = connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
+	query_result = session.	query(models.UserMessage).\
+							filter(	models.UserMessage.user_id==current_user.id).\
+							order_by(models.UserMessage.dt).all()
 	messages = common.RowsToDictList(query_result)
 	return messages
 
 @app.route('/show_text/<object_id>',methods=['GET'])
 def show_text(object_id:int):
-	query = connection.execute(db.select(	models.UserObject	).\
-									where(	models.UserObject.user_id==current_user.id,
-			 						models.UserObject.id==object_id		)).first()
+	# query = connection.execute(db.select(	models.UserObject	).\
+	# 								where(	models.UserObject.user_id==current_user.id,
+	# 		 						models.UserObject.id==object_id		)).first()
+	query = session.	query(	models.UserObject).\
+						filter(	models.UserObject.user_id==current_user.id,
+		 						models.UserObject.id==object_id ).first()
+						
+	#query = session_ul.query()
 	result = common.RowToDict(query)
 	return render_template("show_text.html", text = result['data'])

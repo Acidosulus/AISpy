@@ -72,13 +72,13 @@ class UserObject (db.Model):
 
 class UserMessage(db.Model):
     __tablename__ = 'user_messages'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, nullable=False)
-    dt = Column(TIMESTAMP, nullable=True, server_default='now()')
-    text = Column(String, nullable=False)
-    link = Column(String, nullable=False)
-    icon = Column(String, nullable=True)
-    style = Column(String, nullable=True)
+    id		= db.Column(db.Integer, primary_key=True)
+    user_id	= db.Column(db.Integer,)
+    dt		= db.Column(db.TIMESTAMP, server_default='now()')
+    text	= db.Column(db.String)
+    link	= db.Column(db.String)
+    icon	= db.Column(db.String)
+    style	= db.Column(db.String)
 
 
 def Add_Message_for_User(user_id, text, link, icon, style):
