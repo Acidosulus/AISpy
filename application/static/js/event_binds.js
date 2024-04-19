@@ -13,16 +13,20 @@
 		services_button: function(){
 			RunInScreenForm(
 				{
-					form_name : "services_form",
-					execute_after_load : "",
-					request_link : "/show_text/93",
+					form_name : "db_services_form",
+					execute_after_load : "EventsBindener.assignOnClickToMatchingElement();",
+					request_link : "/db_services",
 					execute_on_cancel:'CloseToplevelDynamicForm();'
 				}
 				);
 		},
 		
 
-
+	
+		ul_db_regain_statistic: function(){
+			asyncRequest(`/ul_regain_statistic`,'GET');
+			CloseToplevelDynamicForm();
+		},
 
 
 

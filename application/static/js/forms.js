@@ -51,7 +51,11 @@ async function openModal(uri_for_get_JSON) {
 
 
 async function asyncRequest (uri, method, data, debug=false){
-    let response_promise = await fetch(uri, {method: method, headers: { 'Content-Type': 'application/json;charset=utf-8' }, body: JSON.stringify(data) } )
+    if (method=='GET'){
+      let response_promise = await fetch(uri, {method: method, headers: { 'Content-Type': 'application/json;charset=utf-8' } } )
+    }else{
+      let response_promise = await fetch(uri, {method: method, headers: { 'Content-Type': 'application/json;charset=utf-8' }, body: JSON.stringify(data) } )
+    }
     return response_promise.json();
 }
 
@@ -419,7 +423,7 @@ function AddMessageIntoLog(message){
 		let str = ``;
 		let message_id = `message_id_${message.id}`;
 		str += `<div id="${message_id}" class="`+(messageLog.dataset.firstinit!=='true'?'new_message':``)+`">`;
-		str += `<span class="message_log_datetimem">${message.dt.slice(5,26)}</span> `;
+		str += `<span class="message_log_datetimem">${message.dt.slice(0,19)}</span> `;
 		str += (message.link==null? '': `<a href='${message.link}'>`);
 		let icon = (message.icon==null,null,(message.icon.includes(`/`)? message.icon: eval(`icons.${message.icon}`)));
 		str += (message.icon==null? '' : `<img src="${icon}" width="32" height="32">`);
@@ -462,9 +466,10 @@ function updateMessageLog() {
 }
 
 var icons={	error:`/static/images/error_icon.png`,
-			excel:`/static/images/excel_icon.png`,
-			info:`/static/images/info_icon.png`,
-			table:`/static/images/table_icon.png`};
+			      excel:`/static/images/excel_icon.png`,
+			      info:`/static/images/info_icon.png`,
+			      table:`/static/images/table_icon.png`,
+            service:`/static/images/service_icon.png`};
 
 
 var messages_timer = setInterval(updateMessageLog, 2000);

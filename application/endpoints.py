@@ -602,7 +602,6 @@ def designer_ul_get_excel_result():
 	return ctask.id
 
 
-
 @app.route('/Check_Celery_Task_Status', methods=['POST'])
 def Check_Celery_Task_Status():
 	arguments = f"""{request.get_data().decode('utf-8').strip()}""".split('\n')
@@ -625,25 +624,30 @@ def download_report_from_file_store():
 	return send_file(file_name)
 
 
-
 @app.route('/message_log',methods=['POST'])
 def get_message_log():
-	# query_result = connection.execute(db.select(models.UserMessage).where(models.UserMessage.user_id==current_user.id).order_by(models.UserMessage.dt)).fetchall()
 	query_result = session.	query(models.UserMessage).\
 							filter(	models.UserMessage.user_id==current_user.id).\
 							order_by(models.UserMessage.dt).all()
 	messages = common.RowsToDictList(query_result)
 	return messages
 
+
 @app.route('/show_text/<object_id>',methods=['GET'])
 def show_text(object_id:int):
-	# query = connection.execute(db.select(	models.UserObject	).\
-	# 								where(	models.UserObject.user_id==current_user.id,
-	# 		 						models.UserObject.id==object_id		)).first()
 	query = session.	query(	models.UserObject).\
 						filter(	models.UserObject.user_id==current_user.id,
 		 						models.UserObject.id==object_id ).first()
-						
-	#query = session_ul.query()
 	result = common.RowToDict(query)
 	return render_template("show_text.html", text = result['data'])
+
+
+@app.route('/db_services',methods=['GET'])
+def db_services():
+	return render_template("db_services.html",)
+
+
+@app.route('/ul_regain_statistic',methods=['GET'])
+def ul_regain_statistic():
+	data_sourses.Update_Statistic_UL_DB(current_user.id)
+	return ''

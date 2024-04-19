@@ -1,3 +1,1 @@
-    for column in rows.__table__.columns:
-                  ^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'list' object has no attribute '__table__'
+sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.

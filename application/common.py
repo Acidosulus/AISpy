@@ -184,8 +184,8 @@ connection_url_ul = URL.create(
 		"extra_params": "MARS_Connection=Yes"	},
 )
 
-# echo(style(text=connection_url_fl, bg='blue', fg='bright_green'))
-# echo(style(text=connection_url_ul, bg='blue', fg='bright_green'))
+echo(style(text=connection_url_fl, bg='blue', fg='bright_green'))
+echo(style(text=connection_url_ul, bg='blue', fg='bright_green'))
 
 
 

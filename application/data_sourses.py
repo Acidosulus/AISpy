@@ -1,5 +1,5 @@
 print(f'data_sourses imported to {__name__}')
-from common import connection_ul, connection, session_ul
+from common import connection_ul, connection, session, session_ul
 from click import echo, style
 import sqlalchemy as sa
 import datetime
@@ -9,7 +9,7 @@ import decimal
 import json
 import pandas
 import os
-
+import models
 import time
 import asyncio
 
@@ -1046,7 +1046,7 @@ def Get_Agreement_Organization_Type():
 														inner join stack.[Организации] as orggr on agr.[Грузополучатель] = orggr.row_id
 														inner join stack.[Организации] as orgpl on agr.[Плательщик] = orgpl.row_id
 														order by agreement
-										   """)).fetchall()
+										   ;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
 def Get_Agreement_Budget():
@@ -1326,6 +1326,28 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 															;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
+def Update_Statistic_UL_DB(user_id):
+	models.Add_Message_for_User(
+									user_id	=	user_id,
+									icon = 'service',
+									link='',
+									style='',
+									text='Начато обновление статистики'
+	)
+
+	result = session_ul.execute(text(	"""--sql
+											EXEC sp_updatestats;
+								  			select 'ended' as result;
+										;""")).fetchall()
+	
+	models.Add_Message_for_User(
+									user_id	=	user_id,
+									icon = 'service',
+									link='',
+									style='',
+									text='Статистика обновлена'
+	)
+	return result
 
 def Join_Pairs(list_of_dictionaries:list, key,value:str):
 	result = {}

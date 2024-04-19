@@ -1,0 +1,30 @@
+{% block content %}
+
+{% block head %}
+  {% include "_head.html"%}
+{% endblock %}
+
+<div class="container-fluid m-5">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center">Сервисные функции</h1>
+
+        <div class="row mt-3">
+          <button
+            class="btn btn-info col-3"
+            id="ul_db_regain_statistic"
+            type="button"
+            style="text-align: left;"
+            >
+            <img width="30" height="30" src="/static/images/service.png" style="margin-right: 5px;">
+            Пересобрать статистику ЮЛ
+          </button>
+        </div>
+
+
+      </div>
+    </div>
+</div>
+
+
+  {% endblock %}
