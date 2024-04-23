@@ -116,5 +116,43 @@ def slow_func(count):
         k=j
     return k
 
+print('========================')
+print('========================')
 
-print(slow_func(count = 10000000))
+
+def types_check(func):
+    def wrapper(*args, **kwargs):
+        # Получаем информацию о типах аргументов функции
+        func_args = func.__annotations__
+        # Проверяем каждый аргумент на соответствие его типа
+        for arg_name, arg_type in func_args.items():
+            # print(f'arg_name:{arg_name}, arg_type:{arg_type}')
+            if arg_name=='return':
+                break
+            # Проверяем наличие аргумента в kwargs
+            if arg_name in kwargs:
+                if not isinstance(kwargs[arg_name], arg_type):
+                    print(f"Argument '{arg_name}' must be of type {arg_type.__name__}")
+            # Проверяем наличие аргумента в args
+            elif len(args) > 0:
+                arg_index = list(func_args.keys()).index(arg_name)
+                # print(f'args:{args}, arg_index:{arg_index}')
+                if not isinstance(args[arg_index], arg_type):
+                    print(f"Argument '{arg_name}' must be of type {arg_type.__name__}")
+        
+        # Если проверка пройдена успешно, вызываем исходную функцию
+        return func(*args, **kwargs)
+    
+    return wrapper
+
+
+@types_check
+def foo3(str_parameter:str, int_parameter:int, float_parameter:float, list_parameter:list, dict_parameter:dict)->str:
+    ...
+
+foo3('aaa', 1.1, 2.2, dict_parameter={1:'tm'}, list_parameter=['g', 'f'])
+
+print('========================')
+print('========================')
+
+
