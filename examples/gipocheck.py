@@ -73,3 +73,48 @@ for key in my_dict.keys():
     print(my_dict[key])
 
 
+print('========================')
+print('========================')
+
+
+def cached(func):
+    cache = {}
+    def wrapper(*args, **kwargs):
+        key=(*args,frozenset(kwargs.items()))
+        print('KEY:',key)
+        if key in cache:
+            return f'cached: {cache[key]}'
+        result = func(*args, **kwargs)
+        cache[key] = result
+        return result
+    return wrapper
+
+@cached
+def add(a,b:int)->int:
+    return a + b
+
+
+print(add(1,6))
+print(add(1,b=2))
+print(add(1,6))
+print(add(1,b=2))
+
+import time
+def time_meter(func):
+    start_time = time.time()
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        print(f'Function: {func.__name__} Parameters: {(*args, kwargs)}  Execution time: {time.time()-start_time}')
+        return result
+    return wrapper
+
+@time_meter
+def slow_func(count):
+    for i in range(count):
+        k=i
+        j=k
+        k=j
+    return k
+
+
+print(slow_func(count = 10000000))

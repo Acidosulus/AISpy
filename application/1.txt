@@ -1,1 +1,1 @@
-sqlalchemy.exc.ResourceClosedError: This result object does not return rows. It has been closed automatically.
+TypeError: Session.execute() got an unexpected keyword argument 'synchronize_session'

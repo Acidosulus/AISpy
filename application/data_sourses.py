@@ -1336,9 +1336,9 @@ def Update_Statistic_UL_DB(user_id):
 	)
 
 	result = session_ul.execute(text(	"""--sql
-											EXEC sp_updatestats;
-								  			select 'ended' as result;
-										;""")).fetchall()
+											EXEC sp_updatestats
+										;"""))
+	session_ul.commit()
 	
 	models.Add_Message_for_User(
 									user_id	=	user_id,
