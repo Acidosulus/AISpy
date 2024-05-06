@@ -53,11 +53,12 @@ async function openModal(uri_for_get_JSON) {
 async function asyncRequest (uri, method, data, debug=false){
     if (method=='GET'){
       let response_promise = await fetch(uri, {method: method, headers: { 'Content-Type': 'application/json;charset=utf-8' } } )
+      return await response_promise.json();
     }else{
       let response_promise = await fetch(uri, {method: method, headers: { 'Content-Type': 'application/json;charset=utf-8' }, body: JSON.stringify(data) } )
+      return await response_promise.json();
     }
-    return response_promise.json();
-}
+ }
 
 async function FillOutModalForm(source){
     console.log(JSON.stringify(source));
