@@ -19,7 +19,16 @@
   }
   
   .mform {
-    gap: 0.4rem;
+    max-width: 95%;
+    position: fixed;
+    z-index: 2;
+    background-color: white;
+    border: 1px solid #2426c2;
+    border-radius: 15px;
+    top:max(30px, 12%);
+    left:2.5%;
+    overflow-y: auto;
+    /* gap: 0.4rem;
     width: 95%;
     padding: 1.3rem;
     max-height: 85%;
@@ -30,8 +39,9 @@
     left: 2.5%;
     background-color: white;
     border: 1px solid #ddd;
-    border-radius: 15px;
+    border-radius: 15px; */
   }
+
 
   .mform .flex {
     display: flex;

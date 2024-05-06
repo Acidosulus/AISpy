@@ -31,7 +31,8 @@ var border_colors = ["border-primary", "border-secondary", "border-success", "bo
 
 document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
-    CloseToplevelDynamicForm();
+    //CloseToplevelDynamicForm();
+    closeModal();
   }
 });
 
@@ -91,7 +92,7 @@ async function FillOutModalForm(source){
             $(`#${section.name}`).focus();
           }
           counter++;
-        } //edit
+        } //date
   
         if (section.type==`checkbox`){
           rootNode.insertAdjacentHTML(`beforeend`,`${str_card_begin}<div class="row"><div class="col-4"><label for="${section.name}">${section.lable}</label></div><div class="col-8"><input autocomplete="off" type="checkbox" name="${section.name}" id="${section.name}" ${Number(section.default)==1?"checked":""}></div>${str_card_end}</div><br>`);
@@ -123,7 +124,18 @@ async function FillOutModalForm(source){
         } //listbox
       }
     }
-    rootNode.insertAdjacentHTML(`beforeend`,`<hr><hr><br><div class="container"> <div class="row"><div class="col-sm-8"><button ${(source.backlink.length>0)?'type="submit"':''} class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button></div><div class="col-sm-4"><button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='closeModal();' id="button_modal_dialog_escape">Отмена</button></div></div>`);
+    rootNode.insertAdjacentHTML(`beforeend`,
+                                `<hr><hr><br>
+                                <div class="container">
+                                  <div class="row">
+                                    <div class="col-sm-8">
+                                      <button ${(source.backlink.length>0)?'type="submit"':''} class="btn btn-primary btn-lg btn-block col-6" id="button_modal_dialog_ok">&nbsp&nbsp&nbsp&nbspОк&nbsp&nbsp&nbsp&nbsp</button>
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <button type="button" class="btn btn-secondary btn-lg btn-block col-12" onclick='closeModal();' id="button_modal_dialog_escape">Отмена</button>
+                                    </div>
+                                  </div>
+                                </div>`);
     const ok_button = document.getElementById('button_modal_dialog_ok');
     if (source.success_jscode.length>0){
       console.log(`jscode`);
