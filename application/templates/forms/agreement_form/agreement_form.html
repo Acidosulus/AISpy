@@ -24,6 +24,11 @@
         <b>Расчет</b>
       </button>
     </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab" aria-controls="documents" aria-selected="false">
+        <b>Документы</b>
+      </button>
+    </li>
   </ul>
   <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -34,6 +39,9 @@
     </div>
     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
       {% include "/forms/agreement_form/_form_calc.html" %}
+    </div>
+    <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+      {% include "/forms/agreement_form/_documents.html" %}
     </div>
   </div>
   

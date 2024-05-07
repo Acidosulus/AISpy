@@ -1,0 +1,30 @@
+ 
+
+<div class="row">
+	<table class="table table-hover text-xsmall table-condensed table-responsive caption-top">
+		<caption>Точки учета</caption>
+		<thead>
+		<tr class="table-secondary">
+			<th>Дата</th>
+			<th>Примечание</th>
+			<th>Номер</th>
+			<th>Сумма</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for row in agreement_documents %}
+			<tr>
+			<td>{{ row.date }}</td>
+			<td>{{ row.note }}</td>
+			<td>{{ row.number }}</td>
+			<td>{{ row.total_money }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+
+</div>
+
+
+
+

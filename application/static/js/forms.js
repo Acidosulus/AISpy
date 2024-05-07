@@ -31,8 +31,8 @@ var border_colors = ["border-primary", "border-secondary", "border-success", "bo
 
 document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
-    //CloseToplevelDynamicForm();
-    closeModal();
+    CloseToplevelDynamicForm();
+    //closeModal();
   }
 });
 
@@ -253,6 +253,10 @@ function RunInScreenForm({
 	execute_on_cancel = "",
 	execute_on_close = "",
   }) {
+  console.log(`form_name: ${form_name}`);
+  console.log(`execute_after_load: ${execute_after_load}`);  
+  console.log(`request_link: ${request_link}`);
+
 	let outerRootElement = document.getElementsByTagName(`body`)[0];
 	form_name = form_name + `_${getRandomInt(999999999999999)}`;
 	forms_zindex++;

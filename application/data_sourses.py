@@ -220,32 +220,32 @@ def Data_For_Addresses_List(parent_id:int) -> list:
 
 def Data_For_Agreements_List(parent_id:int) -> list:
 	query_result = session_ul.execute(text(f"""--sql
-select * 
-	from (
-					select 
-						agr.row_id,
-						agr.[Папки] as folder_id,
-						case
-							when len(agr.[Номер])<10 then ''
-							else agr.[Номер]
-						end as number,
-						CASE 
-							when len(agr.[Номер])<10 then coalesce((select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки]),0)
-							else 0
-						END as descendants_count,
-						case
-							when len(agr.[Номер])<10 then agr.[Примечание]
-							else trim(org.[Наименование]) + trim(agr.[Примечание])
-						end as name,
-						org.[ИНН] as inn,
-						org.[КПП] as kpp
-					from stack.[Договор] as agr
-					left join stack.[Организации] as org on org.row_id = agr.[Грузополучатель]
-					where agr.[Папки]={parent_id})
-			as ct
-	order by number, name;
-  ----------------------------------------------------------------------------------------------------------------------------------------------------
-;""")).fetchall()
+												select * 
+													from (
+																	select 
+																		agr.row_id,
+																		agr.[Папки] as folder_id,
+																		case
+																			when len(agr.[Номер])<10 then ''
+																			else agr.[Номер]
+																		end as number,
+																		CASE 
+																			when len(agr.[Номер])<10 then coalesce((select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки]),0)
+																			else 0
+																		END as descendants_count,
+																		case
+																			when len(agr.[Номер])<10 then agr.[Примечание]
+																			else trim(org.[Наименование]) + trim(agr.[Примечание])
+																		end as name,
+																		org.[ИНН] as inn,
+																		org.[КПП] as kpp
+																	from stack.[Договор] as agr
+																	left join stack.[Организации] as org on org.row_id = agr.[Грузополучатель]
+																	where agr.[Папки]={parent_id})
+															as ct
+													order by number, name;
+												----------------------------------------------------------------------------------------------------------------------------------------------------
+												;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
 
 
@@ -366,16 +366,28 @@ def Pays_from_date_to_date(parameters):
 				doc.Номер as [Номер п.п.],
 				doc.Сумма as [Сумма]
 			from stack.Документ doc
-			left join stack.Договор  as agr on agr.ROW_ID  = doc.[Документы-Договор] 
-			left join stack.Организации as org on org.ROW_ID  = agr.Грузополучатель 
+			left join stack.Договор  as agr on agr.ROW_ID  = doc.[Документы-Договор]
+			left join stack.Организации as org on org.ROW_ID  = agr.Грузополучатель
 			left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = agr.Сотрудник1
 			left join stack.[Сотрудники] as staff3 on staff3.ROW_ID = agr.Сотрудник3
-			where 	doc.[Тип документа] = 21 AND 
-					(doc.Дата between convert(datetime,'{parameters['from']}',21) and convert(datetime,'{parameters['to']}',21)) and 
-					(agr.Номер is not null)
-			;""")).fetchall()
+			where 	doc.[Тип документа] = 21 AND
+					(doc.Дата between convert(datetime,'{parameters['from']}',21) and convert(datetime,'{parameters['to']}',21)) and
+					(agr.Номер is not null);""")).fetchall()
 	# with open('Pays_from_date_to_date.txt', 'w') as file:
 	# 	file.write(pprint.pformat(get_queryresult_header_and_data(query_result)))
+	return get_queryresult_header_and_data(query_result)
+
+
+def Agreement_Documents_List(row_id:int):
+	query_result = session_ul.execute(text(f"""--sql
+												SELECT 	doc.ROW_ID as row_id,
+														doc.[Тип документа] as document_type,
+														FORMAT(doc.[Дата], 'yyyy-MM-dd') as date,
+														doc.Сумма as total_money,
+														doc.Примечание as note,
+														doc.[Полный номер] as number
+												FROM stack.[Документ] as doc
+												WHERE doc.[Тип документа] = 100 and doc.[Документы-Договор]={row_id};"""))
 	return get_queryresult_header_and_data(query_result)
 
 
@@ -391,7 +403,7 @@ def Agreement_Data(row_id:int):
 										   									agr.[Адрес доставки] as address_delivery,
 																			agr.[Плательщик] as pl_row_id,
 																			pl.[Наименование] as pl_name,
-																			agr.[Примечание] as note,								
+																			agr.[Примечание] as note,
 										   									agr.[Тип договора] as agr_type,
 																			case agr.[Тип договора]
 																				when 1 then 'договор энергоснабжения'
@@ -403,7 +415,7 @@ def Agreement_Data(row_id:int):
 																				when 7 then 'договор купли-продажи в целях компенсации фактических потерь, возникающих в электрических сетях'
 																				when 8 then 'договор купли-продажи электричкой энергии в целях компенсации потерь электрической энергии в электрических сетях'
 																				else ''
-																			end as agr_type_name,																			
+																			end as agr_type_name,
 																			CONVERT(date, agr.[Начало договора], 1 ) as agr_begin,
 																			CONVERT(date, agr.[Окончание], 1 )  as agr_end,
 																			CONVERT(date, agr.[Дата подписания], 1 )  as agr_sign_begin,
@@ -440,7 +452,7 @@ def Agreement_Data(row_id:int):
 										   													[Код] as code,
 										   													[Название] as name
 										   											FROM stack.[Классификаторы]
-										   											WHERE [Папки] = (select top 1 row_id 
+										   											WHERE [Папки] = (select top 1 row_id
 										   																from stack.[Классификаторы]
 										   																where [Тип]=128 and [Папки]<0))
 										   											as municipalformation on municipalformation.row_id = agr.[СправочникМО-Договоры]
