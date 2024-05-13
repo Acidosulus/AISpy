@@ -71,7 +71,7 @@ def init():
 	global basedir, config, connection_url_fl, connection_url_ul, connection_fl, connection_ul, engine_ul, engine_fl
 	basedir = os.path.abspath(os.path.dirname(__file__))
 	config = configparser.ConfigParser()
-	config.read("settings.ini", encoding='UTF-8')  
+	config.read("settings.ini", encoding='UTF-8')
 
 	from sqlalchemy.engine import URL
 	connection_url_fl = URL.create(
@@ -110,7 +110,7 @@ def init():
 
 def get_queryresult_header_and_data(query_result):
 	result = []
-	
+
 	for v in query_result:
 		drow = {}
 		for count, value in enumerate(v._fields):
@@ -123,12 +123,12 @@ def get_queryresult_header_and_data(query_result):
 					drow[value] = (v[count] if v[count]!=None else '')
 			#print(v[count], '	->	', type(v[count]), )
 		result.append(drow)
-	
+
 	headers = []
 	if len(result)>0:
 		headers = list(result[0].keys())
-	
-	return headers, result	
+
+	return headers, result
 
 def get_reports_hierarchy(start_id:int) -> list:
 	result, rez = [], []
@@ -205,8 +205,8 @@ def Data_For_Addresses_List(parent_id:int) -> list:
 											select 	stack.[AddrLs](ls.row_id,0) as address,
 														ls.row_id,
 														trim(str(ls.Номер)) as number,
-														CASE 
-															when len(ls.[Номер])<10 
+														CASE
+															when len(ls.[Номер])<10
 								  								then coalesce((select sum(1) from stack.[Лицевые счета] as lss where ls.row_id=lss.[Счета]),0)
 															else 0
 														END as descendants_count
@@ -220,16 +220,16 @@ def Data_For_Addresses_List(parent_id:int) -> list:
 
 def Data_For_Agreements_List(parent_id:int) -> list:
 	query_result = session_ul.execute(text(f"""--sql
-												select * 
+												select *
 													from (
-																	select 
+																	select
 																		agr.row_id,
 																		agr.[Папки] as folder_id,
 																		case
 																			when len(agr.[Номер])<10 then ''
 																			else agr.[Номер]
 																		end as number,
-																		CASE 
+																		CASE
 																			when len(agr.[Номер])<10 then coalesce((select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки]),0)
 																			else 0
 																		END as descendants_count,
@@ -296,11 +296,11 @@ select
 			left join (select sp.row_id, sp.Папки, sp.Примечание, COALESCE (pp.[Примечание], sp.[Примечание]) as area
 							from stack.[Договор] sp
 							left join (select *
-											from stack.[Договор] 
+											from stack.[Договор]
 											where [Папки] = 80540
-										) as pp on pp.row_id = sp.[Папки] 
+										) as pp on pp.row_id = sp.[Папки]
 			where (sp.Папки_ADD=0 and sp.Заказчик>0) or sp.Папки=-10 ) as folders
-			on folders.[row_id] = stack.[Договор].Иерархия2 
+			on folders.[row_id] = stack.[Договор].Иерархия2
 			where len(stack.[Договор].[Номер])>=10) as folders on folders.nc = agr.[Номер]
   where lastdisplays.[Показание] is  null;
   ----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -316,7 +316,7 @@ def Points_with_Constant_Consuming(parameters:dict):
 					 Select distinct * from (
 									   select 	left(dog.Номер,10) as [Номер договора],
 									   			left(org.Название,250) as [Название договора],
-											  	ls.Номер as [ТУ], 
+											  	ls.Номер as [ТУ],
 												left(ls.[Примечание],250) as [Название ТУ],
 												'"'+left(nom.Наименование,250) as [ПУ],
 											  	left(so.ЗаводскойНомер,50) as [Заводской номер],
@@ -462,16 +462,16 @@ def Agreement_Data(row_id:int):
 
 def Agreements_Search_Data(substring:str):
 	query_result = session_ul.execute(text(f"""--sql
-											select * 
+											select *
 												from (
-														select 
+														select
 															agr.row_id,
 															agr.[Папки] as folder_id,
 															case
 																when len(agr.[Номер])<10 then ''
 																else agr.[Номер]
 															end as number,
-															CASE 
+															CASE
 																when len(agr.[Номер])<10 then coalesce((select sum(1) from stack.[Договор] as agrs where agr.row_id=agrs.[Папки]),0)
 																else 0
 															END as descendants_count,
@@ -527,7 +527,7 @@ def Agreement_Payments_Schedule(agreement_id:int):
 															[День платежа] as day ,
 															[процентДоговорнойВеличины] as procent,
 															(case when GETDATE() between [Месяц] and [МесяцПо] then 1 else 0 end) as active
-														from stack.[График оплаты договора] as gr 
+														from stack.[График оплаты договора] as gr
 														where [График-Договор]={agreement_id};
 			;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
@@ -587,49 +587,6 @@ def Ref_Organizaion_Debtor_Category():
 									{'row_id':3, 'name':'Бюджет'}	]
 
 
-def Organization_Data(row_id:int):
-	query_result = session_ul.execute(text(f"""--sql
-																	select
-										   								org.[Название] as short_name,
-										   								org.[Наименование] as name,
-										   								org.[ИНН] as inn,
-										   								org.[КПП] as kpp,
-										   								org.[ОГРН] as ogrn,
-																		case 	when org.[Отрасль] = 0 then 'ЮЛ'
-																				when org.[Отрасль] = 1 then 'Физ.лицо'
-																				when org.[Отрасль] = 2 then 'ИП'
-																				else ''
-																		end as org_type,
-										   								org.[Отрасль] as org_type_id,
-																		org_vid = 	CASE 
-																							when org.[Бюджет] = 1 then 'Бюджет'
-																							when org.[Бюджет] = 2 then 'Малый бизнес'
-																							when org.[Бюджет] = 3 then 'Средний бизнес'
-																							when org.[Бюджет] = 4 then 'Крупный бизнес'
-																							when org.[Бюджет] = 5 then 'Микропредприятия'
-																							else ''
-																						END,
-										   								org.[ОКОНХ] as okonh,
-										   								org.[ОКПО] as okpo,
-										   								org.[ОКВЭД] as OKVED,
-										   								org.[Бюджет] as org_vid_id,
-										   								org.[Вариант НДС] as nds_type,
-										   								org.[Категория] as debtor_category,
-										   								org.[Примечание] as note,
-										   								org.[Адрес] as address,
-										   								org.[ФактАдрес] as fact_address,
-										   								org.[Телефон] as phone,
-										   								org.[Факс] as faks,
-										   								org.[Режим работы] as regime,
-										   								org.[email] as email,
-										   								convert(date, org.[ДатаРегистрации], 1) as date_begin,
-										   								convert(date, org.[ДатаЛиквидации], 1) as date_end,
-										   								org.www as www,
-										   								org.[ИдентификаторЭДО] as EDO
-																	from stack.[Организации] as org
-																	where org.row_id={row_id};
-			;""")).fetchall()
-	return get_queryresult_header_and_data(query_result)
 
 
 
@@ -651,7 +608,7 @@ def Points_Data(agreement_row_id:int):
 																		from  stack.[Лицевые счета]
 																		LEFT JOIN (SELECT stack.[Список услуг].[Счет-Услуги],stack.[Типы услуг].[Название] AS [Услуга]
 																			FROM stack.[Список услуг]
-																			LEFT JOIN stack.[Типы услуг] ON stack.[Типы услуг].row_id = stack.[Список услуг].[Вид-Услуги] 
+																			LEFT JOIN stack.[Типы услуг] ON stack.[Типы услуг].row_id = stack.[Список услуг].[Вид-Услуги]
 																			WHERE (getdate() BETWEEN ДатНач AND ДатКнц) AND ДатНач >= convert(datetime,'2022-09-01',21)) service ON service.[Счет-Услуги] = stack.[Лицевые счета].row_id)
 																			as voltages on voltages.row_id = ls.row_id
 															left join (select ls.row_id, left(org.Название,250) as name
@@ -664,12 +621,12 @@ def Points_Data(agreement_row_id:int):
 																				nm.[Наименование] as pu_type_name
 																			from stack.[Список объектов] as obj
 																			left join stack.[Номенклатура] as nm on nm.ROW_ID = obj.[Номенклатура-Объекты]
-																			where 		nm.[Номенклатура-НСИ]>0 
+																			where 		nm.[Номенклатура-НСИ]>0
 																					and getdate() between obj.[ДатНач] and obj.[ДатКнц]
 																					and obj.[Объект-Услуга] = 14)
 																		as pu on pu.point_id = ls.row_id
 															left join (
-																		select 	ls.row_id as point_id,  
+																		select 	ls.row_id as point_id,
 																				pr.Значение + 1 as category,
 																				case pr.Значение
 																					when 0 then 'Первая'
@@ -683,14 +640,14 @@ def Points_Data(agreement_row_id:int):
 																			from
 																			(select * from stack.[Свойства] where (getdate() between ДатНач and ДатКнц) and [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='СОСТОЯНИЕ') and [Значение]=0) as used,
 																			stack.[Лицевые счета] ls
-																			left join (select * from stack.[Свойства] where (getdate() between ДатНач and ДатКнц) and [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='ЦКАТЕГОРИЯ')) as pr on pr.[Счет-Параметры] = ls.row_id 
-																			where 
-																			ls.row_id = used.[Счет-Параметры] and 
+																			left join (select * from stack.[Свойства] where (getdate() between ДатНач and ДатКнц) and [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='ЦКАТЕГОРИЯ')) as pr on pr.[Счет-Параметры] = ls.row_id
+																			where
+																			ls.row_id = used.[Счет-Параметры] and
 																			(pr.Значение is not null))
 																		as categories on categories.point_id = ls.row_id
 															left join stack.[Лицевых аналитики] as la on la.row_id = ls.[Счет-Аналитика1]
 															where ls.ROW_ID  in (select ld.[Лицевой]
-																					FROM stack.[Лицевые договора] as ld 
+																					FROM stack.[Лицевые договора] as ld
 																					where 	ld.[Договор]={agreement_row_id}
 																						AND	getdate() between ld.[ДатНач] and ld.[ДатКнц]);
 			;""")).fetchall()
@@ -709,14 +666,14 @@ def Calc_Data(agreement_row_id:int, period:str):
 															dr.[Тариф] as tariff,
 															dr.[СуммаБезНДС] as money_withoutnds,
 															dr.[Сумма] as money
-														from stack.[Лицевые счета] as ls 
+														from stack.[Лицевые счета] as ls
 														left join (select 	*
 																from stack.[Детализация расчета]
 																WHERE  		[Номер услуги]<=1999
 										   								and	[Месяц] = '{period}-01'
 										   								and [Месяц]=[ЗаМесяц])
-															as dr on dr.[Лицевой] = ls.ROW_ID 
-														left join stack.[Типы услуг] 
+															as dr on dr.[Лицевой] = ls.ROW_ID
+														left join stack.[Типы услуг]
 															as tu on tu.[Номер услуги]  = dr.[Номер услуги]
 										   				where dr.[Договор]={agreement_row_id};
 			;""")).fetchall()
@@ -740,7 +697,7 @@ def Opened_Agreement_Numbers():
 										   			'		  ' as point
 												from stack.[Договор] as agr
 												where 		len(agr.[Номер])=10 and
-															(Окончание is null or (getdate()<=Окончание)) and 
+															(Окончание is null or (getdate()<=Окончание)) and
 															([Дата расторжения] is null or (getdate()<=[Дата расторжения]))
 												order by agreement
 			;""")).fetchall()
@@ -750,7 +707,7 @@ def Opened_Agreement_Numbers():
 
 def Point_Numbers_of_Opened_Agreements():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															convert(varchar, ls.[Номер]) as point
 														from (select * from stack.[Лицевые договора] where getdate() between [ДатНач] and [ДатКнц]) ld
@@ -764,7 +721,7 @@ def Point_Numbers_of_Opened_Agreements():
 
 def All_Point_Numbers():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															convert(varchar, ls.[Номер]) as point
 														from (select * from stack.[Лицевые договора] where getdate() between [ДатНач] and [ДатКнц]) ld
@@ -777,7 +734,7 @@ def All_Point_Numbers():
 
 def Get_Agreement_Names():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[Название] as name
 														from stack.[Договор] as agr
@@ -799,8 +756,8 @@ def Get_Agreement_FSK():
 																			where   ls.ROW_ID  in (
 																									select [Счет-Параметры]
 																										from stack.[Свойства]
-																										where   [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='ФСК') AND  
-																										(getdate() between [ДатНач] and [ДатКнц])) and 
+																										where   [Виды-Параметры] = (select row_id from stack.[Виды параметров] where [Название]='ФСК') AND
+																										(getdate() between [ДатНач] and [ДатКнц])) and
 																					(getdate()  between ld.ДатНач and ld.ДатКнц) and
 																					agr.ROW_ID  = ld.[Договор] and
 																					ls.row_id = ld.[Лицевой]) as fsk
@@ -814,7 +771,7 @@ def Get_Agreement_FSK():
 
 def Get_Agreement_Id():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															agr.row_id as agreement_row_id
 														from stack.[Договор] as agr
@@ -825,7 +782,7 @@ def Get_Agreement_Id():
 
 def Get_Agreement_Address_gr():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[Адрес] as address_gr
 														from stack.[Договор] as agr
@@ -836,7 +793,7 @@ def Get_Agreement_Address_gr():
 
 def Get_Agreement_Address_Fact_gr():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[ФактАдрес] as address_fact_gr
 														from stack.[Договор] as agr
@@ -847,7 +804,7 @@ def Get_Agreement_Address_Fact_gr():
 
 def Get_Agreement_Address_pl():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[Адрес] as address_pl
 														from stack.[Договор] as agr
@@ -858,7 +815,7 @@ def Get_Agreement_Address_pl():
 
 def Get_Agreement_Address_Fact_pl():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[ФактАдрес] as address_fact_pl
 														from stack.[Договор] as agr
@@ -870,7 +827,7 @@ def Get_Agreement_Address_Fact_pl():
 
 def Get_Agreement_Date_Begin():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															convert(date, agr.[Начало договора],1) as date_begin
 														from stack.[Договор] as agr
@@ -880,7 +837,7 @@ def Get_Agreement_Date_Begin():
 
 def Get_Agreement_Date_Begin_Sign():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															convert(date, agr.[Дата подписания],1) as date_begin_sign
 														from stack.[Договор] as agr
@@ -890,7 +847,7 @@ def Get_Agreement_Date_Begin_Sign():
 
 def Get_Agreement_Date_End():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															convert(date, agr.[Окончание],1) as date_end
 														from stack.[Договор] as agr
@@ -900,7 +857,7 @@ def Get_Agreement_Date_End():
 
 def Get_Agreement_Date_End_Sign():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															convert(date, agr.[Дата расторжения],1) as date_end_sign
 														from stack.[Договор] as agr
@@ -912,7 +869,7 @@ def Get_Agreement_Date_End_Sign():
 
 def Get_Agreement_Phone_gr():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[Телефон] as phone_gr
 														from stack.[Договор] as agr
@@ -923,7 +880,7 @@ def Get_Agreement_Phone_gr():
 
 def Get_Agreement_Phone_pl():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[Телефон] as phone_pl
 														from stack.[Договор] as agr
@@ -935,7 +892,7 @@ def Get_Agreement_Phone_pl():
 
 def Get_Agreement_INN_pl():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[ИНН] as inn_pl
 														from stack.[Договор] as agr
@@ -947,7 +904,7 @@ def Get_Agreement_INN_pl():
 
 def Get_Agreement_KPP_pl():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[КПП] as kpp_pl
 														from stack.[Договор] as agr
@@ -958,7 +915,7 @@ def Get_Agreement_KPP_pl():
 
 def Get_Agreement_ORGN_pl():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[ОГРН] as ogrn_pl
 														from stack.[Договор] as agr
@@ -970,7 +927,7 @@ def Get_Agreement_ORGN_pl():
 
 def Get_Agreement_INN_gr():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[ИНН] as inn_gr
 														from stack.[Договор] as agr
@@ -982,7 +939,7 @@ def Get_Agreement_INN_gr():
 
 def Get_Agreement_KPP_gr():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[КПП] as kpp_gr
 														from stack.[Договор] as agr
@@ -994,7 +951,7 @@ def Get_Agreement_KPP_gr():
 
 def Get_Agreement_ORGN_gr():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															org.[ОГРН] as ogrn_gr
 														from stack.[Договор] as agr
@@ -1013,7 +970,7 @@ def Get_Agreement_FIO():
 																				staff2.ФИО as fio2,
 																				staff3.ФИО as fio3,
 																				staff4.ФИО as fio4
-																	from 	 
+																	from
 																			stack.[Договор]
 																	left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = stack.[Договор].Сотрудник1
 																	left join stack.[Сотрудники] as staff2 on staff2.ROW_ID = stack.[Договор].Сотрудник2
@@ -1029,11 +986,11 @@ def Get_Agreement_Folders():
 															left join (select sp.row_id, sp.Папки, sp.Примечание, COALESCE (pp.[Примечание], sp.[Примечание]) as area
 																			from stack.[Договор] sp
 																			left join (select *
-																							from stack.[Договор] 
+																							from stack.[Договор]
 																							where [Папки] = 80540
-																						) as pp on pp.row_id = sp.[Папки] 
+																						) as pp on pp.row_id = sp.[Папки]
 															where (sp.Папки_ADD=0 and sp.Заказчик>0) or sp.Папки=-10 ) as folders
-															on folders.[row_id] = stack.[Договор].Иерархия2 
+															on folders.[row_id] = stack.[Договор].Иерархия2
 															where len(stack.[Договор].[Номер])>=10
 												;
 										   """)).fetchall()
@@ -1042,7 +999,7 @@ def Get_Agreement_Folders():
 
 def Get_Agreement_Organization_Type():
 	query_result = session_ul.execute(text(f"""--sql
-													select 	
+													select
 															agr.[Номер] as agreement,
 															case 	when orggr.[Отрасль] = 0 then 'ЮЛ'
 																	when orggr.[Отрасль] = 0 then 'Физ.лицо'
@@ -1063,7 +1020,7 @@ def Get_Agreement_Organization_Type():
 
 def Get_Agreement_Budget():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
 															class01.Код as kod_budget,
 															class01.Название as name_budget,
@@ -1078,7 +1035,7 @@ def Get_Agreement_Budget():
 
 def Get_Agreement_Vid():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
 															class01.[Код] as vd_kod,
 															class01.[Название] as vd_name
@@ -1090,7 +1047,7 @@ def Get_Agreement_Vid():
 
 def Get_Agreement_Otrasl():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
 															class01.[Код] as ot_kod,
 															class01.[Название] as ot_name,
@@ -1103,7 +1060,7 @@ def Get_Agreement_Otrasl():
 
 def Get_Agreement_Category():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
 															categories.[Код] as category_kod,
 															categories.[Название] as category_name
@@ -1115,9 +1072,9 @@ def Get_Agreement_Category():
 
 def Get_Agreement_Organization_Vid_gr():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
-																	vid_org_gr =   CASE 
+																	vid_org_gr =   CASE
 																					when org.[Бюджет] = 1 then 'Бюджет'
 																					when org.[Бюджет] = 2 then 'Малый бизнес'
 																					when org.[Бюджет] = 3 then 'Средний бизнес'
@@ -1133,9 +1090,9 @@ def Get_Agreement_Organization_Vid_gr():
 
 def Get_Agreement_Organization_Vid_pl():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
-																	vid_org_pl =   CASE 
+																	vid_org_pl =   CASE
 																					when org.[Бюджет] = 1 then 'Бюджет'
 																					when org.[Бюджет] = 2 then 'Малый бизнес'
 																					when org.[Бюджет] = 3 then 'Средний бизнес'
@@ -1151,7 +1108,7 @@ def Get_Agreement_Organization_Vid_pl():
 
 def Get_Agreement_Organization_email():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
 															orggr.email as email_gr,
 															orgpl.email as email_pl
@@ -1165,7 +1122,7 @@ def Get_Agreement_Organization_email():
 
 def Get_Agreement_LK():
 	query_result = session_ul.execute(text(f"""--sql
-														select 	
+														select
 															agr.[Номер] as agreement,
 															lk.lk
 														from stack.[Договор] as agr
@@ -1197,14 +1154,14 @@ def Get_Agreement_Payments_Shedule():
 
 def Get_Agreement_Reconcilation_Acts(parameters):
 	query_result = session_ul.execute(text(f"""--sql
-														SELECT	  left(agr.Номер,10)  as agreement, 
+														SELECT	  left(agr.Номер,10)  as agreement,
 																		STRING_AGG(left(vd.[Оригинальное имя],250), ', ') as documents
 																FROM	stack.[Внешние документы] vd,
 																		stack.Документ as doc
-																left join stack.[Договор] agr on agr.ROW_ID = doc.[Документы-Договор] 
-																WHERE   doc.[Тип документа] = 105 and 
-																		year(doc.[РасчМесяц]) = {parameters['year']} and  month(doc.[РасчМесяц])= {parameters['month']} and 
-																		vd.[Документ-Файл] = doc.ROW_ID 
+																left join stack.[Договор] agr on agr.ROW_ID = doc.[Документы-Договор]
+																WHERE   doc.[Тип документа] = 105 and
+																		year(doc.[РасчМесяц]) = {parameters['year']} and  month(doc.[РасчМесяц])= {parameters['month']} and
+																		vd.[Документ-Файл] = doc.ROW_ID
 																group by left(agr.Номер,10);
 										   """)).fetchall()
 	return get_queryresult_header_and_data(query_result)
@@ -1230,7 +1187,7 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 													sub_consuming.kvt as [Суб.Потребление за],
 													sub_folders.folder as  [Суб.Район],
 													sub_folders.area as [Суб.Отделение],
-													sub_stuff.fio1 as [Суб.ФИО] 
+													sub_stuff.fio1 as [Суб.ФИО]
 											FROM 	stack.[Связи лицевого] shema
 											inner join (select 		stack.[Договор].Номер as agreement_number,
 																	stack.[Организации].Название, stack.[Организации].ИНН, stack.[Организации].КПП, stack.[Организации].Адрес,
@@ -1238,7 +1195,7 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 														from 	stack.[Лицевые договора], stack.[Договор], stack.[Лицевые счета], stack.[Организации]
 														where 	stack.[Договор].ROW_ID  = stack.[Лицевые договора].Договор and
 															stack.[Лицевые счета].row_id = stack.[Лицевые договора].Лицевой and
-															stack.[Организации].ROW_ID = stack.[Договор].Плательщик and 
+															stack.[Организации].ROW_ID = stack.[Договор].Плательщик and
 															EOMONTH('{cdate}')  between stack.[Лицевые договора].ДатНач and stack.[Лицевые договора].ДатКнц) parts
 															on shema.[Главный лицевой] = parts.row_id
 											inner join (select 		stack.[Договор].Номер as agreement_number,
@@ -1247,7 +1204,7 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 														from 	stack.[Лицевые договора], stack.[Договор], stack.[Лицевые счета], stack.[Организации]
 														where 	stack.[Договор].ROW_ID  = stack.[Лицевые договора].Договор and
 															stack.[Лицевые счета].row_id = stack.[Лицевые договора].Лицевой and
-															stack.[Организации].ROW_ID = stack.[Договор].Плательщик and 
+															stack.[Организации].ROW_ID = stack.[Договор].Плательщик and
 															EOMONTH('{cdate}')  between stack.[Лицевые договора].ДатНач and stack.[Лицевые договора].ДатКнц) points
 																on shema.[Подчиненный лицевой] = points.row_id
 											left join (select 	stack.[Лицевые счета].[Номер] as num_point,
@@ -1257,13 +1214,13 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 																from  stack.[Лицевые счета]
 																inner join (
 																	select dr.[Лицевой], dr.[Кол_во], dr.[СуммабезНДС], dr.[Сумма], tu.Наименование, tu.Наименование  as usl_name,
-																	kvt =  CASE 
+																	kvt =  CASE
 																		when tu.[Номер услуги] < 1999 then dr.[Кол_во]
 																		else 0
 																	END
 																	from stack.[Детализация расчета] dr
 																	left join stack.[Типы услуг] as  tu on tu.[Номер услуги]  = dr.[Номер услуги]
-																	where  (dr.[месяц] BETWEEN convert(datetime,'{cdate}',21) and EOMONTH('{cdate}')) AND 
+																	where  (dr.[месяц] BETWEEN convert(datetime,'{cdate}',21) and EOMONTH('{cdate}')) AND
 																	(dr.[замесяц] BETWEEN convert(datetime,'{cdate}',21) and EOMONTH('{cdate}'))
 																	) as usl
 																on usl.[Лицевой] = stack.[Лицевые счета].ROW_ID
@@ -1276,13 +1233,13 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 																from  stack.[Лицевые счета]
 																inner join (
 																	select dr.[Лицевой], dr.[Кол_во], dr.[СуммабезНДС], dr.[Сумма], tu.Наименование, tu.Наименование  as usl_name,
-																	kvt =  CASE 
+																	kvt =  CASE
 																		when tu.[Номер услуги] < 1999 then dr.[Кол_во]
 																		else 0
 																	END
 																	from stack.[Детализация расчета] dr
 																	left join stack.[Типы услуг] as  tu on tu.[Номер услуги]  = dr.[Номер услуги]
-																	where  (dr.[месяц] BETWEEN convert(datetime,'{cdate}',21) and EOMONTH('{cdate}')) AND 
+																	where  (dr.[месяц] BETWEEN convert(datetime,'{cdate}',21) and EOMONTH('{cdate}')) AND
 																	(dr.[замесяц] BETWEEN convert(datetime,'{cdate}',21) and EOMONTH('{cdate}'))
 																	) as usl
 																on usl.[Лицевой] = stack.[Лицевые счета].ROW_ID
@@ -1293,22 +1250,22 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 														left join (select sp.row_id, sp.Папки, sp.Примечание, COALESCE (pp.[Примечание], sp.[Примечание]) as area
 																		from stack.[Договор] sp
 																		left join (select *
-																						from stack.[Договор] 
+																						from stack.[Договор]
 																						where [Папки] = 80540
-																					) as pp on pp.row_id = sp.[Папки] 
+																					) as pp on pp.row_id = sp.[Папки]
 														where (sp.Папки_ADD=0 and sp.Заказчик>0) or sp.Папки=-10 ) as folders
-														on folders.[row_id] = stack.[Договор].Иерархия2 
+														on folders.[row_id] = stack.[Договор].Иерархия2
 														where len(stack.[Договор].[Номер])>=10) as head_folders on head_folders.nc = parts.agreement_number
 											left join (		select  stack.[Договор].[Номер] as nc, folders.[Примечание] as folder, folders.area
 														from stack.[Договор]
 														left join (select sp.row_id, sp.Папки, sp.Примечание, COALESCE (pp.[Примечание], sp.[Примечание]) as area
 																		from stack.[Договор] sp
 																		left join (select *
-																						from stack.[Договор] 
+																						from stack.[Договор]
 																						where [Папки] = 80540
-																					) as pp on pp.row_id = sp.[Папки] 
+																					) as pp on pp.row_id = sp.[Папки]
 														where (sp.Папки_ADD=0 and sp.Заказчик>0) or sp.Папки=-10 ) as folders
-														on folders.[row_id] = stack.[Договор].Иерархия2 
+														on folders.[row_id] = stack.[Договор].Иерархия2
 														where len(stack.[Договор].[Номер])>=10) as sub_folders on sub_folders.nc = points.agreement_number
 											left join (	select
 																	left(stack.[Договор].Номер,10) as agreement,
@@ -1316,7 +1273,7 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 																	staff2.ФИО as fio2,
 																	staff3.ФИО as fio3,
 																	staff4.ФИО as fio4
-														from 	 
+														from
 																stack.[Договор]
 														left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = stack.[Договор].Сотрудник1
 														left join stack.[Сотрудники] as staff2 on staff2.ROW_ID = stack.[Договор].Сотрудник2
@@ -1328,7 +1285,7 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 																	staff2.ФИО as fio2,
 																	staff3.ФИО as fio3,
 																	staff4.ФИО as fio4
-														from 	 
+														from
 																stack.[Договор]
 														left join stack.[Сотрудники] as staff1 on staff1.ROW_ID = stack.[Договор].Сотрудник1
 														left join stack.[Сотрудники] as staff2 on staff2.ROW_ID = stack.[Договор].Сотрудник2
@@ -1337,6 +1294,63 @@ def Get_Data_For_Report_Heads_and_Submissives(parameters):
 											WHERE 	(EOMONTH('{cdate}') between shema.ДатНач and shema.ДатКнц)
 															;""")).fetchall()
 	return get_queryresult_header_and_data(query_result)
+
+
+def Organization_Data(row_id:int):
+	query_result = session_ul.execute(text(f"""--sql
+																	select
+										   								org.[Название] as short_name,
+										   								org.[Наименование] as name,
+										   								org.[ИНН] as inn,
+										   								org.[КПП] as kpp,
+										   								org.[ОГРН] as ogrn,
+																		case 	when org.[Отрасль] = 0 then 'ЮЛ'
+																				when org.[Отрасль] = 1 then 'Физ.лицо'
+																				when org.[Отрасль] = 2 then 'ИП'
+																				else ''
+																		end as org_type,
+										   								org.[Отрасль] as org_type_id,
+																		org_vid = 	CASE
+																							when org.[Бюджет] = 1 then 'Бюджет'
+																							when org.[Бюджет] = 2 then 'Малый бизнес'
+																							when org.[Бюджет] = 3 then 'Средний бизнес'
+																							when org.[Бюджет] = 4 then 'Крупный бизнес'
+																							when org.[Бюджет] = 5 then 'Микропредприятия'
+																							else ''
+																						END,
+										   								org.[ОКОНХ] as okonh,
+										   								org.[ОКПО] as okpo,
+										   								org.[ОКВЭД] as OKVED,
+										   								org.[Бюджет] as org_vid_id,
+										   								org.[Вариант НДС] as nds_type,
+										   								org.[Категория] as debtor_category,
+										   								org.[Примечание] as note,
+										   								org.[Адрес] as address,
+										   								org.[ФактАдрес] as fact_address,
+										   								org.[Телефон] as phone,
+										   								org.[Факс] as faks,
+										   								org.[Режим работы] as regime,
+										   								org.[email] as email,
+										   								convert(date, org.[ДатаРегистрации], 1) as date_begin,
+										   								convert(date, org.[ДатаЛиквидации], 1) as date_end,
+										   								org.www as www,
+										   								org.[ИдентификаторЭДО] as EDO
+																	from stack.[Организации] as org
+																	where org.row_id={row_id};
+			;""")).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+def Get_Invoice_Data(document_id:int):
+	# Документ.Лицо2  - грузополучатель
+	# select *	from stack.[Документ]	where row_id in ( select [Папки] from stack.[Документ]	where row_id = 30631054 ); и тут Лицо2 - Грузоотпра
+	query_result = session_ul.execute(text(f"""--sql
+										   """)).fetchall()
+	return get_queryresult_header_and_data(query_result)
+
+
+
+
 
 def Update_Statistic_UL_DB(user_id):
 	models.Add_Message_for_User(
@@ -1351,7 +1365,7 @@ def Update_Statistic_UL_DB(user_id):
 											EXEC sp_updatestats
 										;"""))
 	session_ul.commit()
-	
+
 	models.Add_Message_for_User(
 									user_id	=	user_id,
 									icon = 'service',
