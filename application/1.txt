@@ -1,1 +1,0 @@
-TypeError: Session.execute() got an unexpected keyword argument 'synchronize_session'

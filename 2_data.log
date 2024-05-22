@@ -1,2 +1,0 @@
-acidos@acidos-virtualbox:~/AISpy$ sudo docker run -it my-flask-app /bin/bash
-SyntaxError: Non-UTF-8 code starting with '\x82' in file /bin/bash on line 2, but no encoding declared; see https://python.org/dev/peps/pep-0263/ for details
