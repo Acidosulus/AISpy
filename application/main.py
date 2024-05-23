@@ -14,7 +14,7 @@ if __name__ == '__main__' and sys.argv[1]=='flask':
 	stdout_handler = logging.StreamHandler(sys.stdout)
 	stdout_handler.setLevel(logging.ERROR)
 	app.logger.addHandler(stdout_handler)
-	app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)
+	app.run(host='0.0.0.0', port=sys.argv[2], debug=True, use_reloader=True)
 
 if sys.argv[1]!='flask':
 	print({"message":"celery init"})
