@@ -27,6 +27,7 @@ services:
     network_mode: host
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - /home/acidos/AISpy/application/static:/static
     restart: always
 volumes:
   rabbitmq_data:
