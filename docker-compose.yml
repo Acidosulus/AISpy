@@ -15,7 +15,18 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 321
+  elasticsearch:
+    image: elasticsearch:8.7.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+  nginx:
+    image: nginx:latest
+    network_mode: host
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    restart: always
 volumes:
   rabbitmq_data:
-
-
