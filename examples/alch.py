@@ -86,13 +86,11 @@ metadata.reflect(bind=engine_ul)
 #         	where(Договор.columns['Номер'].like('%1300'))
 #         )
 
-# Отражение таблиц
 договор = Table('Договор', metadata, schema='stack', autoload_with=engine_ul)
 организации = Table('Организации', metadata, schema='stack', autoload_with=engine_ul)
 классификаторы = Table('Классификаторы', metadata, schema='stack', autoload_with=engine_ul)
 категории_договоров = Table('Категории договоров', metadata, schema='stack', autoload_with=engine_ul)
 
-# Подзапросы
 AgrTypes = select(
 	классификаторы.c.ROW_ID,
 	классификаторы.columns['Название']
