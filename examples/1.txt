@@ -1,0 +1,6 @@
+/home/acidos/AISpy/examples/alch.py:99: SADeprecationWarning: The SelectBase.c and SelectBase.columns attributes are deprecated and will be removed in a future release; these attributes implicitly create a subquery that should be explicit.  Please call SelectBase.subquery() first in order to create a subquery, which then contains this attribute.  To access the columns that this SELECT object SELECTs from, use the SelectBase.selected_columns attribute. (deprecated since: 1.4)
+  select(sub_budget.c.ROW_ID).select_from(
+/home/acidos/AISpy/examples/alch.py:99: SADeprecationWarning: Implicit coercion of SELECT and textual SELECT constructs into FROM clauses is deprecated; please call .subquery() on any Core select or ORM Query object in order to produce a subquery object.
+  select(sub_budget.c.ROW_ID).select_from(
+/home/acidos/AISpy/examples/alch.py:98: SAWarning: Coercing Subquery object into a select() for use in IN(); please pass a select() construct explicitly
+  классификаторы.columns['Папки'].in_(
